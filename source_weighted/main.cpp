@@ -1,9 +1,8 @@
 #include "commonfunctions.h"
 #include "temporal_graph.h"
 #include "online.h"
-#include "tree.h"
-#include "array.h"
-#include "chunk.h"
+#include "LSC.h"
+#include "measure.h"
 
 TemporalGraph * build(char * argv[]) {
 
@@ -33,30 +32,29 @@ signed main(int argc,char* argv[]){
         delete Graph;
     }
 
-    if(std::strcmp(argv[4], "Tree") == 0){
-        std::cout << "Running tree index..." << std::endl;
-        treeindex* Index=new treeindex(Graph);
+    if(std::strcmp(argv[4], "Measure") == 0){
+        std::cout << "Running measure..." << std::endl;
+        measureindex* Index=new measureindex(Graph);
         double start_time = clock();
-        tree(Index, Graph, argv[2], argv[3]);
-        std::cout << "Tree index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
-        // delete Graph;
-    }
-
-    if(std::strcmp(argv[4], "Array") == 0){
-        std::cout << "Running array index..." << std::endl;
-        arrayindex* Index=new arrayindex(Graph);
-        double start_time = clock();
-        array(Index, Graph, argv[2], argv[3]);
         std::cout << "Array index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
         delete Graph;
     }
 
-    if(std::strcmp(argv[4], "Chunk") == 0){
-        std::cout << "Running chunk index..." << std::endl;
-        chunkindex* Index=new chunkindex(Graph);
+    if(std::strcmp(argv[argc-1], "LSC") == 0){
+        std::cout << "Running LSC index..." << std::endl;
+        LSCindex* Index=new LSCindex(Graph);
         double start_time = clock();
-        chunk(Index, Graph, argv[2], argv[3]);
-        std::cout << "Chunk index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
-        delete Graph;
+        if(argc>5){
+            for(int i=2;i<=5;i++){
+                LSC(Index,Graph,argv[i],argv[i+4]);
+                std::cout << "LSC index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
+            }
+        }
+        else{
+        LSC(Index, Graph, argv[2], argv[3]);
+        std::cout << "LSC index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
+        }
+        //while(1);
+        //delete Graph;
     }
 }
