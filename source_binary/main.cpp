@@ -1,9 +1,7 @@
 #include "commonfunctions.h"
 #include "temporal_graph.h"
 #include "online.h"
-#include "tree.h"
-#include "array.h"
-#include "chunk.h"
+#include "kdtree.h"
 
 TemporalGraph * build(char * argv[]) {
 
@@ -24,16 +22,19 @@ signed main(int argc,char* argv[]){
     // Graph->shrink_to_fit();
     //int vertex_num = Graph->numOfVertices();
 
-    if(std::strcmp(argv[4], "Online") == 0){
+    if(std::strcmp(argv[argc-1], "Online") == 0){
         std::cout << "Running online search..." << std::endl;
         onlineindex* Index=new onlineindex(Graph);
         double start_time = clock();
-        online(Index, Graph, argv[2], argv[3]);
+        for(int i=2;i<argc-2;i++){
+        online(Index, Graph, argv[i], argv[argc-2]);
+        
         std::cout << "Online search completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
+        }
         delete Graph;
     }
 
-    if(std::strcmp(argv[4], "Tree") == 0){
+    /*if(std::strcmp(argv[4], "Tree") == 0){
         std::cout << "Running tree index..." << std::endl;
         treeindex* Index=new treeindex(Graph);
         double start_time = clock();
@@ -57,6 +58,26 @@ signed main(int argc,char* argv[]){
         double start_time = clock();
         chunk(Index, Graph, argv[2], argv[3]);
         std::cout << "Chunk index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
+        delete Graph;
+    }*/
+
+    if(std::strcmp(argv[argc-1], "KD") == 0){
+        std::cout << "Running kd tree index..." << std::endl;
+        kdindex* Index=new kdindex(Graph);
+        double start_time = clock();
+        if(argc>10){
+        for(int i=2;i<=10;i++){
+        kd(Index, Graph, argv[i], argv[i+9]);
+        std::cout << "kd tree index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
+        }
+        }
+        else{
+           for(int i=2;i<=2;i++){
+        kd(Index, Graph, argv[i], argv[i+1]);
+        std::cout << "kd tree index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
+        } 
+        }
+        //while(1);
         delete Graph;
     }
 }
