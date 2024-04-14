@@ -50,7 +50,7 @@ LSCindex::LSCindex(TemporalGraph *Graph,double length){
     m=Graph->m;
     tmax=Graph->tmax;
     long long tim=tmax*length;
-    factor=RAND_MAX*0.01;
+    factor=RAND_MAX;
     //mp=new std::unordered_map<int,std::vector<int> >[n];
     ed=new std::vector<int>[n];
     beta = new std::vector<std::vector<int> > [n]();
@@ -118,7 +118,7 @@ LSCindex::LSCindex(TemporalGraph *Graph,double length){
         Graph->temporal_edge[t].clear();
         std::vector<std::pair<int, int>>().swap(Graph->temporal_edge[t]);
     }
-    std::cerr<<cnt<<'\n';
+    std::cout<<"Number of static triangles: "<<cnt<<'\n';
     //delete [] mp;
     //delete [] ed;
     //delete [] beta;
@@ -146,7 +146,7 @@ LSCindex::LSCindex(TemporalGraph *Graph,double length){
     std::swap(alfa,beta2);
     beta2.clear();
     std::vector<mode>().swap(beta2);
-    std::cerr<<alfa.size()<<std::endl;
+    std::cout<<"Number of C-points: "<<alfa.size()<<std::endl;
     
 
 
@@ -167,7 +167,7 @@ LSCindex::LSCindex(TemporalGraph *Graph,double length){
     rchunk1=new std::vector<node> [(tmax+1)/len2+1];
     rindex2=new std::vector<node> [tmax+1];
     rchunk2=new std::vector<node> [(tmax+1)/len2+1];
-    std::cerr<<len<<' '<<len2<<'\n';
+    //std::cerr<<len<<' '<<len2<<'\n';
     long long sum=0;
     for(int i=0;i<alfa.size();i++){
         //std::cerr<<alfa[i].ts<<' '<<alfa[i].te<<' '<<alfa[i].val<<'\n';
@@ -189,7 +189,7 @@ LSCindex::LSCindex(TemporalGraph *Graph,double length){
         rchunk2[alfa[i].te/len2].push_back(node(delta,-1,alfa[i].val));//chunk for {column, delta}
         //std::cerr<<"???\n";
     }
-    std::cerr<<sum<<'\n';
+    //std::cerr<<sum<<'\n';
     //std::cerr<<"???\n";
     for(int i=0;i<=tim/len;i++){
         for(int j=0;j<=tim/len;j++){
@@ -400,7 +400,7 @@ void LSCindex::update(TemporalGraph *Graph, double pre){
         Graph->temporal_edge[t].clear();
         std::vector<std::pair<int, int>>().swap(Graph->temporal_edge[t]);
     }
-    std::cerr<<cnt<<'\n';
+    std::cout<<"Number of updated static triangles: "<<cnt<<'\n';
     sort(alfa.begin(),alfa.end(),cmp);
     std::vector<mode> beta2;beta2.clear();
     
@@ -422,7 +422,7 @@ void LSCindex::update(TemporalGraph *Graph, double pre){
     std::swap(alfa,beta2);
     beta2.clear();
     std::vector<mode>().swap(beta2);
-    std::cerr<<alfa.size()<<std::endl;
+    std::cout<<"Number of updated C-points: "<<alfa.size()<<std::endl;
     
 
 
@@ -443,7 +443,7 @@ void LSCindex::update(TemporalGraph *Graph, double pre){
     rchunk1=new std::vector<node> [(tmax+1)/len2+1];
     rindex2=new std::vector<node> [tmax+1];
     rchunk2=new std::vector<node> [(tmax+1)/len2+1];
-    std::cerr<<len<<' '<<len2<<'\n';
+    //std::cerr<<len<<' '<<len2<<'\n';
     long long sum=0;
     for(int i=0;i<alfa.size();i++){
         //std::cerr<<alfa[i].ts<<' '<<alfa[i].te<<' '<<alfa[i].val<<'\n';
@@ -465,7 +465,7 @@ void LSCindex::update(TemporalGraph *Graph, double pre){
         rchunk2[alfa[i].te/len2].push_back(node(delta,-1,alfa[i].val));//chunk for {column, delta}
         //std::cerr<<"???\n";
     }
-    std::cerr<<sum<<'\n';
+    //std::cerr<<sum<<'\n';
     //std::cerr<<"???\n";
     for(int i=0;i<=tmax/len;i++){
         for(int j=0;j<=tmax/len;j++){

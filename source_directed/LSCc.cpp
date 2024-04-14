@@ -68,7 +68,7 @@ LSCcindex::LSCcindex(TemporalGraph *Graph){
     n=Graph->n;
     m=Graph->m;
     tmax=Graph->tmax;
-    factor=RAND_MAX*0.01;
+    factor=RAND_MAX*1;
     //mp=new std::unordered_map<int,std::vector<int> >[n];
     ed=new std::vector<int>[n];
     beta = new std::vector<std::vector<int> > [n]();
@@ -139,7 +139,7 @@ LSCcindex::LSCcindex(TemporalGraph *Graph){
         Graph->temporal_edge[t].clear();
         std::vector<std::pair<int, int>>().swap(Graph->temporal_edge[t]);
     }
-    std::cerr<<cnt<<'\n';
+    std::cout<<"Number of static triangles: "<<cnt<<'\n';
     //delete [] mp;
     delete [] ed;
     delete [] beta;
@@ -169,7 +169,7 @@ LSCcindex::LSCcindex(TemporalGraph *Graph){
     std::swap(alfa,beta2);
     beta2.clear();
     std::vector<mode>().swap(beta2);
-    std::cerr<<alfa.size()<<std::endl;
+    std::cout<<"Number of C-points: "<<alfa.size()<<std::endl;
     /*for(int i=0;i<alfa.size();i++){
         std::cerr<<alfa[i].ts<<' '<<alfa[i].te<<' '<<alfa[i].val<<'\n';
     }*/

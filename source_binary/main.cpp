@@ -26,11 +26,11 @@ signed main(int argc,char* argv[]){
         std::cout << "Running online search..." << std::endl;
         onlineindex* Index=new onlineindex(Graph);
         double start_time = clock();
-        for(int i=2;i<argc-2;i++){
-        online(Index, Graph, argv[i], argv[argc-2]);
+        
+        online(Index, Graph, argv[2], argv[3]);
         
         std::cout << "Online search completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
-        }
+        
         delete Graph;
     }
 

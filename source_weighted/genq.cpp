@@ -90,9 +90,8 @@ signed main(int argc,char* argv[]){
         ofstream fout(name.c_str());
         int q=10000;
         while(q--){
-            int l=(rande())%(tmax+1);
-            while(l+0.8*tmax>tmax)l=(rande())%(tmax+1);
-            int r=(l+0.8*tmax),delta=0.1*(r-l);
+            int l=0;
+            int r=tmax,delta=0.1*(r-l);
             //printf("%d %d %d\n",l,r,delta);
             fout<<l<<' '<<r<<' '<<delta<<'\n';
         }
@@ -100,9 +99,8 @@ signed main(int argc,char* argv[]){
         fout=ofstream(name.c_str());
         q=10000;
         while(q--){
-            int l=(rande())%(tmax+1);
-            while(l+0.8*tmax>tmax)l=(rande())%(tmax+1);
-            int r=(l+0.8*tmax),delta=0.3*(r-l);
+            int l=0;
+            int r=tmax,delta=0.3*(r-l);
             //printf("%d %d %d\n",l,r,delta);
             fout<<l<<' '<<r<<' '<<delta<<'\n';
         }
@@ -110,9 +108,8 @@ signed main(int argc,char* argv[]){
         fout=ofstream(name.c_str());
         q=10000;
         while(q--){
-            int l=(rande())%(tmax+1);
-            while(l+0.8*tmax>tmax)l=(rande())%(tmax+1);
-            int r=(l+0.8*tmax),delta=0.5*(r-l);
+           int l=0;
+            int r=tmax,delta=0.5*(r-l);
             //printf("%d %d %d\n",l,r,delta);
             fout<<l<<' '<<r<<' '<<delta<<'\n';
         }
@@ -120,9 +117,8 @@ signed main(int argc,char* argv[]){
         fout=ofstream(name.c_str());
         q=10000;
         while(q--){
-            int l=(rande())%(tmax+1);
-            while(l+0.8*tmax>tmax)l=(rande())%(tmax+1);
-            int r=(l+0.8*tmax),delta=0.7*(r-l);
+           int l=0;
+            int r=tmax,delta=0.7*(r-l);
             //printf("%d %d %d\n",l,r,delta);
             fout<<l<<' '<<r<<' '<<delta<<'\n';
         }
@@ -130,9 +126,8 @@ signed main(int argc,char* argv[]){
         fout=ofstream(name.c_str());
         q=10000;
         while(q--){
-            int l=(rande())%(tmax+1);
-            while(l+0.8*tmax>tmax)l=(rande())%(tmax+1);
-            int r=(l+0.8*tmax),delta=0.9*(r-l);
+            int l=0;
+            int r=tmax,delta=0.9*(r-l);
             //printf("%d %d %d\n",l,r,delta);
             fout<<l<<' '<<r<<' '<<delta<<'\n';
         }

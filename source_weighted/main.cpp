@@ -45,8 +45,8 @@ signed main(int argc,char* argv[]){
         LSCindex* Index=new LSCindex(Graph);
         double start_time = clock();
         if(argc>5){
-            for(int i=2;i<=5;i++){
-                LSC(Index,Graph,argv[i],argv[i+4]);
+            for(int i=2;i<=10;i++){
+                LSC(Index,Graph,argv[i],argv[i+9]);
                 std::cout << "LSC index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
             }
         }

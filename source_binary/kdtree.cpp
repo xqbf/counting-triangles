@@ -81,7 +81,7 @@ kdindex::kdindex(TemporalGraph *Graph){
     tmax=Graph->tmax;
     
     srand(1);
-    factor=RAND_MAX*0.01;
+    factor=RAND_MAX;
     mp=new std::unordered_map<int,int>[n];
     ed=new std::vector<std::pair<int,int>>[n];
     deltav.clear();
@@ -270,7 +270,7 @@ kdindex::kdindex(TemporalGraph *Graph){
     delete[] mp;
     delete[] ed;
     std::cout << "Fetching total: " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl<<std::endl;
-    std::cerr<<alfa.size()<<'\n';
+    
     std::sort(alfa.begin(),alfa.end(),cmp);
     std::vector<mode> beta;beta.clear();
     mode current;
@@ -302,6 +302,7 @@ kdindex::kdindex(TemporalGraph *Graph){
     std::vector<mode>().swap(beta);
     alfa.clear();
     std::vector<mode>().swap(alfa);
+    std::cout<<"Number of C-points: "<<num<<'\n';
     tree =new node[num+5];
     tree[0].tot=0;
     for(int i=0;i<3;i++)
