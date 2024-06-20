@@ -72,8 +72,8 @@ signed main(int argc,char* argv[]){
         LSCcindex* Index=new LSCcindex(Graph);
         double start_time = clock();
         if(argc>5){
-            for(int i=2;i<=6;i++){
-                LSCc(Index,Graph,argv[i],argv[i+5]);
+            for(int i=2;i<=10;i++){
+                LSCc(Index,Graph,argv[i],argv[i+9]);
                 std::cout << "LSCc index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
             }
         }
@@ -108,8 +108,8 @@ signed main(int argc,char* argv[]){
         kdindex* Index=new kdindex(Graph);
         double start_time = clock();
         if(argc>5){
-        for(int i=2;i<=6;i++){
-        kd(Index, Graph, argv[i], argv[i+5]);
+        for(int i=2;i<=10;i++){
+        kd(Index, Graph, argv[i], argv[i+9]);
         std::cout << "kd tree index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
         }
         }

@@ -9,6 +9,7 @@ class LSCindex{
         mode(int _ts=0,int _te=0,int _val=0){ts=_ts;te=_te;val=_val;}
     };
     std::vector<mode> alfa;
+    std::vector<mode> alfa2;
     int n,m,tmax,len,len2,factor;
     std::unordered_map<int,std::vector<int> > *mp;
     std::vector<int> *ed;

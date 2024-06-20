@@ -1,7 +1,8 @@
 #include "commonfunctions.h"
 #include "temporal_graph.h"
-//#include "kdtree.h"
-#include "LSC.h"
+#include "tree.h"
+#include "kdtree.h"
+//#include "LSC.h"
 #include "online.h" 
 
 TemporalGraph * build(char * argv[]) {
@@ -58,16 +59,39 @@ signed main(int argc,char* argv[]){
         delete Graph;
     }*/
 
-    if(std::strcmp(argv[argc-1], "LSC") == 0){
-        std::cout << "Running LSC index..." << std::endl;
-        LSCindex* Index=new LSCindex(Graph,0.8);
-        std::cout<<"Updating LSC index..." <<std::endl;
+    if(std::strcmp(argv[argc-1], "KD") == 0){
+        std::cout << "Running kd tree index..." << std::endl;
+        kdindex* Index=new kdindex(Graph,0.8);
+        std::cout<<"Updating kd tree index..." <<std::endl;
         Index->update(Graph,0.8);
         double start_time = clock();
 
-        LSC(Index, Graph, argv[2], argv[3]);
-        std::cout << "LSC index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
-        //while(1);
+        kd(Index, Graph, argv[2], argv[3]);
+        std::cout << "kd tree index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
+        std::cerr << "Over!\n";
+        while(1);
+        //delete Graph;
+    }
+    
+    if(std::strcmp(argv[argc-1], "Tree") == 0){
+        std::cout << "Running tree index..." << std::endl;
+        treeindex* Index=new treeindex(Graph,0.8);
+        std::cout<<"Updating tree index..." <<std::endl;
+        Index->update(Graph,0.8);
+        double start_time = clock();
+        if(argc>5){
+            for(int i=2;i<=10;i++){
+                tree(Index,Graph,argv[i],argv[i+9]);
+                std::cout << "Tree index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
+            }
+            std::cerr << "Over!\n";
+        }
+        else{
+        tree(Index, Graph, argv[2], argv[3]);
+        std::cout << "tree index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
+        std::cerr << "Over!\n";
+        }
+        while(1);
         //delete Graph;
     }
 }

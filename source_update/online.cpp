@@ -444,6 +444,7 @@ long long onlineindex::search(TemporalGraph *Graph, int ts, int te,int delta){
             v=(*it).second;
             ed2[u].push_back(v);
             ed2[v].push_back(u);
+            //std::cout<<u<<' '<<v<<' '<<t<<"!!\n";
         }
     }
     //std::cerr<<"??\n";
@@ -496,7 +497,15 @@ long long onlineindex::search(TemporalGraph *Graph, int ts, int te,int delta){
             for(auto w:ed[v]){
                 if(vis[w]){
                     cnt++;
-                    ans+=deal(u,v,w,delta);
+                    int tmp=deal(u,v,w,delta);
+                    if(tmp>0){
+                        ans++;
+                        int u1=u,v1=v,w1=w;
+                        if(u1>v1)std::swap(u1,v1);
+                        if(u1>w1)std::swap(u1,w1);
+                        if(v1>w1)std::swap(v1,w1);
+                        std::cout<<u1<<' '<<v1<<' '<<w1<<'\n';
+                    }
                 }
             }
             d[v]--;

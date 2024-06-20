@@ -3,6 +3,8 @@
 #include "online.h"
 #include "LSC.h"
 #include "measure.h"
+#include "kdtree.h"
+#include "tree.h"
 
 TemporalGraph * build(char * argv[]) {
 
@@ -25,6 +27,7 @@ signed main(int argc,char* argv[]){
 
     if(std::strcmp(argv[4], "Online") == 0){
         std::cout << "Running online search..." << std::endl;
+        //while(1);
         onlineindex* Index=new onlineindex(Graph);
         double start_time = clock();
         online(Index, Graph, argv[2], argv[3]);
@@ -54,7 +57,46 @@ signed main(int argc,char* argv[]){
         LSC(Index, Graph, argv[2], argv[3]);
         std::cout << "LSC index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
         }
-        //while(1);
+        std::cerr<<"Over!\n";
+        while(1);
+        //delete Graph;
+    }
+
+    if(std::strcmp(argv[argc-1], "Tree") == 0){
+        std::cout << "Running Wavelet tree index..." << std::endl;
+        treeindex* Index=new treeindex(Graph);
+        double start_time = clock();
+        if(argc>5){
+            for(int i=2;i<=10;i++){
+                tree(Index,Graph,argv[i],argv[i+9]);
+                std::cout << "Wavelet tree index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
+            }
+        }
+        else{
+        tree(Index, Graph, argv[2], argv[3]);
+        std::cout << "Wavelet tree index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
+        }
+        std::cerr<<"Over!\n";
+        while(1);
+        //delete Graph;
+    }
+
+    if(std::strcmp(argv[argc-1], "KD") == 0){
+        std::cout << "Running KD index..." << std::endl;
+        kdindex* Index=new kdindex(Graph);
+        double start_time = clock();
+        if(argc>5){
+            for(int i=2;i<=10;i++){
+                kd(Index,Graph,argv[i],argv[i+9]);
+                std::cout << "KD index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
+            }
+        }
+        else{
+        kd(Index, Graph, argv[2], argv[3]);
+        std::cout << "KD index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
+        }
+        std::cerr<<"Over!\n";
+        while(1);
         //delete Graph;
     }
 }

@@ -75,213 +75,175 @@ long long kdindex::query(int rt,int ts1,int ts2,int te1,int te2,int delta1,int d
     if(ts1<= tree[rt].pos[0] && tree[rt].pos[0]<=ts2 && te1<= tree[rt].pos[1] && tree[rt].pos[1]<=te2 && delta1<= tree[rt].pos[2] && tree[rt].pos[2]<=delta2)ans+=tree[rt].val;
     return ans;
 }
+
+
+inline int kdindex::find(int u,int p){
+    
+    int l=0,r=ed[u].size()-1,ans=-1;
+    if(r-l+1<=40){
+        /*for(int i=0;i<=r;i+=8){
+            if(ed[u][i]>p)return -1;
+            if(ed[u][i]==p)return i;
+            if(i+1<=r && ed[u][i+1]==p)return i+1;
+            if(i+2<=r && ed[u][i+2]==p)return i+2;
+            if(i+3<=r && ed[u][i+3]==p)return i+3;
+            if(i+4<=r && ed[u][i+4]==p)return i+4;
+            if(i+5<=r && ed[u][i+5]==p)return i+5;
+            if(i+6<=r && ed[u][i+6]==p)return i+6;
+            if(i+7<=r && ed[u][i+7]==p)return i+7;
+        }*/
+        for(int i=0;i<=r;i+=4){
+            if(ed[u][i]>=p){
+            if(ed[u][i]>p)return -1;
+            if(ed[u][i]==p)return i;}
+            if(i+1<=r&&ed[u][i+1]>=p){
+            if(ed[u][i+1]>p)return -1;
+            if(ed[u][i+1]==p)return i+1;}
+            if(i+2<=r&&ed[u][i+2]>=p){
+            if(ed[u][i+2]>p)return -1;
+            if(ed[u][i+2]==p)return i+2;}
+            if(i+3<=r&&ed[u][i+3]>=p){
+            if(ed[u][i+3]>p)return -1;
+            if(ed[u][i+3]==p)return i+3;}
+        }
+        return -1;
+    }
+    /*else{
+        std::unordered_map<int,int>::iterator iter;
+        iter=pt[u].find(p);
+        if(iter!=pt[u].end())
+        return (*iter).second;
+        else
+        return -1;
+    }*/
+    while(l<=r){
+        int mid=(l+r)>>1;
+        if(ed[u][mid]<=p){
+            ans=mid;
+            l=mid+1;
+        }
+        else{
+            r=mid-1;
+        }
+    }
+    if(ed[u][ans]==p)
+    return ans;
+    else
+    return -1;
+}
+
 kdindex::kdindex(TemporalGraph *Graph){
     n=Graph->n;
     m=Graph->m;
     tmax=Graph->tmax;
-    
-    srand(1);
     factor=RAND_MAX*1;
-    mp=new std::unordered_map<int,int>[n];
-    ed=new std::vector<std::pair<int,int>>[n];
-    deltav.clear();
+    //mp=new std::unordered_map<int,std::vector<int> >[n];
+    ed=new std::vector<int>[n];
+    beta = new std::vector<std::vector<int> > [n]();
     double start_time=clock();
-    int tmpcnt=0;
+    srand(1);
     for(int t=0;t<=tmax;t++){
         std::vector<std::pair<int, int>>::iterator it;
         for (it = Graph->temporal_edge[t].begin(); it != Graph->temporal_edge[t].end(); it++) {
             int u=(*it).first;
             int v=(*it).second;
-            if(mp[u].count(v)){//already connected before
-                int time=mp[u][v];//previously connected time
-                ed[u].push_back(std::pair<int,int>(v,t));
-                int du=ed[u].size();
-                int dv=ed[v].size();
-                std::unordered_map<int,int> vis;
-                vis.clear();
-                for(int i=dv-1;i>=0;i--){// sorted by time
-                    std::pair<int,int> p=ed[v][i];
-                    int t1=p.second,v1=p.first;//t1: time of connecting v1 and v
-                    if(t1<=time){
-                        break;
-                    }
-                    if(vis.count(v1))continue;
-                    vis[v1]=1;
-                    if(mp[v1].count(u)){
-                        //std::cerr<<u<<' '<<v<<' '<<v1<<std::endl;
-                        //std::cerr<<t<<' '<<t1<<' '<<mp[u][v1]<<std::endl;
-                        int tmn=std::min(std::min(t,t1),mp[v1][u]);
-                        int tpre=std::max(t1,mp[v1][u]);
-                        int x=u,y=v,z=v1;
-                        if(x>y)std::swap(x,y);
-                        if(x>z)std::swap(x,z);
-                        if(y>z)std::swap(y,z);
-                        std::pair<int,std::pair<int,int> > vs=std::pair<int,std::pair<int,int> >(x,std::pair<int,int> (y,z));
-                        
-                        if(tmn>time){
-                            if(deltav.count(vs)){
-                                int lst=-1;
-                                int tmp=10;
-                                while(1){
-                                    if(deltav[vs].empty())break;
-                                    int len=deltav[vs].size()-1;
-                                    point realtop = deltav[vs][len];
-                                    if(realtop.delta>=t-tmn){
-                                        if(rand()<=factor)
-                                        alfa.push_back(mode(realtop.ts,t,realtop.delta,-1));
-                                        if(lst!=-1){
-                                            if(rand()<=factor)
-                                            alfa.push_back(mode(realtop.ts,t,lst,1));
-                                        }
-                                        lst=realtop.delta;
-                                        if(len>0){
-                                            deltav[vs].pop_back();
-                                            len--;
-                                            realtop=deltav[vs][len];
-                                        }
-                                        else{
-                                            break;
-                                        }
-                                    }
-                                    else{
-                                        if(rand()<=factor)
-                                        alfa.push_back(mode(realtop.ts,t,t-tmn,-1));
-                                        if(lst!=-1){
-                                            if(rand()<=factor)
-                                            alfa.push_back(mode(realtop.ts,t,lst,1));
-                                        }
-                                        break;
-                                    }
-                                }
-                                //std::cout<<toper<<"?\n";
-                                deltav[vs].push_back(point(tmn,t-tmn));
-                                if(rand()<=factor)
-                                alfa.push_back(mode(tmn,t,t-tmn,1));
-                            }
-                            else{
-                                point tmper=point(tmn,t-tmn);
-                                deltav[vs].push_back(tmper);
-                                if(rand()<=factor)
-                                alfa.push_back(mode(tmn,t,t-tmn,1));
-                            }
-                        }
-                    }
-                }
-                //std::cerr<<u<<' '<<v<<' '<<t<<'\n';
-                mp[u][v]=t;
-                //mp[v][u]=t;
-            }
-            else{//not connected before
-                int time=t;
-                int du=ed[u].size();
-                int dv=ed[v].size();
-                /*if(du<dv){
-                    std::swap(u,v);
-                    std::swap(du,dv);
-                }*/
-                std::unordered_map<int,int> vis;
-                vis.clear();
-                for(int i=dv-1;i>=0;i--){
-                    std::pair<int,int> p=ed[v][i];
-                    int t1=p.second;
-                    int v1=p.first;
-                    if(vis.count(v1))continue;
-                    vis[v1]=1;
-                    if(mp[v1].count(u)){
-                        int tmn=std::min(std::min(t,t1),mp[v1][u]);
-                        int x=u,y=v,z=v1;
-                        if(x>y)std::swap(x,y);
-                        if(x>z)std::swap(x,z);
-                        if(y>z)std::swap(y,z);
-                        std::pair<int,std::pair<int,int> > vs=std::pair<int,std::pair<int,int> >(x,std::pair<int,int> (y,z));
-                        /*if(deltav.count(vs)){//monotoncity stack already encounted this vertices set
-                            point* toper=&deltav[vs];//top of the stack
-                            int lst=-1;
-                            while(1){
-                                if(toper==NULL)break;
-                                point realtop=*toper;
-                                if(realtop.delta>=t-tmn){
-                                    alfa.push_back(mode(realtop.ts,t,realtop.delta,-1));
-                                    if(lst!=-1){
-                                        alfa.push_back(mode(realtop.ts,t,lst,1));
-                                    }
-                                    lst=realtop.delta;
-                                    if(realtop.nex!=NULL){
-                                        toper=realtop.nex;
-                                    }
-                                    else{
-                                        toper=NULL;
-                                        break;
-                                    }
-                                }
-                                else{
-                                    alfa.push_back(mode(realtop.ts,t,t-tmn,-1));
-                                    if(lst!=-1){
-                                        alfa.push_back(mode(realtop.ts,t,lst,1));
-                                    }
-                                    break;
-                                }
-                            }
-                            point tmper=point(tmn,t-tmn,toper);
-                            deltav[vs]=tmper;
-                            alfa.push_back(mode(tmn,t,t-tmn,1));
-                        }
-                        else*/{
-                            deltav[vs].push_back(point(tmn,t-tmn));
-                            if(rand()<=factor)
-                            alfa.push_back(mode(tmn,t,t-tmn,1));
-                        }
-                    }
-                }
-                //ed[v].push_back(std::pair<int,int>(u,t));
-                ed[u].push_back(std::pair<int,int>(v,t));
-                mp[u][v]=t;
-                //mp[v][u]=t;
-            }
+            if(u==v)continue;
+            ed[u].push_back(v);
+            //ed2[v].push_back(u);
         }
-        //std::cerr<<alfa.size()<<std::endl;
-        if((t+1)%10000 == 0){
+    }
+    for(int i=0;i<n;i++){
+        std::sort(ed[i].begin(),ed[i].end());
+        ed[i].erase(std::unique(ed[i].begin(),ed[i].end()), ed[i].end());
+        beta[i].resize(ed[i].size());
+        /*std::sort(ed2[i].begin(),ed2[i].end());
+        ed2[i].erase(std::unique(ed2[i].begin(),ed2[i].end()), ed2[i].end());*/
+    }
+    int id,p,l1,l2;
+    long long cnt=0;
+    for(int t=0;t<=tmax;t++){
+        std::vector<std::pair<int, int>>::iterator it;
+        for (it = Graph->temporal_edge[t].begin(); it != Graph->temporal_edge[t].end(); it++) {
+            int u=(*it).first;
+            int v=(*it).second;
+            if(u==v)continue;
+            //if(ed[u].size()<ed[v].size())std::swap(u,v);
+            for(int i1=0;i1<ed[v].size();++i1){
+                p=ed[v][i1];
+                if(beta[v][i1].size()==0)continue;
+                id=find(p,u);
+                if(id!=-1){
+                    if(beta[p][id].size()==0)continue;
+                        cnt++;
+                        l1=0,l2=0;
+                    for(int i=0;i<beta[p][id].size();i++){
+                        while(beta[v][i1][l2]<beta[p][id][i]&&l2<beta[v][i1].size()){
+                            l2++;
+                        }
+                        if(beta[v][i1].size()==l2)break;
+                        //std::cerr<<u<<' '<<v<<' '<<p<<' '<<tmp2.size()-l2<<std::endl;
+                        if(rand()<factor)
+                        alfa.push_back(mode(beta[p][id][i],t, t-beta[p][id][i],beta[v][i1].size()-l2));
+                    }
+                    for(int i=0;i<beta[v][i1].size();i++){
+                        while(beta[p][id][l1]<=beta[v][i1][i]&&l1<beta[p][id].size()){
+                            l1++;
+                        }
+                        if(beta[p][id].size()==l1)break;
+                        //std::cerr<<u<<' '<<v<<' '<<p<<' '<<tmp1.size()-l1<<std::endl;
+                        if(rand()<factor)
+                        alfa.push_back(mode(beta[v][i1][i],t,t-beta[v][i1][i],beta[p][id].size()-l1));
+                    }
+                    
+                }
+            }
+            id=find(u,v);
+            beta[u][id].push_back(t);
+            /*id=find(v,u);
+            beta[v][id].push_back(t);*/
+        }
+        if((t+1)%10000 == 0)
         putProcess(double(t+1) / (tmax+1), (clock()-start_time)/CLOCKS_PER_SEC);
-        //std::cerr<<deltav.size()<<'\n';
-        }
-    }//std::cerr<<tmpcnt<<'\n';
-    deltav.clear();
-    for(int i=0;i<n;i++){mp[i].clear();ed[i].clear();std::vector<std::pair<int,int> >().swap(ed[i]);}
-    delete[] mp;
-    delete[] ed;
+        Graph->temporal_edge[t].clear();
+        std::vector<std::pair<int, int>>().swap(Graph->temporal_edge[t]);
+    }
+    std::cout<<"Number of static triangles: "<<cnt<<'\n';
+    //delete [] mp;
+    delete [] ed;
+    delete [] beta;
+    delete Graph;
     std::cout << "Fetching total: " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl<<std::endl;
+    int period_time = clock();
+    //tree.push_back((node)(0,0,0));
+    sort(alfa.begin(),alfa.end(),cmp);
+    std::vector<mode> beta2;beta2.clear();
     
-    std::sort(alfa.begin(),alfa.end(),cmp);
-    std::vector<mode> beta;beta.clear();
     mode current;
     current.ts=alfa[0].ts;
     current.te=alfa[0].te;
-    current.delta=alfa[0].delta;
     current.val=alfa[0].val;
-    //std::cerr<<"???\n";
     for(int i=1;i<alfa.size();i++){
-        if(alfa[i].ts==alfa[i-1].ts && alfa[i].te==alfa[i-1].te && alfa[i].delta==alfa[i-1].delta){
+        if(alfa[i].ts==alfa[i-1].ts && alfa[i].te==alfa[i-1].te){
             current.val+=alfa[i].val;
         }
         else{
             if(current.val!=0)
-            beta.push_back(current);
+            beta2.push_back(current);
             current=alfa[i];
         }
     }
-    beta.push_back(current);
-    //std::cerr<<"??\n";
-    //std::swap(alfa,beta);
-    num=beta.size();
+    beta2.push_back(current);
+    std::swap(alfa,beta2);
+    beta2.clear();
+    std::vector<mode>().swap(beta2);
+    
+    num=alfa.size();
     std::cout<<"Number of C-points: "<<num<<'\n';
     // std::cerr<<num<<'\n';
     a = new mode[num];
     for(int i=0;i<num;i++){
-        a[i]=beta[i];
+        a[i]=alfa[i];
     }
-    beta.clear();
-    
-    std::vector<mode>().swap(beta);
     alfa.clear();
     std::vector<mode>().swap(alfa);
     tree =new node[num+5];

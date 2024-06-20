@@ -5,7 +5,7 @@ signed main(){
     cin.tie(0);cout.tie(0);
     srand(time(0));
     freopen("graph.txt","w",stdout);
-    int n=45,m=500,t=30;
+    int n=100,m=10000,t=100;
     for(int i=1;i<=m;i++){
         printf("%d %d %d\n",rand()*rand()%n,rand()*rand()%n,rand()*rand()%t);
     }

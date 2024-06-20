@@ -329,6 +329,15 @@ long long onlineindex::deal(int u,int v,int w,int delta){
                 ans=ans+a*b;
                 break;
         }
+        if(ans>0){
+            s5.clear();
+            s6.clear();
+            s4.clear();
+            std:: vector<int>().swap(s5);
+            std:: vector<int>().swap(s6);
+            std:: vector<int>().swap(s4);
+            return true;
+        }
     }
     while(l3<s3.size()){
         c++;
@@ -368,6 +377,15 @@ long long onlineindex::deal(int u,int v,int w,int delta){
             //std::cerr<<"val: "<<a*b<<'\n';
                 ans=ans+a*b;
                 break;
+        }
+        if(ans>0){
+            s5.clear();
+            s6.clear();
+            s4.clear();
+            std:: vector<int>().swap(s5);
+            std:: vector<int>().swap(s6);
+            std:: vector<int>().swap(s4);
+            return true;
         }
     }
     while(l4<s4.size()){
@@ -416,6 +434,15 @@ long long onlineindex::deal(int u,int v,int w,int delta){
             //std::cerr<<"val: "<<a*b<<'\n';
                 ans=ans+a*b;
                 break;
+        }
+        if(ans>0){
+            s5.clear();
+            s6.clear();
+            s4.clear();
+            std:: vector<int>().swap(s5);
+            std:: vector<int>().swap(s6);
+            std:: vector<int>().swap(s4);
+            return true;
         }
     }
     //std::cerr<<u<<' '<<v<<' '<<w<<'\n';

@@ -14,13 +14,14 @@ class kdindex{
         short val;
         mode(int _ts=0,int _te=0,int _delta=0,short _val=0){ts=_ts;te=_te;delta=_delta;val=_val;}
     };
+    std::unordered_map<int,std::vector<int> > *mp;
+    std::vector<int> *ed;
+    //std::vector<int> *ed2;
+    std::vector<std::vector<int>> *beta;
     std::vector<mode> alfa;
-    //std::vector<point> aggregate_points;
-    std::map<std::pair<int, std::pair<int,int> >, std::vector<point> > deltav;
+    int find(int u,int p);
     mode *a;
     int n,m,tmax;
-    std::unordered_map<int,int>* mp;
-    std::vector<std::pair<int,int> > *ed;
     kdindex(){};
     kdindex(TemporalGraph *Graph);
     ~kdindex();

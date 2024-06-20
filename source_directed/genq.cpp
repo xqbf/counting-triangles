@@ -25,7 +25,7 @@ signed main(int argc,char* argv[]){
     if(argv[1][0]=='A'){
         string name("query2.txt");
         ofstream fout(name.c_str());
-        int q=10000;
+        int q=50;
         while(q--){
             int l=(rande())%(tmax+1);
             while(l+0.2*tmax>tmax)l=(rande())%(tmax+1);
@@ -35,7 +35,7 @@ signed main(int argc,char* argv[]){
         }
         name="query4.txt"s;
         fout=ofstream(name.c_str());
-        q=10000;
+        q=50;
         while(q--){
             int l=(rande())%(tmax+1);
             while(l+0.4*tmax>tmax)l=(rande())%(tmax+1);
@@ -45,7 +45,7 @@ signed main(int argc,char* argv[]){
         }
         name="query6.txt"s;
         fout=ofstream(name.c_str());
-        q=10000;
+        q=50;
         while(q--){
             int l=(rande())%(tmax+1);
             while(l+0.6*tmax>tmax)l=(rande())%(tmax+1);
@@ -55,7 +55,7 @@ signed main(int argc,char* argv[]){
         }
         name="query8.txt"s;
         fout=ofstream(name.c_str());
-        q=10000;
+        q=50;
         while(q--){
             int l=(rande())%(tmax+1);
             while(l+0.8*tmax>tmax)l=(rande())%(tmax+1);
@@ -65,7 +65,7 @@ signed main(int argc,char* argv[]){
         }
         name="query10.txt"s;
         fout=ofstream(name.c_str());
-        q=10000;
+        q=50;
         while(q--){
             int l=0;
             int r=tmax,delta=0.1*(r-l);
@@ -76,7 +76,7 @@ signed main(int argc,char* argv[]){
     if(argv[1][0]=='B'){
         string name("queryd1.txt");
         ofstream fout(name.c_str());
-        int q=10000;
+        int q=50;
         while(q--){
             int l=0;
             int r=tmax,delta=0.1*(r-l);
@@ -85,7 +85,7 @@ signed main(int argc,char* argv[]){
         }
         name="queryd3.txt"s;
         fout=ofstream(name.c_str());
-        q=10000;
+        q=50;
         while(q--){
             int l=0;
             int r=tmax,delta=0.3*(r-l);
@@ -94,7 +94,7 @@ signed main(int argc,char* argv[]){
         }
         name="queryd5.txt"s;
         fout=ofstream(name.c_str());
-        q=10000;
+        q=50;
         while(q--){
             int l=0;
             int r=tmax,delta=0.5*(r-l);
@@ -103,7 +103,7 @@ signed main(int argc,char* argv[]){
         }
         name="queryd7.txt"s;
         fout=ofstream(name.c_str());
-        q=10000;
+        q=50;
         while(q--){
             int l=0;
             int r=tmax,delta=0.7*(r-l);
@@ -112,7 +112,7 @@ signed main(int argc,char* argv[]){
         }
         name="queryd9.txt"s;
         fout=ofstream(name.c_str());
-        q=10000;
+        q=50;
         while(q--){
             int l=0;
             int r=tmax,delta=0.9*(r-l);

@@ -1,2 +1,2 @@
-test: main.cpp online.cpp temporal_graph.cpp commonfunctions.cpp LSC.cpp measure.cpp
-		g++ main.cpp LSC.cpp online.cpp temporal_graph.cpp commonfunctions.cpp measure.cpp -o main -O3 -std=c++17
+test: main.cpp online.cpp tree.cpp temporal_graph.cpp commonfunctions.cpp LSC.cpp measure.cpp kdtree.cpp
+		g++ main.cpp LSC.cpp tree.cpp online.cpp kdtree.cpp temporal_graph.cpp commonfunctions.cpp measure.cpp -o main -O3 -std=c++17

@@ -65,11 +65,17 @@ signed main(int argc,char* argv[]){
         std::cout << "Running kd tree index..." << std::endl;
         kdindex* Index=new kdindex(Graph);
         double start_time = clock();
-        if(argc>10){
+        if(argc>15){
         for(int i=2;i<=10;i++){
         kd(Index, Graph, argv[i], argv[i+9]);
         std::cout << "kd tree index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
         }
+        }
+        else if(argc>8){
+            for(int i=2;i<=5;i++){
+                kd(Index,Graph,argv[i],argv[i+4]);
+                std::cout << "kd tree index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
+            }
         }
         else{
            for(int i=2;i<=2;i++){
@@ -77,7 +83,8 @@ signed main(int argc,char* argv[]){
         std::cout << "kd tree index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
         } 
         }
-        //while(1);
+        std::cerr<<"Over!\n";
+        while(1);
         delete Graph;
     }
 }

@@ -170,9 +170,6 @@ LSCcindex::LSCcindex(TemporalGraph *Graph){
     beta2.clear();
     std::vector<mode>().swap(beta2);
     std::cout<<"Number of C-points: "<<alfa.size()<<std::endl;
-    /*for(int i=0;i<alfa.size();i++){
-        std::cerr<<alfa[i].ts<<' '<<alfa[i].te<<' '<<alfa[i].val<<'\n';
-    }*/
 
 
     len=std::max(1,(int)sqrt(tmax));

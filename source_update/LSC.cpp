@@ -6,6 +6,7 @@ bool LSCindex::cmp(mode a,mode b){
 }
 
 bool LSCindex::cmp2(node a,node b){
+    if(a.pos==b.pos)return a.presum<b.presum;
     return a.pos<b.pos;
 }
 
@@ -49,14 +50,14 @@ LSCindex::LSCindex(TemporalGraph *Graph,double length){
     n=Graph->n;
     m=Graph->m;
     tmax=Graph->tmax;
-    long long tim=tmax*length;
+    int tim=tmax*length;
     factor=RAND_MAX;
     //mp=new std::unordered_map<int,std::vector<int> >[n];
     ed=new std::vector<int>[n];
     beta = new std::vector<std::vector<int> > [n]();
     double start_time=clock();
     srand(1);
-    for(int t=0;t<=tim;t++){
+    for(int t=0;t<=tmax;t++){
         std::vector<std::pair<int, int>>::iterator it;
         for (it = Graph->temporal_edge[t].begin(); it != Graph->temporal_edge[t].end(); it++) {
             int u=(*it).first;
@@ -94,7 +95,7 @@ LSCindex::LSCindex(TemporalGraph *Graph,double length){
                         }
                         if(beta[v][i1].size()==l2)break;
                         //std::cerr<<u<<' '<<v<<' '<<p<<' '<<tmp2.size()-l2<<std::endl;
-                        if(rand()<factor)
+                        if(rand()<=factor)
                         alfa.push_back(mode(beta[u][id][i],t,beta[v][i1].size()-l2));
                     }
                     for(int i=0;i<beta[v][i1].size();i++){
@@ -102,7 +103,7 @@ LSCindex::LSCindex(TemporalGraph *Graph,double length){
                             l1++;
                         }
                         if(beta[u][id].size()==l1)break;
-                        if(rand()<factor)
+                        if(rand()<=factor)
                         alfa.push_back(mode(beta[v][i1][i],t,beta[u][id].size()-l1));
                     }
                     
@@ -123,7 +124,7 @@ LSCindex::LSCindex(TemporalGraph *Graph,double length){
     //delete [] ed;
     //delete [] beta;
     //delete Graph;
-    std::cout << "Fetching 80\% total: " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl<<std::endl;
+    std::cout << "Fetching"<< length*100<<"\%"<<" total: " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl<<std::endl;
     //tree.push_back((node)(0,0,0));
     sort(alfa.begin(),alfa.end(),cmp);
     std::vector<mode> beta2;beta2.clear();
@@ -157,7 +158,7 @@ LSCindex::LSCindex(TemporalGraph *Graph,double length){
     for(int i=0;i<=(tmax+1)/len;i++){
         mat1[i]=new long long[(tmax+1)/len+2];
         mat2[i]=new long long[(tmax+1)/len+2];
-        for(int j=0;j<=len;j++)mat1[i][j]=mat2[i][j]=0;
+        for(int j=0;j<=(tmax+1)/len;j++)mat1[i][j]=mat2[i][j]=0;
     }
     index1=new std::vector<node> [tmax+1];
     chunk1=new std::vector<node> [(tmax+1)/len2+1];
@@ -189,6 +190,8 @@ LSCindex::LSCindex(TemporalGraph *Graph,double length){
         rchunk2[alfa[i].te/len2].push_back(node(delta,-1,alfa[i].val));//chunk for {column, delta}
         //std::cerr<<"???\n";
     }
+    alfa.clear();
+    std::vector<mode>().swap(alfa);
     //std::cerr<<sum<<'\n';
     //std::cerr<<"???\n";
     for(int i=0;i<=tim/len;i++){
@@ -205,7 +208,9 @@ LSCindex::LSCindex(TemporalGraph *Graph,double length){
                 mat1[i][j]-=mat1[i-1][j-1];
                 mat2[i][j]-=mat2[i-1][j-1];
             }
+            //std::cout<<mat1[i][j]<<' ';
         }
+        //std::cout<<'\n';
     }
     //std::cerr<<"????\n";
     for(int i=0;i<=tim;i++){
@@ -329,14 +334,23 @@ LSCindex::LSCindex(TemporalGraph *Graph,double length){
         }
     }
     std::cout << "Indexing 80\% costs: " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str()<<std::endl;
+    
+    /*for(int i=0;i<=tmax/len2;i++){
+        std::cout<<"ts = "<<i<<' ';
+        for(int j=0;j<chunk1[i].size();j++){
+            std::cout<<'('<<chunk1[i][j].pos<<' ' <<chunk1[i][j].presum<<") ";
+        }
+        std::cout<<'\n';
+    }*/
     //std::cout << "Indexing size: " <<  alfa.size()*8ll*16+32ll*(len+2)*(len+2)<<"bytes"<< std::endl<<std::endl;
 }
 
 void LSCindex::update(TemporalGraph *Graph, double pre){
     double start_time=clock();
-    long long tpre= pre*tmax+1;
+    int tpre= pre*tmax+1;
+    if(tpre>tmax)return ;
     int edgenum = 0;
-    for(int t=tpre;t<=tmax;t++){
+    /*for(int t=tpre;t<=tmax;t++){
         std::vector<std::pair<int, int>>::iterator it;
         for (it = Graph->temporal_edge[t].begin(); it != Graph->temporal_edge[t].end(); it++) {
             edgenum++;
@@ -351,13 +365,14 @@ void LSCindex::update(TemporalGraph *Graph, double pre){
         std::sort(ed[i].begin(),ed[i].end());
         ed[i].erase(std::unique(ed[i].begin(),ed[i].end()), ed[i].end());
         beta[i].resize(ed[i].size());
-    }
+    }*/
 
     int id,p,l1,l2;
     long long cnt=0;
     for(int t=tpre;t<=tmax;t++){
         std::vector<std::pair<int, int>>::iterator it;
         for (it = Graph->temporal_edge[t].begin(); it != Graph->temporal_edge[t].end(); it++) {
+            edgenum++;
             int u=(*it).first;
             int v=(*it).second;
             if(u==v)continue;
@@ -376,16 +391,16 @@ void LSCindex::update(TemporalGraph *Graph, double pre){
                         }
                         if(beta[v][i1].size()==l2)break;
                         //std::cerr<<u<<' '<<v<<' '<<p<<' '<<tmp2.size()-l2<<std::endl;
-                        if(rand()<factor)
-                        alfa.push_back(mode(beta[u][id][i],t,beta[v][i1].size()-l2));
+                        if(rand()<=factor)
+                        alfa2.push_back(mode(beta[u][id][i],t,beta[v][i1].size()-l2));
                     }
                     for(int i=0;i<beta[v][i1].size();i++){
                         while(beta[u][id][l1]<=beta[v][i1][i]&&l1<beta[u][id].size()){
                             l1++;
                         }
                         if(beta[u][id].size()==l1)break;
-                        if(rand()<factor)
-                        alfa.push_back(mode(beta[v][i1][i],t,beta[u][id].size()-l1));
+                        if(rand()<=factor)
+                        alfa2.push_back(mode(beta[v][i1][i],t,beta[u][id].size()-l1));
                     }
                     
                 }
@@ -400,40 +415,40 @@ void LSCindex::update(TemporalGraph *Graph, double pre){
         Graph->temporal_edge[t].clear();
         std::vector<std::pair<int, int>>().swap(Graph->temporal_edge[t]);
     }
-    std::cout<<"Number of updated static triangles: "<<cnt<<'\n';
-    sort(alfa.begin(),alfa.end(),cmp);
+    //std::cout<<"Number of updated static triangles: "<<cnt<<'\n';
+    sort(alfa2.begin(),alfa2.end(),cmp);
     std::vector<mode> beta2;beta2.clear();
     
     mode current;
-    current.ts=alfa[0].ts;
-    current.te=alfa[0].te;
-    current.val=alfa[0].val;
-    for(int i=1;i<alfa.size();i++){
-        if(alfa[i].ts==alfa[i-1].ts && alfa[i].te==alfa[i-1].te){
-            current.val+=alfa[i].val;
+    current.ts=alfa2[0].ts;
+    current.te=alfa2[0].te;
+    current.val=alfa2[0].val;
+    for(int i=1;i<alfa2.size();i++){
+        if(alfa2[i].ts==alfa2[i-1].ts && alfa2[i].te==alfa2[i-1].te){
+            current.val+=alfa2[i].val;
         }
         else{
             if(current.val!=0)
             beta2.push_back(current);
-            current=alfa[i];
+            current=alfa2[i];
         }
     }
     beta2.push_back(current);
-    std::swap(alfa,beta2);
+    std::swap(alfa2,beta2);
     beta2.clear();
     std::vector<mode>().swap(beta2);
-    std::cout<<"Number of updated C-points: "<<alfa.size()<<std::endl;
+    std::cout<<"Number of C-points updated: "<<alfa2.size()<<std::endl;
     
 
 
     len=std::max(1,(int)sqrt(tmax));
     len2=std::max(1,(int)sqrt(len));
-    mat1=new long long* [(tmax+1)/len+2];
+    /*mat1=new long long* [(tmax+1)/len+2];
     mat2=new long long* [(tmax+1)/len+2];
     for(int i=0;i<=(tmax+1)/len;i++){
         mat1[i]=new long long[(tmax+1)/len+2];
         mat2[i]=new long long[(tmax+1)/len+2];
-        for(int j=0;j<=len;j++)mat1[i][j]=mat2[i][j]=0;
+        for(int j=0;j<=(tmax+1)/len;j++)mat1[i][j]=mat2[i][j]=0;
     }
     index1=new std::vector<node> [tmax+1];
     chunk1=new std::vector<node> [(tmax+1)/len2+1];
@@ -442,33 +457,81 @@ void LSCindex::update(TemporalGraph *Graph, double pre){
     rindex1=new std::vector<node> [tmax+1];
     rchunk1=new std::vector<node> [(tmax+1)/len2+1];
     rindex2=new std::vector<node> [tmax+1];
-    rchunk2=new std::vector<node> [(tmax+1)/len2+1];
-    //std::cerr<<len<<' '<<len2<<'\n';
-    long long sum=0;
-    for(int i=0;i<alfa.size();i++){
-        //std::cerr<<alfa[i].ts<<' '<<alfa[i].te<<' '<<alfa[i].val<<'\n';
-        int delta=alfa[i].te-alfa[i].ts;
-        sum=sum+alfa[i].val;
-        mat1[alfa[i].ts/len][alfa[i].te/len]+=alfa[i].val;// O(1) big matrix
-        mat2[delta/len][alfa[i].te/len]+=alfa[i].val;
-        //std::cerr<<"??\n";
-        index1[alfa[i].ts].push_back(node(alfa[i].te,-1,alfa[i].val));// {row, ts}
-        chunk1[alfa[i].ts/len2].push_back(node(alfa[i].te,-1,alfa[i].val));// chunk for {row,ts}
-        //std::cerr<<"???\n";
-        index2[delta].push_back(node(alfa[i].te,-1,alfa[i].val));// {row,delta}
-        chunk2[delta/len2].push_back(node(alfa[i].te,-1,alfa[i].val));// chunk for {row,delta}
-        //std::cerr<<"???\n";
-        rindex1[alfa[i].te].push_back(node(alfa[i].ts,-1,alfa[i].val));// {column, ts}
-        rchunk1[alfa[i].te/len2].push_back(node(alfa[i].ts,-1,alfa[i].val));//chunk for {column, ts}
-        //std::cerr<<"???\n";
-        rindex2[alfa[i].te].push_back(node(delta,-1,alfa[i].val));// {column, delta}
-        rchunk2[alfa[i].te/len2].push_back(node(delta,-1,alfa[i].val));//chunk for {column, delta}
-        //std::cerr<<"???\n";
+    rchunk2=new std::vector<node> [(tmax+1)/len2+1];*/
+    for(int i=tpre/len;i>=0;i--){
+        int j=tpre/len;
+        if(i>0){
+            mat1[i][j]-=mat1[i-1][j];
+            mat2[i][j]-=mat2[i-1][j];
+            if(j!=i){
+            mat1[j][i]-=mat1[j][i-1];
+            mat2[j][i]-=mat2[j][i-1];
+            }
+        }
+        if(j>0){
+            mat1[i][j]-=mat1[i][j-1];
+            mat2[i][j]-=mat2[i][j-1];
+            if(i!=j){
+            mat1[j][i]-=mat1[j-1][i];
+            mat2[j][i]-=mat2[j-1][i];
+            }
+        }
+        if(i>0 && j>0){
+            mat1[i][j]+=mat1[i-1][j-1];
+            mat2[i][j]+=mat2[i-1][j-1];
+            if(j!=i){
+                mat1[j][i]+=mat1[j-1][i-1];
+                mat2[j][i]+=mat2[j-1][i-1];
+            }
+        }
+        if(mat1[i][j]<0)mat1[i][j]=0;
+        if(mat2[i][j]<0)mat2[i][j]=0;
+        if(mat1[j][i]<0)mat1[j][i]=0;
+        if(mat2[j][i]<0)mat2[j][i]=0;
     }
+    //std::cout<<mat1[0][tpre/len]<<"target\n";
+    if(!rchunk1[tpre/len2].empty()){
+        int sz=rchunk1[tpre/len2].size();
+        for(int i=sz-1;i>0;i--){
+            rchunk1[tpre/len2][i].presum-=rchunk1[tpre/len2][i-1].presum;
+        }
+    }
+    if(!rchunk2[tpre/len2].empty()){
+        int sz=rindex2[tpre/len2].size();
+        for(int i=sz-1;i>0;i--){
+            rchunk2[tpre/len2][i].presum-=rchunk2[tpre/len2][i-1].presum;
+        }
+    }
+    long long sum=0;
+    for(int i=0;i<alfa2.size();i++){
+        int delta=alfa2[i].te-alfa2[i].ts;
+        sum=sum+alfa2[i].val;
+        mat1[alfa2[i].ts/len][alfa2[i].te/len]+=alfa2[i].val;
+        mat2[delta/len][alfa2[i].te/len]+=alfa2[i].val;
+        index1[alfa2[i].ts].push_back(node(alfa2[i].te,-1,alfa2[i].val));
+        chunk1[alfa2[i].ts/len2].push_back(node(alfa2[i].te,-1,alfa2[i].val));
+        index2[delta].push_back(node(alfa2[i].te,-1,alfa2[i].val));
+        chunk2[delta/len2].push_back(node(alfa2[i].te,-1,alfa2[i].val));
+        rindex1[alfa2[i].te].push_back(node(alfa2[i].ts,-1,alfa2[i].val));
+        rchunk1[alfa2[i].te/len2].push_back(node(alfa2[i].ts,-1,alfa2[i].val));
+        rindex2[alfa2[i].te].push_back(node(delta,-1,alfa2[i].val));
+        rchunk2[alfa2[i].te/len2].push_back(node(delta,-1,alfa2[i].val));
+    }
+    /*for(int i=0;i<=tmax/len;i++){
+        for(int j=0;j<=tmax/len;j++){
+            std::cout<<mat1[i][j]<<' ';
+        }
+        std::cout<<'\n';
+    }*/
+
     //std::cerr<<sum<<'\n';
     //std::cerr<<"???\n";
     for(int i=0;i<=tmax/len;i++){
         for(int j=0;j<=tmax/len;j++){
+            if(i<tpre/len && j<tpre/len){
+                //std::cout<<mat1[i][j]<<' ';
+                continue;
+            }
             if(i>0){
                 mat1[i][j]+=mat1[i-1][j];
                 mat2[i][j]+=mat2[i-1][j];
@@ -481,13 +544,16 @@ void LSCindex::update(TemporalGraph *Graph, double pre){
                 mat1[i][j]-=mat1[i-1][j-1];
                 mat2[i][j]-=mat2[i-1][j-1];
             }
+            //std::cout<<mat1[i][j]<<' ';
         }
+        //std::cout<<'\n';
     }
     //std::cerr<<"????\n";
     for(int i=0;i<=tmax;i++){
         int sz=index1[i].size();
         int fd=0;
         for(int j=1;j<sz;j++){
+            if(index1[i][j].pos<tpre)continue;
             index1[i][j].presum+=index1[i][j-1].presum;
         }
         if(i+1<=tmax)
@@ -501,6 +567,7 @@ void LSCindex::update(TemporalGraph *Graph, double pre){
         int sz=index2[i].size();
         int fd=0;
         for(int j=1;j<sz;j++){
+            if(index2[i][j].pos<tpre)continue;
             index2[i][j].presum+=index2[i][j-1].presum;
         }
         if(i+1<=tmax)
@@ -510,7 +577,7 @@ void LSCindex::update(TemporalGraph *Graph, double pre){
         }
     }
     //std::cerr<<"??????\n";
-    for(int i=0;i<=tmax;i++){
+    for(int i=tpre;i<=tmax;i++){
         if(!rindex1[i].empty())
         std::sort(rindex1[i].begin(),rindex1[i].end(),cmp2);
         if(!rindex2[i].empty())
@@ -524,7 +591,7 @@ void LSCindex::update(TemporalGraph *Graph, double pre){
             rindex2[i][j].presum+=rindex2[i][j-1].presum;
         }
     }
-    for(int i=0;i<tmax;i++){
+    for(int i=tpre;i<tmax;i++){
         int fd=0;
         int sz=rindex1[i].size();
         for(int j=0;j<sz;j++){
@@ -532,7 +599,7 @@ void LSCindex::update(TemporalGraph *Graph, double pre){
             rindex1[i][j].next=fd-1;
         }
     }
-    for(int i=0;i<tmax;i++){
+    for(int i=tpre;i<tmax;i++){
         int fd=0;
         int sz=rindex2[i].size();
         for(int j=0;j<sz;j++){
@@ -545,6 +612,7 @@ void LSCindex::update(TemporalGraph *Graph, double pre){
             std::sort(chunk1[i].begin(),chunk1[i].end(),cmp2);
             int sz=chunk1[i].size();
             for(int j=1;j<sz;j++){
+                if(chunk1[i][j].pos<tpre)continue;
                 chunk1[i][j].presum+=chunk1[i][j-1].presum;
             }
         }
@@ -552,9 +620,11 @@ void LSCindex::update(TemporalGraph *Graph, double pre){
             std::sort(chunk2[i].begin(),chunk2[i].end(),cmp2);
             int sz=chunk2[i].size();
             for(int j=1;j<sz;j++){
+                if(chunk2[i][j].pos<tpre)continue;
                 chunk2[i][j].presum+=chunk2[i][j-1].presum;
             }
         }
+        if(i>=tpre/len2){
         if(!rchunk1[i].empty()){
             std::sort(rchunk1[i].begin(),rchunk1[i].end(),cmp2);
             int sz=rchunk1[i].size();
@@ -568,6 +638,7 @@ void LSCindex::update(TemporalGraph *Graph, double pre){
             for(int j=1;j<sz;j++){
                 rchunk2[i][j].presum+=rchunk2[i][j-1].presum;
             }
+        }
         }
     }
     //std::cerr<<"???????\n";
@@ -604,6 +675,15 @@ void LSCindex::update(TemporalGraph *Graph, double pre){
             rchunk2[i][j].next=fd-1;
         }
     }
+
+    /*for(int i=0;i<=tmax/len2;i++){
+        std::cout<<"ts = "<<i<<' ';
+        for(int j=0;j<chunk1[i].size();j++){
+            std::cout<<'('<<chunk1[i][j].pos<<' ' <<chunk1[i][j].presum<<") ";
+        }
+        std::cout<<'\n';
+    }*/
+
     std::cout << "Update time costs: " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str()<<std::endl;
     std::cout << "Update edge number: "<<edgenum<<std::endl;
 
@@ -611,15 +691,18 @@ void LSCindex::update(TemporalGraph *Graph, double pre){
 
 
 long long LSCindex::brute1(int ts1,int ts2,int te1,int te2){
-	if(te1>te2)return 0; 
+    if(te1>te2 ||ts1>ts2)return 0;
     long long ans = 0;
-    if(ts2-ts1<=2*len){//chunk1
+    if(ts2-ts1<=te2-te1){//chunk1
+    
         te1--;
         int id1=ts1/len2;
         int id2=ts2/len2;
+        //std::cerr<<"??? "<<ts1<<' '<<ts2<<' '<<te1<<' '<<te2<<'\n';
         if(id1+2>id2){
-             int l=0,r=index1[ts1].size()-1;
+            int l=0,r=index1[ts1].size()-1;
             int pos=-1;
+            if(te1>-1){
             while(l<=r){
                 int mid=(l+r)>>1;
                 if(index1[ts1][mid].pos<=te1){
@@ -649,7 +732,7 @@ long long LSCindex::brute1(int ts1,int ts2,int te1,int te2){
                     pos=0;
                 }
             }
-
+            }
             l=0,r=index1[ts1].size()-1;
             pos=-1;
             while(l<=r){
@@ -685,6 +768,7 @@ long long LSCindex::brute1(int ts1,int ts2,int te1,int te2){
         }
         int pos=-1;
         int l=0,r=chunk1[id1+1].size()-1;
+        if(te1>-1){
         while(l<=r){
             int mid=(l+r)>>1;
             if(chunk1[id1+1][mid].pos<=te1){
@@ -711,11 +795,12 @@ long long LSCindex::brute1(int ts1,int ts2,int te1,int te2){
             }
             if(pos==-1)pos=0;
         }
-
+        }
 
 
         pos=-1;
         l=0,r=index1[ts1].size()-1;
+        if(te1>-1){
         while(l<=r){
             int mid=(l+r)>>1;
             if(index1[ts1][mid].pos<=te1){
@@ -742,10 +827,11 @@ long long LSCindex::brute1(int ts1,int ts2,int te1,int te2){
             }
             if(pos==-1)pos=0;
         }
-
+        }
 
         pos=-1;
         l=0,r=index1[id2*len2].size()-1;
+        if(te1>-1){
         while(l<=r){
             int mid=(l+r)>>1;
             if(index1[id2*len2][mid].pos<=te1){
@@ -771,6 +857,7 @@ long long LSCindex::brute1(int ts1,int ts2,int te1,int te2){
                 pos=index1[i][pos].next;
             }
             if(pos==-1)pos=0;
+        }
         }
 
 //summation
@@ -867,12 +954,14 @@ long long LSCindex::brute1(int ts1,int ts2,int te1,int te2){
         return ans;
     }
     else{//rchunk1
+    //std::cerr<<"???\n";
         ts1--;
         int id1=te1/len2;
         int id2=te2/len2;
         if(id1+2>id2){
             int l=0,r=rindex1[te1].size()-1;
             int pos=-1;
+            if(ts1>-1){
             while(l<=r){
                 int mid=(l+r)>>1;
                 if(rindex1[te1][mid].pos<=ts1){
@@ -902,9 +991,12 @@ long long LSCindex::brute1(int ts1,int ts2,int te1,int te2){
                     pos=0;
                 }
             }
+            }
 
             l=0,r=rindex1[te1].size()-1;
             pos=-1;
+            if(ts2==tmax){pos=r;}
+            else{
             while(l<=r){
                 int mid=(l+r)>>1;
                 if(rindex1[te1][mid].pos<=ts2){
@@ -914,6 +1006,7 @@ long long LSCindex::brute1(int ts1,int ts2,int te1,int te2){
                     r=mid-1;
                 }
             }
+            }
             if(pos!=-1){
                 ans+=rindex1[te1][pos].presum;
                 pos=rindex1[te1][pos].next;
@@ -922,8 +1015,11 @@ long long LSCindex::brute1(int ts1,int ts2,int te1,int te2){
                 pos=0;
             }
             for(int i=te1+1;i<=te2;i++){
+                if(ts2==tmax){pos=rindex1[i].size();}
+                else{
                 while(pos<rindex1[i].size()&&rindex1[i][pos].pos<=ts2){
                     pos++;
+                }
                 }
                 pos--;
                 if(pos!=-1){
@@ -941,6 +1037,7 @@ long long LSCindex::brute1(int ts1,int ts2,int te1,int te2){
         int pos=-1;
         int l=0,r=rchunk1[id1+1].size()-1;
         //std::cerr<<l<<' '<<r<<'\n';
+        if(ts1>-1){
         while(l<=r){
             int mid=(l+r)>>1;
             if(rchunk1[id1+1][mid].pos<=ts1){
@@ -967,12 +1064,13 @@ long long LSCindex::brute1(int ts1,int ts2,int te1,int te2){
             }
             if(pos==-1)pos=0;
         }
-
+        }
 
 
         pos=-1;
         l=0,r=rindex1[te1].size()-1;
         //std::cerr<<l<<' '<<r<<"??\n"; 
+        if(ts1>-1){
         while(l<=r){
             int mid=(l+r)>>1;
             if(rindex1[te1][mid].pos<=ts1){
@@ -999,12 +1097,14 @@ long long LSCindex::brute1(int ts1,int ts2,int te1,int te2){
             }
             if(pos==-1)pos=0;
         }
+        }
 
 
         pos=-1;
         //std::cerr<<id2*len2<<' '<<tmax<<'\n';
         l=0,r=rindex1[id2*len2].size()-1;
         //std::cerr<<l<<' '<<r<<"!\n";
+        if(ts1>-1){
         while(l<=r){
             int mid=(l+r)>>1;
             if(rindex1[id2*len2][mid].pos<=ts1){
@@ -1031,10 +1131,13 @@ long long LSCindex::brute1(int ts1,int ts2,int te1,int te2){
             }
             if(pos==-1)pos=0;
         }
+        }
 
 //summation
         pos=-1;
         l=0,r=rchunk1[id1+1].size()-1;
+        if(ts2==tmax){pos=r;}
+        else{
         while(l<=r){
             int mid=(l+r)>>1;
             if(rchunk1[id1+1][mid].pos<=ts2){
@@ -1042,6 +1145,7 @@ long long LSCindex::brute1(int ts1,int ts2,int te1,int te2){
                 l=mid+1;
             }
             else r=mid-1;
+        }
         }
         if(pos!=-1){
             ans+=rchunk1[id1+1][pos].presum;
@@ -1051,8 +1155,11 @@ long long LSCindex::brute1(int ts1,int ts2,int te1,int te2){
             pos=0;
         }
         for(int i=id1+2;i<id2;i++){
+            if(ts2==tmax){pos=rchunk1[i].size();}
+            else{
             while(pos<rchunk1[i].size()&&rchunk1[i][pos].pos<=ts2){
                 pos++;
+            }
             }
             pos--;
             if(pos!=-1){
@@ -1065,6 +1172,10 @@ long long LSCindex::brute1(int ts1,int ts2,int te1,int te2){
 
         pos=-1;
         l=0,r=rindex1[te1].size()-1;
+        if(ts2==tmax){
+            pos=r;
+        }
+        else{
         while(l<=r){
             int mid=(l+r)>>1;
             if(rindex1[te1][mid].pos<=ts2){
@@ -1072,6 +1183,7 @@ long long LSCindex::brute1(int ts1,int ts2,int te1,int te2){
                 l=mid+1;
             }
             else r=mid-1;
+        }
         }
         if(pos!=-1){
             ans+=rindex1[te1][pos].presum;
@@ -1081,8 +1193,13 @@ long long LSCindex::brute1(int ts1,int ts2,int te1,int te2){
             pos=0;
         }
         for(int i=te1+1;i<=(id1+1)*len2-1;i++){
+            if(ts2==tmax){
+                pos=rindex1[i].size();
+            }
+            else{
             while(pos<rindex1[i].size()&&rindex1[i][pos].pos<=ts2){
                 pos++;
+            }
             }
             pos--;
             if(pos!=-1){
@@ -1095,6 +1212,10 @@ long long LSCindex::brute1(int ts1,int ts2,int te1,int te2){
 
         pos=-1;
         l=0,r=rindex1[id2*len2].size()-1;
+        if(ts2==tmax){
+            pos=r;
+        }
+        else{
         while(l<=r){
             int mid=(l+r)>>1;
             if(rindex1[id2*len2][mid].pos<=ts2){
@@ -1102,6 +1223,7 @@ long long LSCindex::brute1(int ts1,int ts2,int te1,int te2){
                 l=mid+1;
             }
             else r=mid-1;
+        }
         }
         if(pos!=-1){
             ans+=rindex1[id2*len2][pos].presum;
@@ -1111,8 +1233,13 @@ long long LSCindex::brute1(int ts1,int ts2,int te1,int te2){
             pos=0;
         }
         for(int i=id2*len2+1;i<=te2;i++){
+            if(ts2==tmax){
+                pos=rindex1[i].size();
+            }
+            else{
             while(pos<rindex1[i].size()&&rindex1[i][pos].pos<=ts2){
                 pos++;
+            }
             }
             pos--;
             if(pos!=-1){
@@ -1130,6 +1257,7 @@ long long LSCindex::query1(int ts1,int ts2,int te1,int te2){
     //bigmat: mat1[ts2/len-1][te2/len-1]-mat1[(ts1-1)/len-1][te2/len-1]-mat1[ts2/len-1][(te1-1)/len-1]+mat1[(ts1-1)/len-1][(te1-1)/len-1];
     long long ans = 0;
     if(ts2/len!=ts1/len && te2/len!=te1/len){
+        //std::cerr<<"wtff?\n";
         if(ts2/len>=1 && te2/len>=1){
             ans=mat1[ts2/len-1][te2/len-1];
             //std::cerr<<ans<<"?\n";
@@ -1164,15 +1292,15 @@ long long LSCindex::query1(int ts1,int ts2,int te1,int te2){
     ans+=brute1(es2,ts2,et1+1,et2-1);
     return ans;
     }
-
+    //std::cerr<<"wtf\n";
     return brute1(ts1,ts2,te1,te2);
 }
 
 long long LSCindex::brute2(int ts1,int ts2,int te1,int te2){
-	if(te1>te2)return 0;
+    if(te1>te2||ts1>ts2)return 0;
     //std::cerr<<ts1<<' '<<ts2<<' '<<te1<<' '<<te2<<'\n';
     long long ans = 0;
-    if(ts2-ts1<=2*len){//chunk2
+    if(ts2-ts1<=te2-te1){//chunk2
     te1--;
         int id1=ts1/len2;
         int id2=ts2/len2;
@@ -1180,6 +1308,7 @@ long long LSCindex::brute2(int ts1,int ts2,int te1,int te2){
         if(id1+2>id2){
             int l=0,r=index2[ts1].size()-1;
             int pos=-1;
+            if(te1>-1){
             while(l<=r){
                 int mid=(l+r)>>1;
                 if(index2[ts1][mid].pos<=te1){
@@ -1209,7 +1338,7 @@ long long LSCindex::brute2(int ts1,int ts2,int te1,int te2){
                     pos=0;
                 }
             }
-
+            }
             l=0,r=index2[ts1].size()-1;
             pos=-1;
             while(l<=r){
@@ -1248,6 +1377,7 @@ long long LSCindex::brute2(int ts1,int ts2,int te1,int te2){
         }
         int pos=-1;
         int l=0,r=chunk2[id1+1].size()-1;
+        if(te1>-1){
         while(l<=r){
             int mid=(l+r)>>1;
             if(chunk2[id1+1][mid].pos<=te1){
@@ -1274,11 +1404,12 @@ long long LSCindex::brute2(int ts1,int ts2,int te1,int te2){
             }
             if(pos==-1)pos=0;
         }
-
+        
 
 
         pos=-1;
         l=0,r=index2[ts1].size()-1;
+        
         while(l<=r){
             int mid=(l+r)>>1;
             if(index2[ts1][mid].pos<=te1){
@@ -1305,10 +1436,11 @@ long long LSCindex::brute2(int ts1,int ts2,int te1,int te2){
             }
             if(pos==-1)pos=0;
         }
-
+        
 
         pos=-1;
         l=0,r=index2[id2*len2].size()-1;
+        
         while(l<=r){
             int mid=(l+r)>>1;
             if(index2[id2*len2][mid].pos<=te1){
@@ -1334,6 +1466,7 @@ long long LSCindex::brute2(int ts1,int ts2,int te1,int te2){
                 pos=index2[i][pos].next;
             }
             if(pos==-1)pos=0;
+        }
         }
         //std::cerr<<ans<<'\n';
 //summation
@@ -1442,6 +1575,7 @@ long long LSCindex::brute2(int ts1,int ts2,int te1,int te2){
         if(id1+2>id2){
             int l=0,r=rindex2[te1].size()-1;
             int pos=-1;
+            if(ts1>-1){
             while(l<=r){
                 int mid=(l+r)>>1;
                 if(rindex2[te1][mid].pos<=ts1){
@@ -1471,7 +1605,7 @@ long long LSCindex::brute2(int ts1,int ts2,int te1,int te2){
                     pos=0;
                 }
             }
-
+            }
             l=0,r=rindex2[te1].size()-1;
             pos=-1;
             while(l<=r){
@@ -1508,6 +1642,7 @@ long long LSCindex::brute2(int ts1,int ts2,int te1,int te2){
         
         int pos=-1;
         int l=0,r=rchunk2[id1+1].size()-1;
+        if(ts1>-1){
         while(l<=r){
             int mid=(l+r)>>1;
             if(rchunk2[id1+1][mid].pos<=ts1){
@@ -1534,7 +1669,6 @@ long long LSCindex::brute2(int ts1,int ts2,int te1,int te2){
             }
             if(pos==-1)pos=0;
         }
-
 
 
         pos=-1;
@@ -1566,7 +1700,6 @@ long long LSCindex::brute2(int ts1,int ts2,int te1,int te2){
             if(pos==-1)pos=0;
         }
 
-
         pos=-1;
         l=0,r=rindex2[id2*len2].size()-1;
         while(l<=r){
@@ -1595,18 +1728,21 @@ long long LSCindex::brute2(int ts1,int ts2,int te1,int te2){
             }
             if(pos==-1)pos=0;
         }
+        }
 
 //summation
         pos=-1;
         l=0,r=rchunk2[id1+1].size()-1;
-        while(l<=r){
-            int mid=(l+r)>>1;
-            if(rchunk2[id1+1][mid].pos<=ts2){
-                pos=mid;
-                l=mid+1;
+        
+            while(l<=r){
+                int mid=(l+r)>>1;
+                if(rchunk2[id1+1][mid].pos<=ts2){
+                    pos=mid;
+                    l=mid+1;
+                }
+                else r=mid-1;
             }
-            else r=mid-1;
-        }
+        
         if(pos!=-1){
             ans+=rchunk2[id1+1][pos].presum;
             pos=rchunk2[id1+1][pos].next;
@@ -1615,9 +1751,10 @@ long long LSCindex::brute2(int ts1,int ts2,int te1,int te2){
             pos=0;
         }
         for(int i=id1+2;i<id2;i++){
-            while(pos<rchunk2[i].size()&&rchunk2[i][pos].pos<=ts2){
-                pos++;
-            }
+                while(pos<rchunk2[i].size()&&rchunk2[i][pos].pos<=ts2){
+                    pos++;
+                }
+            
             pos--;
             if(pos!=-1){
                 ans+=rchunk2[i][pos].presum;
@@ -1629,6 +1766,7 @@ long long LSCindex::brute2(int ts1,int ts2,int te1,int te2){
 
         pos=-1;
         l=0,r=rindex2[te1].size()-1;
+        
         while(l<=r){
             int mid=(l+r)>>1;
             if(rindex2[te1][mid].pos<=ts2){
@@ -1637,6 +1775,7 @@ long long LSCindex::brute2(int ts1,int ts2,int te1,int te2){
             }
             else r=mid-1;
         }
+        
         if(pos!=-1){
             ans+=rindex2[te1][pos].presum;
             pos=rindex2[te1][pos].next;
@@ -1645,9 +1784,11 @@ long long LSCindex::brute2(int ts1,int ts2,int te1,int te2){
             pos=0;
         }
         for(int i=te1+1;i<=(id1+1)*len2-1;i++){
+            
             while(pos<rindex2[i].size()&&rindex2[i][pos].pos<=ts2){
                 pos++;
             }
+            
             pos--;
             if(pos!=-1){
                 ans+=rindex2[i][pos].presum;
@@ -1667,6 +1808,7 @@ long long LSCindex::brute2(int ts1,int ts2,int te1,int te2){
             }
             else r=mid-1;
         }
+        
         if(pos!=-1){
             ans+=rindex2[id2*len2][pos].presum;
             pos=rindex2[id2*len2][pos].next;
@@ -1678,6 +1820,7 @@ long long LSCindex::brute2(int ts1,int ts2,int te1,int te2){
             while(pos<rindex2[i].size()&&rindex2[i][pos].pos<=ts2){
                 pos++;
             }
+            
             pos--;
             if(pos!=-1){
                 ans+=rindex2[i][pos].presum;
@@ -1732,8 +1875,10 @@ long long LSCindex::query2(int ts1,int ts2,int te1,int te2){
 long long LSCindex::solve(int ts,int te,int delta){
     if(te-ts>delta){
         //std::cerr<<"?\n";
-        long long tmp1=query1(ts,tmax,0,ts+delta),tmp2=query2(0,delta,ts+delta+1,te);
-        //std::cout<<ts<<' '<<te<<' '<<delta<<' '<<tmp1<<' '<<tmp2<<' '<<tmp1+tmp2<<'\n';
+        long long tmp1=query1(ts,tmax,0,ts+delta);
+        //std::cerr<<tmp1<<'\n';
+        long long tmp2=query2(0,delta,ts+delta+1,te);
+        //std::cerr<<ts<<' '<<te<<' '<<delta<<' '<<tmp1<<' '<<tmp2<<' '<<tmp1+tmp2<<'\n';
         return tmp1+tmp2;
     }
     else{
