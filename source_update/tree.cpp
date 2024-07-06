@@ -492,6 +492,7 @@ void treeindex::update(TemporalGraph *Graph, double pre){
     std::swap(alfa2,beta2);
     beta2.clear();
     std::vector<mode>().swap(beta2);
+    std::cout << "Updated edge number: "<<edgenum<<std::endl;
     std::cout<<"Number of C-points updated: "<<alfa2.size()<<std::endl;
     double start2=clock();
     for(long long i=0;i<alfa2.size();i++){
@@ -502,7 +503,7 @@ void treeindex::update(TemporalGraph *Graph, double pre){
         }
     }
     std::cout << "Update time costs: " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str()<<std::endl;
-    std::cout << "Update edge number: "<<edgenum<<std::endl;
+    
 }
 
 void tree(treeindex *Index, TemporalGraph *Graph, char* query_file, char* output_file){
