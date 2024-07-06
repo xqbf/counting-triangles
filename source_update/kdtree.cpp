@@ -8,7 +8,7 @@ bool kdindex::cmp(mode a,mode b){
 
 
 
-void kdindex::pushup(int rt){
+void kdindex::pushup(long long rt){
     for(int i=0;i<3;i++){
         tree[rt].mxpos[i]=std::max(std::max(tree[tree[rt].ls].mxpos[i],tree[tree[rt].rs].mxpos[i]),tree[rt].mxpos[i]);
         tree[rt].mnpos[i]=std::min(std::min(tree[tree[rt].ls].mnpos[i],tree[tree[rt].rs].mnpos[i]),tree[rt].mnpos[i]);
@@ -16,13 +16,13 @@ void kdindex::pushup(int rt){
     tree[rt].tot=tree[rt].val+tree[tree[rt].ls].tot+tree[tree[rt].rs].tot;
 }
 
-void kdindex::build(long long &rt,int l,int r,int dep){
+void kdindex::build(long long &rt,long long l,long long r,int dep){
     if(l>r){rt = 0;return ;}
     cnt++;
     //std::cerr<<cnt<<' '<<l<<' '<<r<<' '<<' '<<num<<'\n';
     rt=cnt;
     static int opt=dep%3;
-    int mid=(l+r)>>1;
+    long long mid=(l+r)>>1;
     std::nth_element(a+l,a+mid,a+r+1,[&](mode a,mode b){
         if(opt==0)
             return a.ts<b.ts;
@@ -40,7 +40,7 @@ void kdindex::build(long long &rt,int l,int r,int dep){
     //std::cerr<<rt<<' '<<tree[rt].tot<<'\n'<<tree[rt].mnpos[0]<<' '<<tree[rt].mxpos[0]<<'\n'<<tree[rt].mnpos[1]<<' '<<tree[rt].mxpos[1]<<'\n'<<tree[rt].mnpos[2]<<' '<<tree[rt].mxpos[2]<<"\n\n";
 }
 
-void kdindex::insert(long long &rt, mode a, int dep){
+void kdindex::insert(long long &rt, mode a, long long dep){
     if(rt!=0){
         static int opt=dep%3;
         if(opt==0){
@@ -149,6 +149,16 @@ kdindex::kdindex(TemporalGraph *Graph,double length){
     factor=RAND_MAX;
     mp=new std::unordered_map<int,int>[n];
     ed=new std::vector<std::pair<int,int>>[n];
+    rep=new std::unordered_map<int,int>[n];
+    for(int t=0;t<=tmax;t++){
+        std::vector<std::pair<int, int>>::iterator it;
+        for (it = Graph->temporal_edge[t].begin(); it != Graph->temporal_edge[t].end(); it++) {
+            int u=(*it).first;
+            int v=(*it).second;
+            rep[u][v]++;
+            rep[v][u]++;
+        }
+    }
     deltav.clear();
     double start_time=clock();
     int check=0;
@@ -308,10 +318,12 @@ kdindex::kdindex(TemporalGraph *Graph,double length){
                         if(x>y)std::swap(x,y);
                         if(x>z)std::swap(x,z);
                         if(y>z)std::swap(y,z);
+                        
                         std::pair<int,std::pair<int,int> > vs=std::pair<int,std::pair<int,int> >(x,std::pair<int,int> (y,z));
                         {
                             point tmper= point(tmn,t-tmn);
-                            deltav[vs].push_back(tmper);
+                            if(rep[x][y]==1 && rep[x][z]==1 && rep[y][z]==1);
+                            else deltav[vs].push_back(tmper);
                             if(rand()<=factor){
                                 /*if(t<=19 && t-tmn<=1){
                                     std::cout<<vs.first<<' '<<vs.second.first<<' '<<vs.second.second<<' '<<1<<'\n';
@@ -350,7 +362,7 @@ kdindex::kdindex(TemporalGraph *Graph,double length){
     current.delta=alfa[0].delta;
     current.val=alfa[0].val;
     //std::cerr<<"???\n";
-    for(int i=1;i<alfa.size();i++){
+    for(long long i=1;i<alfa.size();i++){
         if(alfa[i].ts==alfa[i-1].ts && alfa[i].te==alfa[i-1].te && alfa[i].delta==alfa[i-1].delta){
             current.val+=alfa[i].val;
         }
@@ -364,9 +376,9 @@ kdindex::kdindex(TemporalGraph *Graph,double length){
     //std::cerr<<"??\n";
     //std::swap(alfa,beta);
     num=beta.size();
-    // std::cerr<<num<<'\n';
+    //std::cerr<<num<<'\n';
     a = new mode[num];
-    for(int i=0;i<num;i++){
+    for(long long i=0;i<num;i++){
         a[i]=beta[i];
     }
     beta.clear();
@@ -519,7 +531,8 @@ void kdindex::update(TemporalGraph *Graph, double pre){
                         std::pair<int,std::pair<int,int> > vs=std::pair<int,std::pair<int,int> >(x,std::pair<int,int> (y,z));
                         {
                             point tmper= point(tmn,t-tmn);
-                            deltav[vs].push_back(tmper);
+                            if(rep[x][y]==1 && rep[x][z]==1 && rep[y][z]==1);
+                            else deltav[vs].push_back(tmper);
                             if(rand()<=factor)
                             alfa.push_back(mode(tmn,t,t-tmn,1));
                         }
@@ -547,7 +560,7 @@ void kdindex::update(TemporalGraph *Graph, double pre){
     current.delta=alfa[0].delta;
     current.val=alfa[0].val;
     //std::cerr<<"???\n";
-    for(int i=1;i<alfa.size();i++){
+    for(long long i=1;i<alfa.size();i++){
         if(alfa[i].ts==alfa[i-1].ts && alfa[i].te==alfa[i-1].te && alfa[i].delta==alfa[i-1].delta){
             current.val+=alfa[i].val;
         }
@@ -563,7 +576,7 @@ void kdindex::update(TemporalGraph *Graph, double pre){
     num=beta.size();
     //std::cerr<<num<<'\n';
     a = new mode[num];
-    for(int i=0;i<num;i++){
+    for(long long i=0;i<num;i++){
         a[i]=beta[i];
     }
     beta.clear();
@@ -571,24 +584,25 @@ void kdindex::update(TemporalGraph *Graph, double pre){
     alfa.clear();
     std::vector<mode>().swap(alfa);
     std::cout<<"Number of updated C-points: "<<num<<'\n';
+    std::cout << "Update edge number: "<<edgenum<<std::endl;
     double start2=clock();
-    for (int i=0;i<num;i++){
+    for (long long i=0;i<num;i++){
         //std::cout<<a[i].ts<<' '<<a[i].te<<' '<<a[i].delta<<' '<<a[i].val<<' '<<root<<' '<<tree.size()<<' '<<cnt<<std::endl;
         insert(root,a[i],0);
-        if(tree.size()<=cnt+1){
-            //std::cout<<tree.size()<<std::endl;
+        if(tree.size()<=cnt+5){
+            //std::cerr<<tree.size()<<std::endl;
             //std::cerr<<rt<<std::endl;
             tree.resize(1.1*cnt);
             //std::cerr<<tree[cnt].val<<std::endl;
-            //std::cout<<tree.size()<<' '<<rt<<std::endl;
+            //std::cerr<<tree.size()<<std::endl;
         }
         //std::cerr<<i<<' '<<tree[root].tot<<' '<<root<<std::endl;
-        if((i+1)%10000==0){
+        if((i+1)%100000==0){
              putProcess(double(i+1) / (num), (clock()-start2)/CLOCKS_PER_SEC);
         }
     }
     std::cout << "Update time costs: " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str()<<std::endl;
-    std::cout << "Update edge number: "<<edgenum<<std::endl;
+    
 
 }
 

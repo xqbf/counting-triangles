@@ -20,6 +20,7 @@ class kdindex{
     mode *a;
     int n,m,tmax,tim;
     std::unordered_map<int,int>* mp;
+    std::unordered_map<int,int>* rep;
     std::vector<std::pair<int,int> > *ed;
     kdindex(){};
     kdindex(TemporalGraph *Graph,double length);
@@ -27,7 +28,8 @@ class kdindex{
     static bool cmp(mode a,mode b);
     struct node{
         long long ls,rs;
-        int mxpos[3],mnpos[3],val,pos[3];
+        int mxpos[3],mnpos[3],pos[3];
+        short val;
         long long tot;
         node(){
             ls=0;
@@ -37,11 +39,11 @@ class kdindex{
         }
     };
     void update(TemporalGraph *Graph, double pre);
-    void pushup(int rt);
-    void build(long long &rt,int l,int r,int dep);
+    void pushup(long long rt);
+    void build(long long &rt,long long l,long long r,int dep);
     long long query(long long rt,int ts1,int ts2,int te1,int te2,int delta1,int delta2);
     long long solve(int ts,int te,int delta); 
-    void insert(long long &rt, mode a, int dep);
+    void insert(long long &rt, mode a, long long dep);
     long long cnt=0,num=0,root=0;
     std::vector<node> tree;
 };
