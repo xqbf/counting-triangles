@@ -94,7 +94,7 @@ signed main(int argc,char* argv[]){
         std::cout << "KD index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
         }
         std::cerr<<"Over!\n";
-        while(1);
+        //while(1);
         //delete Graph;
     }*/
 }
