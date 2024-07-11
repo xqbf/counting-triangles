@@ -69,7 +69,7 @@ signed main(int argc,char* argv[]){
         kd(Index, Graph, argv[2], argv[3]);
         std::cout << "kd tree index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
         std::cerr << "Over!\n";
-        while(1);
+        //while(1);
         //delete Graph;
     }
     
@@ -91,7 +91,7 @@ signed main(int argc,char* argv[]){
         std::cout << "tree index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
         std::cerr << "Over!\n";
         }
-        while(1);
+        //while(1);
         //delete Graph;
     }
 }
