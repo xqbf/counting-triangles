@@ -1,6 +1,6 @@
 # counting-triangles
 
-To run the source codes, you need to first have the temporal graph file, graph.txt and the query file, query.txt. 
+To run the source codes, you need to first have the temporal graph file, graph.txt and the query file, query.txt (We have already provided the example graph file and query file). 
 
 For each source file, there is a makefile for compiling the source codes and a run.sh for running.
 
