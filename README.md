@@ -30,7 +30,7 @@ The id of algorithm will be running, which the id is presented as following.
 
 You may change the output file and log file as you want.
 
-#Other
+# Other
 The five datasets used in paper are available from:
 
 <div style="text-align:center">
