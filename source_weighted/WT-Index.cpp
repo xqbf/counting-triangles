@@ -213,7 +213,7 @@ long long treeindex::solve(int ts,int te,int delta){
 treeindex::treeindex(TemporalGraph* Graph){
     n=Graph->n;
     m=Graph->m;
-    tmax=Graph->tmax*0.6;
+    tmax=Graph->tmax;
     factor=RAND_MAX;
     //mp=new std::unordered_map<int,std::vector<int> >[n];
     ed=new std::vector<int>[n];
