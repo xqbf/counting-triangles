@@ -13,9 +13,9 @@ For each source file, there is a makefile for compiling the source codes.
 
 The command of running these codes:
 
----
+```
 ./main graph.txt query.txt output.txt {id} > log.txt
----
+```
 
 * ALGORITHM:
 The id of algorithm will be running, which the id is presented as following.
@@ -25,6 +25,6 @@ The id of algorithm will be running, which the id is presented as following.
 |OTTC|OTTC|
 |WT|WT-Index|
 |BTTC|BTTC|
-|KDT|-KDT-Index|
+|KDT|KDT-Index|
 
 You may change the output file and log file as you want.
