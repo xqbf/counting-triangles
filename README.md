@@ -68,4 +68,6 @@ The five datasets used in paper are available from:
     </table>
 </div>
 
-We have also provided a toy example graph file as the graph.txt.
+We have provided a toy example graph file as the graph.txt.
+
+We have also attached our technical report.
