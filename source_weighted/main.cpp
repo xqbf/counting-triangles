@@ -2,6 +2,7 @@
 #include "temporal_graph.h"
 #include "OTTC.h"
 #include "WT-Index.h"
+#include "baseline.h"
 
 TemporalGraph * build(char * argv[]) {
 
@@ -32,6 +33,17 @@ signed main(int argc,char* argv[]){
         delete Graph;
     }
 
+
+    if(std::strcmp(argv[4],"Baseline")==0){
+        std::cout << "Running baseline-Index..." << std::endl;
+        baseline* Index=new baseline(Graph);
+        double start_time = clock();
+        
+        base(Index, Graph, argv[2], argv[3]);
+        std::cout << "baseline-Index solution completed in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
+        
+        std::cerr<<"Over!\n";
+    }
     /*if(std::strcmp(argv[4], "Measure") == 0){
         std::cout << "Running measure..." << std::endl;
         measureindex* Index=new measureindex(Graph);

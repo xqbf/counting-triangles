@@ -6,7 +6,7 @@ if [ -n "$1" ]; then
 else
     ./main graph.txt query.txt output_WT.txt WT > log_WT.txt
     ./main graph.txt query.txt output_OTTC.txt OTTC > log_OTTC.txt
-
+    ./main graph.txt query.txt output_baseline.txt Baseline > log_baseline.txt
     #./main graph.txt query.txt output_LSC20.txt LSC > log_LSC20.txt
     #./main graph.txt query.txt output_LSC40.txt LSC > log_LSC40.txt
     #./main graph.txt query.txt output_LSC60.txt LSC > log_LSC60.txt
