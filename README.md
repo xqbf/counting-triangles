@@ -6,6 +6,7 @@ For each source file, there is a makefile for compiling the source codes.
 
 # The code of algorithms
 * DOTTT: The SOTA $\delta$-temporal triangle counting algorithm, provided by Noujan Pashanasangi and C Seshadhri. The codes are in https://github.com/nojanp/temporal-triangle-counting
+* source_weighted/baseline: The adapted baseline index-based solution from TSRjoin, an algorithm from http://avantgraph.io.
 * source_weighted/OTTC: Our proposed noval online algorithm for $\delta$-temporal triangle counting.
 * source_weighted/WT-Index: Our proposed novel index-based algorithm for $\delta$-temporal triangle counting using the wavelet tree.
 * source_binary/BTTC: Our proposed noval online algorithm for binary $\delta$-temporal triangle counting.
