@@ -24,6 +24,7 @@ The id of algorithm will be running, which the id is presented as following.
 |id|algorithm|
 | :----: | :----: |
 |OTTC|OTTC|
+|Baseline|TSRjoin|
 |WT|WT-Index|
 |BTTC|BTTC|
 |KDT|KDT-Index|
