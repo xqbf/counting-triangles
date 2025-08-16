@@ -19,6 +19,10 @@ The command of running these codes (after using the makefile to compile):
 ./main graph.txt query.txt output.txt {id} > log.txt
 ```
 
+In the graph file, each line indiactes a temporal edge following the format {$u$, $v$, $t$}.
+
+In the query file, each line is a query following the format {$t_s$, $t_e$, $delta$}.
+
 * ALGORITHM:
 The id of algorithm will be running, which the id is presented as following.
 
