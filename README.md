@@ -13,6 +13,20 @@ For each source file, there is a makefile for compiling the source codes.
 * source_binary/KDT-Index: Our proposed novel index-based algorithm for binary $\delta$-temporal triangle counting using the kd tree.
 * source_update/WT-Index: Our proposed updating algorithm for WT-Index.
 
+How to use it (you need to run the scripts on a Linux platform):
+
+- Run ``graph-gen.sh`` to generate graph data automatically, which would download datasets from [SNAP](https://snap.stanford.edu/data/index.html) and [KONECT](http://konect.cc/) and process the data into ``graph.txt``:
+
+```sh
+sh graph-gen.sh
+```
+
+- Run ``query-gen.sh`` and input the size of query time windows (in proportion to ``tmax``) to generate query data automatically, which would write queries into ``query.txt``:
+
+```sh
+sh query-gen.sh
+```
+
 The command of running these codes (after using the makefile to compile):
 
 ```
