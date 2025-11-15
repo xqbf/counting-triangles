@@ -126,7 +126,7 @@ baseline::baseline(TemporalGraph *Graph){
     s = new std::set<int> [n];
     g = new std::vector<edge>* [tmax+1];
     vis = new int[n];
-    int num[10]={0.1*tmax,0.3*tmax,0.5*tmax,0.7*tmax,0.9*tmax,0.2*tmax*0.1,0.4*tmax*0.1,0.6*tmax*0.1,0.8*tmax*0.1};
+    int num[10]={(int)(0.1*tmax),(int)(0.3*tmax),(int)(0.5*tmax),(int)(0.7*tmax),(int)(0.9*tmax),(int)(0.2*tmax*0.1),(int)(0.4*tmax*0.1),(int)(0.6*tmax*0.1),(int)(0.8*tmax*0.1)};
     for(int delta=0;delta<=tmax;delta++){
         g[delta]=new std::vector<edge> [n];
     }
@@ -201,4 +201,5 @@ void base(baseline *Index, TemporalGraph *Graph, char* query_file, char* output_
         putProcess(double(tmp) / query_num, (clock()-start_time)/CLOCKS_PER_SEC);
     }
     std::cout << "Average: " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC / query_num).str() << std::endl;
+
 }
