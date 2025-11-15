@@ -24,8 +24,14 @@ sh graph-gen.sh
 - Run ``query-gen.sh`` and input the size of query time windows (in proportion to ``tmax``) to generate query data automatically, which would write queries into ``query.txt``:
 
 ```sh
-sh query-gen.sh
+sh query-gen.sh \$1
 ```
+For query generation, \$1 has several choices:
+'E': evenly generate query intervals and the setting of interval length and duration is default.
+'R': randomly generate query intervals and the setting of interval length and duration is default.
+'A': generate different-length query intervals and the setting of duration is default.
+'B': generate different-duration query intervals and the setting of interval length is default.
+
 
 The command of running these codes (after using the makefile to compile):
 
