@@ -119,8 +119,8 @@ if __name__ == "__main__":
     DATASETS_URL = ["http://konect.cc/files/download.tsv.contact.tar.bz2",
                     "https://datasets.ldbcouncil.org/graphalytics/graph500-23.tar.zst",
                     "https://snap.stanford.edu/data/sx-stackoverflow.txt.gz",
-                    "https://snap.stanford.edu/data/wiki-Talk.txt.gz",
-                    "https://snap.stanford.edu/data/email-Eu-core.txt.gz"]
+                    "https://snap.stanford.edu/data/wiki-talk-temporal.txt.gz",
+                    "https://snap.stanford.edu/data/email-Eu-core-temporal.txt.gz"]
     if os.path.isdir("datasets") is False or len(os.listdir("datasets")) < len(DATASETS_URL):
         print("Downloading datasets...")
         if os.path.isdir("datasets") is False:
