@@ -64,7 +64,7 @@ long long baseline::count(int u,int v,int w,int ts,int te,int delta){
             l=l3,r=g[delta][u].size()-1;
             while(l<=r){
                 int mid=(l+r)>>1;
-                if(g[delta][u][mid].ts<=g[delta][v][l2].ts+delta&& g[delta][u][mid].v==w){
+                if((g[delta][u][mid].ts<=g[delta][v][l2].ts+delta)&& (g[delta][u][mid].v==w)){
                     ans_uw=mid;l=mid+1;
                 }
                 else r=mid-1;
@@ -79,7 +79,7 @@ long long baseline::count(int u,int v,int w,int ts,int te,int delta){
             int l=l1,r=g[delta][u].size()-1,ans_uv=l1-1;
             while(l<=r){
                 int mid=(l+r)>>1;
-                if(g[delta][u][mid].ts<=g[delta][u][l3].ts+delta&& g[delta][u][mid].v==v){
+                if((g[delta][u][mid].ts<=g[delta][u][l3].ts+delta) && (g[delta][u][mid].v==v)){
                     ans_uv=mid;l=mid+1;
                 }
                 else r=mid-1;
@@ -89,20 +89,23 @@ long long baseline::count(int u,int v,int w,int ts,int te,int delta){
             int ans_vw=l2-1;
             while(l<=r){
                 int mid=(l+r)>>1;
-                if(g[delta][v][mid].ts<=g[delta][u][l3].ts+delta&&g[delta][v][mid].v==w){
+                if((g[delta][v][mid].ts<=g[delta][u][l3].ts+delta)&&(g[delta][v][mid].v==w)){
                     ans_vw=mid;l=mid+1;
                 }
                 else r=mid-1;
             }
-            /*if(u==1&&v==2&&w==4){
-                std::cerr<<ans_vw-l2+1<<' '<<ans_uv-l1+1<<'\n';
+            if(u==1&&v==2&&w==4){
+                // for(auto p:g[delta][u]) std::cerr<<p.v<<' '<<p.ts<<'\n';
+                // for(auto p:g[delta][v]) std::cerr<<p.v<<' '<<p.ts<<'\n';
+                // for(auto p:g[delta][w]) std::cerr<<p.v<<' '<<p.ts<<'\n';
+                // std::cerr<<ans_vw<<' '<<g[delta][v][ans_vw].ts<<' '<<g[delta][u][ans_uv].ts<<' '<<ans_uv<<'\n';
             }
-            if((ans_vw-l2+1)*(ans_uv-l1+1)>0) std::cerr<<u<<' '<<v<<' '<<w<<"???\n";*/
+            // if((ans_vw-l2+1)*(ans_uv-l1+1)>0) std::cerr<<u<<' '<<v<<' '<<w<<"???\n";
             ans=ans+(ans_vw-l2+1)*(ans_uv-l1+1);
             l3++;
         }
     }
-    //std::cerr<<u<<' '<<v<<' '<<w<<' '<<ts<<' '<<te<<' '<<delta<<" ans: "<<ans<<'\n';
+    // std::cerr<<u<<' '<<v<<' '<<w<<' '<<ts<<' '<<te<<' '<<delta<<" ans: "<<ans<<'\n';
     return ans;
 }
 
@@ -115,6 +118,7 @@ long long baseline::solve(int ts,int te,int delta){
     long long ans=0;
     for(auto R: alfa){
         ans += count(R.u,R.v,R.w,ts+delta,te,delta);
+        // std::cerr<<R.u<<' '<<R.v<<' '<<R.w<<' '<<ts+delta<<' '<<te<<' '<<delta<<" ans: "<<ans<<'\n';
     }
     return ans;
 }
@@ -127,6 +131,7 @@ baseline::baseline(TemporalGraph *Graph){
     g = new std::vector<edge>* [tmax+1];
     vis = new int[n];
     int num[10]={(int)(0.1*tmax),(int)(0.3*tmax),(int)(0.5*tmax),(int)(0.7*tmax),(int)(0.9*tmax),(int)(0.2*tmax*0.1),(int)(0.4*tmax*0.1),(int)(0.6*tmax*0.1),(int)(0.8*tmax*0.1)};
+
     for(int delta=0;delta<=tmax;delta++){
         g[delta]=new std::vector<edge> [n];
     }
@@ -138,8 +143,12 @@ baseline::baseline(TemporalGraph *Graph){
             if(u==v)continue;
             s[u].insert(v);
             s[v].insert(u);
+            std::map<int,int> vis;
+            vis.clear();
             for(int ii=0;ii<9;ii++){
                 int delta=num[ii];
+                if(vis.count(delta))continue;
+                vis[delta]=1;
                 g[delta][u].push_back(edge(t,t+delta,v));
                 g[delta][v].push_back(edge(t,t+delta,u));
            }
@@ -158,7 +167,7 @@ baseline::baseline(TemporalGraph *Graph){
                 if(vis[w]){
                     if(u<v&&v<w){
                     alfa.push_back(relation(u,v,w));
-                    //std::cerr<<u<<' '<<v<<' '<<w<<'\n';
+                    // std::cerr<<u<<' '<<v<<' '<<w<<'\n';
                     }
                 }
             }
@@ -201,5 +210,4 @@ void base(baseline *Index, TemporalGraph *Graph, char* query_file, char* output_
         putProcess(double(tmp) / query_num, (clock()-start_time)/CLOCKS_PER_SEC);
     }
     std::cout << "Average: " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC / query_num).str() << std::endl;
-
 }
