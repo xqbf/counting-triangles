@@ -26,7 +26,7 @@ sh graph-gen.sh
 ```sh
 sh query-gen.sh $1
 ```
-For query generation, \$1 has several choices:
+For query generation, \$1 has several options:
 
 'E': evenly generate query intervals and the setting of interval length and duration is default.
 
@@ -35,7 +35,8 @@ For query generation, \$1 has several choices:
 'A': generate different-length query intervals and the setting of duration is default.
 
 'B': generate different-duration query intervals and the setting of interval length is default.
-
+ 
+Note that options 'A' and 'B' will generate multiple query files since they sweep over a set of predefined interval lengths (for A) or durations (for B), and create a separate query file for each parameter setting.
 
 The command of running these codes (after using the makefile to compile):
 
