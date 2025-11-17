@@ -115,12 +115,15 @@ def normalize(filename):
     open(filename, "w").write(text)
 
 if __name__ == "__main__":
-    # download datasets
-    DATASETS_URL = ["http://konect.cc/files/download.tsv.contact.tar.bz2",
-                    "https://datasets.ldbcouncil.org/graphalytics/graph500-23.tar.zst",
-                    "https://snap.stanford.edu/data/sx-stackoverflow.txt.gz",
-                    "https://snap.stanford.edu/data/wiki-talk-temporal.txt.gz",
-                    "https://snap.stanford.edu/data/email-Eu-core-temporal.txt.gz"]
+    # 下载 datasets
+    # === 修改 1：去掉已经失效的 konect.cc 数据集 URL ===
+    DATASETS_URL = [
+        "https://datasets.ldbcouncil.org/graphalytics/graph500-23.tar.zst",
+        "https://snap.stanford.edu/data/sx-stackoverflow.txt.gz",
+        "https://snap.stanford.edu/data/wiki-talk-temporal.txt.gz",
+        "https://snap.stanford.edu/data/email-Eu-core-temporal.txt.gz"
+    ]
+
     if os.path.isdir("datasets") is False or len(os.listdir("datasets")) < len(DATASETS_URL):
         print("Downloading datasets...")
         if os.path.isdir("datasets") is False:
@@ -202,30 +205,55 @@ if __name__ == "__main__":
     if os.path.isfile("model"):
         os.remove("model")
 
-    # select a target graph dataset
+    # === 修改 2：支持直接使用当前目录下的 graph-ct.txt 作为一个数据集选项 ===
     file_ls = os.listdir("datasets")
-    count = 1
+    has_graph_ct = os.path.isfile("graph-ct.txt")
+
     print("Datasets:")
     print("0. naive")
+
+    # idx_map: 菜单编号（字符串） -> 数据来源
+    idx_map = {}
+    count = 1
+
+    if has_graph_ct:
+        print(f"{count}. graph-ct.txt (local preprocessed graph)")
+        idx_map[str(count)] = "graph-ct"   # 特殊标识
+        count += 1
+
     for file in file_ls:
         print(str(count) + ".", file)
+        idx_map[str(count)] = file         # 普通数据集文件名
         count += 1
+
     user_input = None
     if len(sys.argv) > 1:
         user_input = sys.argv[len(sys.argv)-1]
     else:
         user_input = input("Select a graph dataset (0-" + str(count - 1) + "): ")
 
+    valid_inputs = [str(i) for i in range(count)]
+
     # move data file
-    if user_input.strip() in [str(i) for i in range(count)]:
+    if user_input.strip() in valid_inputs:
         waiting_message = 'Copying dataset to "graph.txt"...'
         is_finished = False
         thread_move_data_file = threading.Thread(target=showProcess)
         thread_move_data_file.start()
-        if int(user_input) == 0:
-            open("graph.txt", "w").write("0 2 1\n0 4 1\n0 5 2\n1 4 2\n1 5 3\n2 3 3\n2 4 4\n1 2 5\n4 5 5")
+        if user_input.strip() == "0":
+            # naive toy graph
+            open("graph.txt", "w").write(
+                "0 2 1\n0 4 1\n0 5 2\n1 4 2\n1 5 3\n2 3 3\n2 4 4\n1 2 5\n4 5 5"
+            )
         else:
-            move_data_file(file_ls[int(user_input) - 1], "graph.txt")
+            choice = idx_map[user_input.strip()]
+            if choice == "graph-ct":
+                # 直接使用当前目录下的 graph-ct.txt 作为输入，不再 normalize
+                with open("graph-ct.txt", "r") as src, open("graph.txt", "w") as dst:
+                    dst.writelines(src.readlines())
+            else:
+                # 原来的逻辑：从 datasets/ 中拷贝并后续 normalize
+                move_data_file(choice, "graph.txt")
         is_finished = True
         thread_move_data_file.join()
     else:
@@ -237,7 +265,12 @@ if __name__ == "__main__":
     is_finished = False
     thread_normalize = threading.Thread(target=showProcess)
     thread_normalize.start()
-    if int(user_input) != 0:
-        normalize("graph.txt")
+
+    # naive 图不 normalize；graph-ct.txt 也默认已经预处理好，不再二次 normalize
+    if user_input.strip() != "0":
+        choice = idx_map.get(user_input.strip(), None)
+        if choice is not None and choice != "graph-ct":
+            normalize("graph.txt")
+
     is_finished = True
     thread_normalize.join()
