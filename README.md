@@ -15,11 +15,15 @@ For each source file, there is a makefile for compiling the source codes.
 
 How to use it (you need to run the scripts on a Linux platform):
 
-- Run ``graph-gen.sh`` to generate graph data automatically, which would download datasets from [SNAP](https://snap.stanford.edu/data/index.html) and [KONECT](http://konect.cc/) and process the data into ``graph.txt``:
+  - download datasets from [SNAP](https://snap.stanford.edu/data/index.html) and [LDBCouncil](https://datasets.ldbcouncil.org) if needed,
+  - automatically detect a local `graph-ct.txt` (if present) and offer it as a dataset option, and
+  - process the chosen dataset into `graph.txt`.
 
 ```sh
 sh graph-gen.sh
 ```
+
+We include the locally preprocessed graph-ct.txt because the original dataset we used from KONECT (konect.cc) is no longer reliably accessible. By shipping a processed snapshot in graph-ct.txt and letting the script use it directly, we keep the graph generation pipeline reproducible even if the remote source is down or permanently unavailable.
 
 - Run ``query-gen.sh`` and input the size of query time windows (in proportion to ``tmax``) to generate query data automatically, which would write queries into ``query.txt``:
 
