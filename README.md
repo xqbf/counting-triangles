@@ -75,7 +75,9 @@ These options correspond to the query distributions used in the respective figur
 
 Index construction (Figures 15 and 16)
 
-Figures 15 and 16 report index construction cost. These values are obtained during the index-building step on the above datasets and can be observed/logged when running the index construction scripts described in the README.
+Figures 15 report index construction cost. These values are obtained during the index-building step on the above datasets and can be observed/logged when running the index construction scripts described in the README.
+
+For Figure 16, 
 
 
 * ALGORITHM:
