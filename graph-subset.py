@@ -1,12 +1,13 @@
-#!/usr/bin/env python3
 import sys
 import math
+import random
 
 def usage():
-    print("Usage: python3 graph-subset.py <fraction> [input_file] [output_file]")
+    print("Usage: python3 graph-subset.py <fraction> [input_file] [output_file] [seed]")
     print("  <fraction> : portion of edges to keep, e.g., 0.25 for 25% or 25 for 25%")
     print("  [input_file]  (optional): default = graph.txt")
     print("  [output_file] (optional): default = graph-<fraction*100>.txt")
+    print("  [seed]       (optional): random seed for reproducibility (e.g., 42)")
     sys.exit(1)
 
 def main():
@@ -38,18 +39,29 @@ def main():
         pct = int(round(frac * 100))
         output_file = f"graph-{pct}.txt"
 
+    # optional seed
+    seed = 42
+    if len(sys.argv) >= 5:
+        try:
+            seed = int(sys.argv[4])
+        except ValueError:
+            print("Warning: invalid seed, using default seed 42.")
+
+    random.seed(seed)
+
     with open(input_file, "r") as f:
         lines = f.readlines()
 
     n = len(lines)
     k = max(1, int(math.floor(n * frac)))
 
-    subset = lines[:k]
+    # randomly pick k edges without replacement
+    subset = random.sample(lines, k)
 
     with open(output_file, "w") as f:
         f.writelines(subset)
 
-    print(f"Total edges: {n}, kept: {k} ({frac*100:.1f}%), written to {output_file}")
+    print(f"Total edges: {n}, randomly kept: {k} ({frac*100:.1f}%), written to {output_file} (seed={seed})")
 
 if __name__ == "__main__":
     main()
