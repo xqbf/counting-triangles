@@ -23,8 +23,6 @@ How to use it (you need to run the scripts on a Linux platform):
 sh graph-gen.sh
 ```
 
-We include the locally preprocessed graph-ct.txt because the original dataset we used from KONECT (konect.cc) is no longer reliably accessible. By shipping a processed snapshot in graph-ct.txt and letting the script use it directly, we keep the graph generation pipeline reproducible even if the remote source is down or permanently unavailable.
-
 - Run ``query-gen.sh`` and input the size of query time windows (in proportion to ``tmax``) to generate query data automatically, which would write queries into ``query.txt``:
 
 ```sh
@@ -130,6 +128,8 @@ The five datasets used in paper are available from:
         </tbody>
     </table>
 </div>
+
+*Update: We include the locally preprocessed graph-ct.txt because the original dataset we used from KONECT (konect.cc) is no longer reliably accessible. By shipping a processed snapshot in graph-ct.txt and letting the script use it directly, we keep the graph generation pipeline reproducible even if the remote source is down or permanently unavailable.
 
 We have provided a toy example graph file as the graph.txt.
 
