@@ -52,6 +52,32 @@ In the graph file, each line indiactes a temporal edge following the format { $u
 
 In the query file, each line is a query following the format { $t_s$, $t_e$, $\delta$ }.
 
+To help you reproduce Figures 12–19 more directly, here is how the current scripts map to the figures:
+
+Generate the graph datasets
+
+```
+sh graph-gen.sh
+```
+
+The script will show 5 graph options (1-5) in the menu; these are exactly the graph datasets used in Figures 12–19 (as described in the technical report). You can select each of them in turn to reproduce the corresponding curves.
+
+Generate query workloads for each figure
+
+After graph.txt is generated, you can run:
+```
+sh query-gen.sh R   # query setting used for Figures 14 and 19 (random queries)
+sh query-gen.sh A   # query setting used for Figures 12 and 17 (varying interval lengths)
+sh query-gen.sh B   # query setting used for Figures 13 and 18 (varying durations)
+```
+
+These options correspond to the query distributions used in the respective figures.
+
+Index construction (Figures 15 and 16)
+
+Figures 15 and 16 report index construction cost. These values are obtained during the index-building step on the above datasets and can be observed/logged when running the index construction scripts described in the README.
+
+
 * ALGORITHM:
 The id of algorithm will be running, which the id is presented as following.
 
