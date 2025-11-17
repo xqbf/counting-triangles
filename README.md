@@ -20,13 +20,13 @@ How to use it (you need to run the scripts on a Linux platform):
   - process the chosen dataset into `graph.txt`.
 
 ```sh
-sh graph-gen.sh
+bash graph-gen.sh
 ```
 
 - Run ``query-gen.sh`` and input the size of query time windows (in proportion to ``tmax``) to generate query data automatically, which would write queries into ``query.txt``:
 
 ```sh
-sh query-gen.sh $1
+bash query-gen.sh $1
 ```
 For query generation, \$1 has several options:
 
@@ -57,7 +57,7 @@ To help you reproduce Figures 12–19 more directly, here is how the current scr
 Generate the graph datasets
 
 ```
-sh graph-gen.sh
+bash graph-gen.sh
 ```
 
 The script will show 5 graph options (1-5) in the menu; these are exactly the graph datasets used in Figures 12–19 (as described in the technical report). You can select each of them in turn to reproduce the corresponding curves.
@@ -66,9 +66,9 @@ Generate query workloads for each figure
 
 After graph.txt is generated, you can run:
 ```
-sh query-gen.sh R   # query setting used for Figures 14 and 19 (random queries)
-sh query-gen.sh A   # query setting used for Figures 12 and 17 (varying interval lengths)
-sh query-gen.sh B   # query setting used for Figures 13 and 18 (varying durations)
+bash query-gen.sh R   # query setting used for Figures 14 and 19 (random queries)
+bash query-gen.sh A   # query setting used for Figures 12 and 17 (varying interval lengths)
+bash query-gen.sh B   # query setting used for Figures 13 and 18 (varying durations)
 ```
 
 These options correspond to the query distributions used in the respective figures.
