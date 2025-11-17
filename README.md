@@ -52,6 +52,8 @@ In the graph file, each line indiactes a temporal edge following the format { $u
 
 In the query file, each line is a query following the format { $t_s$, $t_e$, $\delta$ }.
 
+* Figure reproduce guideline:
+
 To help you reproduce Figures 12–19 more directly, here is how the current scripts map to the figures:
 
 Generate the graph datasets
