@@ -115,8 +115,7 @@ def normalize(filename):
     open(filename, "w").write(text)
 
 if __name__ == "__main__":
-    # 下载 datasets
-    # === 修改 1：去掉已经失效的 konect.cc 数据集 URL ===
+
     DATASETS_URL = [
         "https://datasets.ldbcouncil.org/graphalytics/graph500-23.tar.zst",
         "https://snap.stanford.edu/data/sx-stackoverflow.txt.gz",
@@ -205,25 +204,25 @@ if __name__ == "__main__":
     if os.path.isfile("model"):
         os.remove("model")
 
-    # === 修改 2：支持直接使用当前目录下的 graph-ct.txt 作为一个数据集选项 ===
+
     file_ls = os.listdir("datasets")
     has_graph_ct = os.path.isfile("graph-ct.txt")
 
     print("Datasets:")
     print("0. naive")
 
-    # idx_map: 菜单编号（字符串） -> 数据来源
+
     idx_map = {}
     count = 1
 
     if has_graph_ct:
         print(f"{count}. graph-ct.txt (local preprocessed graph)")
-        idx_map[str(count)] = "graph-ct"   # 特殊标识
+        idx_map[str(count)] = "graph-ct" 
         count += 1
 
     for file in file_ls:
         print(str(count) + ".", file)
-        idx_map[str(count)] = file         # 普通数据集文件名
+        idx_map[str(count)] = file 
         count += 1
 
     user_input = None
@@ -248,11 +247,9 @@ if __name__ == "__main__":
         else:
             choice = idx_map[user_input.strip()]
             if choice == "graph-ct":
-                # 直接使用当前目录下的 graph-ct.txt 作为输入，不再 normalize
                 with open("graph-ct.txt", "r") as src, open("graph.txt", "w") as dst:
                     dst.writelines(src.readlines())
             else:
-                # 原来的逻辑：从 datasets/ 中拷贝并后续 normalize
                 move_data_file(choice, "graph.txt")
         is_finished = True
         thread_move_data_file.join()
@@ -266,7 +263,6 @@ if __name__ == "__main__":
     thread_normalize = threading.Thread(target=showProcess)
     thread_normalize.start()
 
-    # naive 图不 normalize；graph-ct.txt 也默认已经预处理好，不再二次 normalize
     if user_input.strip() != "0":
         choice = idx_map.get(user_input.strip(), None)
         if choice is not None and choice != "graph-ct":
