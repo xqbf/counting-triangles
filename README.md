@@ -50,7 +50,7 @@ In the graph file, each line indiactes a temporal edge following the format { $u
 
 In the query file, each line is a query following the format { $t_s$, $t_e$, $\delta$ }.
 
-# Figure reproduce guideline:
+# Reproducing figures guideline:
 
 To help you reproduce Figures 12–19 more directly, here is how the current scripts map to the figures:
 
@@ -77,7 +77,15 @@ Index construction (Figures 15 and 16)
 
 Figures 15 report index construction cost. These values are obtained during the index-building step on the above datasets and can be observed/logged when running the index construction scripts described in the README.
 
-For Figure 16, 
+For Figure 16, we vary the number of edges by randomly picking a given fraction of edges from graph.txt and rebuilding the index on each sampled subgraph. I have added a helper script graph-subset.py that randomly keeps a specified fraction of edges (without replacement):
+
+python3 graph-subset.py 0.2 graph.txt graph-20.txt 42
+python3 graph-subset.py 0.4 graph.txt graph-40.txt 42
+python3 graph-subset.py 0.6 graph.txt graph-60.txt 42
+python3 graph-subset.py 0.8 graph.txt graph-80.txt 42
+python3 graph-subset.py 1.00 graph.txt graph-100.txt 42
+
+For each output file (e.g., graph-20.txt), you can copy it to graph.txt and run the index construction command as described in the README. After the command finishes, the construction time is written to log.txt in the current directory. Collecting these times for different fractions allows you to recreate the curves in Figure 16.
 
 
 * ALGORITHM:
