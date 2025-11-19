@@ -60,10 +60,12 @@ In the query file, each line is a query following the format { $t_s$, $t_e$, $\d
 
 **2. Execution Time (Online Algorithm)**
 * Our method (OTTC) is an **online algorithm**, processing queries sequentially. Running the full 10,000 queries on Graph500-23 takes a significant amount of time.
-* **For Efficient Verification:** We recommend running the **first 200 queries**.
-    * Since queries are independent, the performance metrics (avg time per query) for the first 200 queries are statistically representative of the full workload.
-    * You can generate a subset of queries using `head -n 200 query.txt > query_sample.txt`.
-    * The expectation running time for OTTC and TSRjoin to finish the first 200 default queries is roughly 60 hours.
+* **Graph500-23 Performance:** Running the full 10,000 queries takes a significant amount of time. Even for a subset of **200 queries**, the expected execution time is roughly **60 hours** (depending on hardware).
+* **Recommendation for Quick Verification:**
+    * To simply verify that the code runs and produces logs without waiting for days, you can run a very small subset (e.g., **top 5 or 10 queries**).
+    * Use the command: `head -n 10 query.txt > query_sample.txt`.
+    * If you have the necessary hardware and time (60h+), running the top 200 queries will yield statistically representative performance metrics (Average Time per Query).
+
 
 
 # Reproducibility: Source Code & Plotting
