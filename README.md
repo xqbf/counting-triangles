@@ -63,6 +63,7 @@ In the query file, each line is a query following the format { $t_s$, $t_e$, $\d
 * **For Efficient Verification:** We recommend running the **first 200 queries**.
     * Since queries are independent, the performance metrics (avg time per query) for the first 200 queries are statistically representative of the full workload.
     * You can generate a subset of queries using `head -n 200 query.txt > query_sample.txt`.
+    * The expectation running time for OTTC and TSRjoin to finish the first 200 default queries is roughly 60 hours.
 
 
 # Reproducibility: Source Code & Plotting
