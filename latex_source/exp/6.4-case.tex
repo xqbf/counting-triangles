@@ -1,0 +1,230 @@
+\subsection{Case Study}
+\label{sec:experiment-case-study}
+
+We consider two temporal co-authorship graphs of papers published in database (DB) and artificial intelligence (AI) areas from 2000 to 2023, respectively.
+%
+Specifically, we first identify the top-50 most frequent keywords in titles of papers in SIGMOD, VLDB, and ICDE as representative DB keywords, and the top-50 most frequent keywords in titles of papers in NIPS, ICML, and ICLR as representative AI keywords (stopwords are omitted).
+%
+Then, we classify each paper into DB, or AI, or none of them, if the corresponding area has more representative keywords in its title.
+%
+Afterward, we build two temporal graphs, $G_{AI} = (V, E_{AI})$ and $G_{DB} = (V, E_{DB})$, where $V$ consists of authors who have published at least three papers at KDD, an edge $(u,v,t) \in E_{AI}$ indicates that authors $u$ and $v$ collaborate on an AI paper published in year $t$, and an edge in $E_{DB}$ indicates similar collaborations on DB papers.
+%
+{\color{black}
+We find that $|V| = 2024$, $|E_{AI}| = 9,049$, and $|E_{DB}| = 7,093$, indicating the number of collaborations in the AI community is more than that in the DB community.}
+%
+Finally, we divide the whole time interval $[2000,2023]$ into six disjoint intervals, each having a 4-year length, and analyze the AI and DB communities by counting $\delta$-temporal triangles.
+
+\begin{figure}[h]
+    \centering
+    \centering %图片居中
+    \subfigure[$\delta \in \{0,1\}$]{
+        \begin{tikzpicture} %tikz图片
+        \begin{axis}[
+            xlabel= {\scriptsize \bf Number of $\delta$-temporal triangles}, %横坐标名
+            ylabel= {\scriptsize \bf Number of authors}, %纵坐标名
+            ylabel style={yshift=-5pt},
+            xlabel style={yshift=5pt},
+            ymode = normal,
+            xmode = log,
+            xmin=0,xmax=5000,
+            ymin=0,ymax=250,
+            mark size=0.0pt,
+            width=0.4\textwidth,
+            height=0.25\textwidth,
+            ticklabel style={font=\footnotesize},
+            every axis plot/.append style={line width= 1.1pt},
+            ytick = {10, 50, 100,200},
+            xtick = {1, 10, 1e2,1e3,1e4},
+            every axis/.append style={line width= 0.8pt},
+            legend style = {
+                at={(0.97,1)},
+    		legend columns=2,
+                draw=none,
+                font=\Huge,
+                nodes={scale=0.35, transform shape}
+    	},
+            legend image post style={scale=0.45, ultra thick},
+         ]
+        \addplot[smooth,mark=*,color=c8] table {figure/trend/ai0.txt};
+        \addplot[smooth,mark=*,color = c2] table {figure/trend/db0.txt};
+        %\addlegendentry{AI ($\delta$=0)}
+        \addplot[smooth,mark=*,color =c7] table {figure/trend/ai1.txt};
+        %\addlegendentry{AI ($\delta$=1)}
+        
+        %\addlegendentry{DB ($\delta$=0)}
+        \addplot[smooth,mark=*,color = c4] table {figure/trend/db1.txt};
+        %\addlegendentry{DB ($\delta$=1)}
+        \legend{{ {AI ($\delta$=0)}}, { DB ($\delta$=0)}, { { AI ($\delta$=1)}}, { { DB ($\delta$=1)}}}
+        % \addplot[smooth,mark=*,cc5] table {pic/k_0/lj.dat};
+        % \addlegendentry{LJ}
+        % \addplot[smooth,mark=*,cc6] table {pic/k_0/ew.dat};
+        % \addlegendentry{EW}
+        % \addplot[smooth,mark=*,cc7] table {pic/k_0/hw.dat};
+        % \addlegendentry{HW}
+        % \addplot[smooth,mark=*,cc8] table {pic/k_0/wb.dat};
+        % \addlegendentry{WB}
+        % \addplot[smooth,mark=*,cc9] table {pic/k_0/it.dat};
+        % \addlegendentry{IT}
+        % \addplot[smooth,mark=*,cc10] table {pic/k_0/uk.dat};
+        % \addlegendentry{UK}
+     \end{axis}
+     \end{tikzpicture}
+ }
+ \subfigure[$\delta \in \{2,3\}$]{
+        \begin{tikzpicture} %tikz图片
+        \begin{axis}[
+            xlabel= {\scriptsize \bf Number of $\delta$-temporal triangles}, %横坐标名
+            %ylabel= {\footnotesize \bf Number of authors}, %纵坐标名
+            % ylabel style={yshift=-12pt},
+            xlabel style={yshift=5pt},
+            ymode = normal,
+            xmode = log,
+            xmin=0,xmax=5000,
+            ymin=0,ymax=250,
+            mark size=0.0pt,
+            width=0.4\textwidth,
+            height=0.25\textwidth,
+            ticklabel style={font=\scriptsize},
+            every axis plot/.append style={line width= 1.1pt},
+            ytick = {10, 50, 100,200},
+            xtick = {1, 10, 1e2,1e3,1e4},
+            every axis/.append style={line width= 0.8pt},
+            legend style = {
+                at={(0.97,1)},
+    		legend columns=2,
+                %font=\footnotesize,
+                draw=none,
+                font=\Huge,
+                nodes={scale=0.35, transform shape}
+    	},
+            legend image post style={scale=0.45, ultra thick},
+         ]
+        \addplot[smooth,mark=*,color=c8] table {figure/trend/ai2.txt};
+        \addplot[smooth,mark=*,color = c2] table {figure/trend/db2.txt};
+        %\addlegendentry{AI ($\delta$=0)}
+        \addplot[smooth,mark=*,color =c7] table {figure/trend/ai3.txt};
+        %\addlegendentry{AI ($\delta$=1)}
+        
+        %\addlegendentry{DB ($\delta$=0)}
+        \addplot[smooth,mark=*,color = c4] table {figure/trend/db3.txt};
+        %\addlegendentry{DB ($\delta$=1)}
+        \legend{{ {AI ($\delta$=2)}}, { DB ($\delta$=2)}, { { AI ($\delta$=3)}}, { { DB ($\delta$=3)}}}
+        % \addplot[smooth,mark=*,cc5] table {pic/k_0/lj.dat};
+        % \addlegendentry{LJ}
+        % \addplot[smooth,mark=*,cc6] table {pic/k_0/ew.dat};
+        % \addlegendentry{EW}
+        % \addplot[smooth,mark=*,cc7] table {pic/k_0/hw.dat};
+        % \addlegendentry{HW}
+        % \addplot[smooth,mark=*,cc8] table {pic/k_0/wb.dat};
+        % \addlegendentry{WB}
+        % \addplot[smooth,mark=*,cc9] table {pic/k_0/it.dat};
+        % \addlegendentry{IT}
+        % \addplot[smooth,mark=*,cc10] table {pic/k_0/uk.dat};
+        % \addlegendentry{UK}
+     \end{axis}
+     \end{tikzpicture}
+ }
+ \setlength{\abovecaptionskip}{-0.1cm}
+ \setlength{\belowcaptionskip}{-2pt}
+\caption{\color{black}Distribution of $\delta$-temporal triangles.}
+\label{fig:triangle-distribution}
+\end{figure}
+
+$\bullet$ {\bf Collaboration density trends of DB and AI communities.} 
+%
+As a well-known metric of measuring the subgraph cohesiveness \cite{samusevich2016local,tsourakakis2015k}, the triangle density of a graph is defined as the number of $\delta$-temporal triangles over the number of vertices.
+%
+Figure \ref{fig:case-study-weighted-intro} shows the $\delta$-temporal triangle densities for the DB and AI communities across all time intervals with varying $\delta$ values.
+%
+We observe that after 2016, the $\delta$-temporal triangle density of the AI community surpasses that of the DB community, indicating AI's rising prominence post-2016.
+%
+Besides, the number of $\delta$-temporal triangles with $\delta$=1 is significantly higher than that with $\delta$=0, while the difference between $\delta$=2 and $\delta$=3  is minimal.
+%
+{\color{black} For instance, during the time interval [2020, 2023], the numbers of $\delta$-temporal triangles in the AI community are 9,811, 23,753, 31,651, and 34,581, when $\delta$ is set to 0, 1, 2, and 3, respectively.}
+%
+This suggests that authors prefer to continue collaborating over short periods.
+
+{\color{black}
+Besides, we count the number of $\delta$-temporal triangles that each author is involved in, and report the distribution in Figure \ref{fig:triangle-distribution}, where each point $(x,y)$ means that there are $y$ authors with each participating $x$ $\delta$-temporal triangles.
+%
+The distribution roughly follows the long-tail distribution \cite{kordumova2016exploring}, indicating that most authors engage with only a few $\delta$-temporal triangles.
+%
+% Similar to the triangle density, the difference in distribution is more significant between $\delta$=0 and $\delta$=1 compared to $\delta$=2 and $\delta$=3.}
+
+\begin{figure}[h]
+        \subfigure[$\delta\in \{0,1\}$]{
+	\begin{tikzpicture}[scale = 0.5]
+	   \begin{axis}[
+                    width=0.7\textwidth,
+                    height=0.42\textwidth,
+				xtick={0,1,2,3,4,5,6},
+				xticklabels={,2000,2004,2008,2012,2016,2020},
+				xmin=0.5,xmax=6.5,
+				ymin=0.2,ymax=1.4,
+                    legend style = {
+                        legend columns=2,
+                        draw=none,
+                        at={(0.9,1)/}
+				},
+				mark size=5pt,
+                    line width=2.5pt,
+				% xlabel={\huge \bf $\delta$ length ratio},
+                ylabel={\huge \bf $\delta$-transitivity},
+				ticklabel style={font=\huge},
+				every axis plot/.append style={ultra thick},
+				every axis/.append style={ultra thick},
+				]
+				
+            \addplot [mark=x,color=c8,line width=2.5pt] table[x=time,y=AI0]{\binary};
+				\addplot [mark=o,color=c2,line width=2.5pt] table[x=time,y=DB0]{\binary};
+                    \addplot [mark=x,color=c7,line width=2.5pt] table[x=time,y=AI1]{\binary};
+				\addplot [mark=o,color=c4,line width=2.5pt] table[x=time,y=DB1]{\binary};			\legend{{ {\LARGE AI ($\delta$=0)}}, { \LARGE DB ($\delta$=0)}, { {\LARGE AI ($\delta$=1)}}, { {\LARGE DB ($\delta$=1)}}}
+                    
+			\end{axis}
+	\end{tikzpicture}
+	}
+        \subfigure[$\delta\in \{2,3\}$]{
+	\begin{tikzpicture}[scale = 0.5]
+	   \begin{axis}[
+                    width=0.7\textwidth,
+                    height=0.42\textwidth,
+				xtick={0,1,2,3,4,5,6},
+				xticklabels={,2000,2004,2008,2012,2016,2020},
+				xmin=0.5,xmax=6.5,
+				ymin=0.2,ymax=1.4,
+                    legend style = {
+                        legend columns=2,
+                        draw=none,
+                        at={(0.9,1)/}
+				},
+				%ymode = log,
+				mark size=5pt,
+                    line width=2.5pt,
+				ticklabel style={font=\huge},
+				every axis plot/.append style={ultra thick},
+				every axis/.append style={ultra thick},
+				]
+					
+                    \addplot [mark=x,color=c8,line width=2.5pt] table[x=time,y=AI2]{\binary};
+				\addplot [mark=o,color=c2,line width=2.5pt] table[x=time,y=DB2]{\binary};
+                    \addplot [mark=x,color=c7,line width=2.5pt] table[x=time,y=AI3]{\binary};
+				\addplot [mark=o,color=c4,line width=2.5pt] table[x=time,y=DB3]{\binary};	
+                    \legend{{ {\LARGE AI ($\delta$=2)}}, { \LARGE DB ($\delta$=2)}, { {\LARGE AI ($\delta$=3)}}, { {\LARGE DB ($\delta$=3)}}}
+			\end{axis}
+	\end{tikzpicture}
+	}
+    \setlength{\abovecaptionskip}{-0.1cm}
+ \setlength{\belowcaptionskip}{-2pt}
+    \caption{$\delta$-transitivity.}
+    \label{fig:case-study-binary}
+\end{figure}
+
+$\bullet$ {\bf Transitivity trends of DB and AI communities.}
+% 
+Transitivity is a widely used metric for measuring graph sparsity \cite{chu2011triangle}.
+%
+We extend the $\delta$-transitivity as three times the number of binary $\delta$-temporal triangles divided by the number of binary $\delta$-temporal wedges, where a binary $\delta$-temporal wedge is a path of three vertices $u$-$v$-$w$ with the timestamp gap of the two edges not exceeding $\delta$.
+%
+Figure \ref{fig:case-study-binary} shows the $\delta$-transitivity of the DB and AI communities in all the six time intervals with varying $\delta$ values.
+%
+We observe a continuous decline in the $\delta$-transitivity of the AI community, indicating that it has become sparser as more researchers join it.

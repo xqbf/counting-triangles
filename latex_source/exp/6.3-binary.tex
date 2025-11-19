@@ -1,0 +1,80 @@
+\subsection{Efficiency of Binary $\delta$-Temporal Triangle Counting}
+\label{sec:experiment-binary}
+
+$\bullet$ {\bf Overall results.}
+%
+For each dataset, we report the average response
+time of each algorithm in Figure \ref{fig:overall-binary}. 
+%
+Our online algorithm \BTTC consistently outperforms {\tt B-DOTTT} across all datasets.
+%
+For example, on the CT dataset, \BTTC is 23$\times$ faster than {\tt B-DOTTT}. 
+%
+Moreover, {\tt KDT-Index-query} achieves the best performance, as it is up to four orders of magnitude faster than \BTTC.
+
+% \begin{figure}[h]	
+% 	\centering
+% 	\begin{tikzpicture}[scale=0.65]
+%     		\begin{axis}[
+%     			ybar,
+%     			bar width=0.35cm,
+%     			width=.73\textwidth,
+%                     height=0.26\textwidth,
+%     			xtick={1,2,3,4,5},	
+%                     xticklabels={GR,ST,WK,EM,CT},
+%     			legend style = {
+%                         legend columns=-1,
+%             		font=\large,
+%                         draw=none,
+%                         at={(0.64,1)/}
+%                     },
+%     			legend entries={{\tt B-DOTTT}, {\tt BTTC},{\tt KDT-Index-query}},
+%     			xmin=0.5,xmax = 5.5,
+%     			ymin=0,ymax=20000000,
+%     			ymode =log,
+%                     log origin=infty,
+%     			% ylabel style={yshift=-4pt},
+%     			ylabel={\LARGE \bf Time (ms)},
+%     			ticklabel style={font=\LARGE},
+% 				every axis plot/.append style={ultra thick},
+% 				every axis/.append style={ultra thick},
+%                     x dir=reverse,
+%     		]
+%     		\addplot[pattern=north west lines, pattern color=c1] table[x=datasets,y=DOTTT]{\binarybaseline};
+%     		\addplot[pattern = grid, pattern color=c2] table[x=datasets,y=BTTC]{\binarybaseline};
+%     		% \addplot[pattern = crosshatch dots,pattern color=green] table[x=datasets,y=kd-tree]{\baseline};
+%                 \addplot[pattern = crosshatch,pattern color=c3] table[x=datasets,y=KD]{\binarybaseline};
+%         \end{axis}
+%         \end{tikzpicture}
+%         \caption{Efficiency of binary $\delta$-temporal triangle counting.}
+% 	\label{fig:overall-binary}
+% \end{figure}
+ 
+$\bullet$ {\bf Effect of $(t_e-t_s)$.}
+%
+In this experiment, we test five different lengths: $20\%$, $40\%$, $60\%$, $80\%$, and $100\%$ of $t_{max}$, with $\delta$ set to the default value.
+%
+For each length, we execute 1,000 counting queries with randomly selected $t_s$ and report the average response time in Figure \ref{fig:length-binary}.
+%
+Again, the response time increases as the interval length increases since more binary $\delta$-temporal triangles are involved.
+
+$\bullet$ {\bf Effect of $\delta$.}
+%
+In this experiment, we set $[t_s,t_e]= [0, t_{max}]$, and vary $\delta = t_{max}\cdot y$ with $y\in \{10\%, 30\%, 50\%, 70\%, 90\%\}$.
+%
+For each $\delta$, we conduct 1,000 queries and record the average response time.
+%
+The findings are summarized in Figure  \ref{fig:query-delta-binary}.
+%
+We observe that $\delta$ has little effect on the efficiency on \BTTC and {\tt B-DOTTT}. But it affects the efficiency of {\tt KDT-Index-query} a lot because when $\delta$ goes larger, the response time complexity of {\tt KDT-Index} approaches $O(1)$.
+
+
+% $\bullet$ {\bf Time and space costs of index construction.}
+%
+% {\color{red}In this experiment, we detail the time and space costs of index construction for all graphs in Figure \ref{fig:cons}. 
+% %
+% The time and space requirements of the {\tt WT-Index} scale with the graph sizes. Notably, the space cost of ST is larger than GR, possibly because the tree height of {\tt WT-Index} of ST is larger than that of GR since the $t_{max}$ of ST is larger than that of GR.
+% }
+%
+% In this experiment, we evaluate the time and space costs of index construction for all graphs. As shown in Figure \ref{fig:cons-binary}, the time and space requirements of the {\tt KDT-Index} scale with graph sizes.
+

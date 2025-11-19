@@ -1,0 +1,149 @@
+\subsection{Efficiency of $\delta$-Temporal Triangle Counting}
+\label{sec:experiment-weighted}
+
+$\bullet$ {\bf Overall results.}
+%
+For each dataset, we report the average response time of each algorithm in Figure \ref{fig:overall}. 
+%
+Clearly, our online algorithm \OTTC consistently outperforms \DOTTT across all datasets.
+%
+For example, on the CT dataset, \OTTC is 70 $\times$ faster than \DOTTT.
+%
+{\color{black}
+The baseline index solution, {\tt TSRjoin}, performs similarly to our \OTTC.
+%
+This is because {\tt TSRjoin} needs to enumerate the graph and all $\delta$-temporal triangles, which is time-consuming. }
+%
+{\color{black}Moreover, {\tt WT-Index-query} demonstrates superior performance since it is up to eight orders of magnitude faster than \OTTC, {\tt TSRjoin}, and \DOTTT}.
+
+% Notably, our online algorithm \OTTC outperforms \DOTTT on all datasets. For instance, on the CT dataset, \OTTC is 70$\times$ faster than \DOTTT. Additionally, {\tt WT-Index-query} achieves the best performance among all algorithms.
+% Specifically, {\tt WT-Index-query} is up to eight orders of magnitude faster than \OTTC and \DOTTT.
+% demonstrating at most $10^8\times$ faster execution than \OTTC. 
+
+$\bullet$ {\bf Effect of $(t_e-t_s)$.}
+%
+In this experiment, we consider five different interval lengths: 20\%, 40\%, 60\%, 80\%, and 100\% of $t_{max}$.
+%
+For each interval length, we conduct 1,000 counting queries with $t_s$ randomly selected, where $\delta$ is consistently set to 10\% of each interval length, and depict the efficiency results in Figure \ref{fig:length}.
+%
+As the interval length increases, \OTTC, { \color{black}{\tt TSRjoin}}, and \DOTTT experience longer response times, since the number of $\delta$-temporal triangles increases.
+%
+In contrast, the response time of {\tt WT-Index} remains relatively stable, exhibiting a slight decrease. 
+%
+This is because when the query interval spans the entire duration $[0, t_{max}]$, the {\tt WT-Index} responses with $O(1)$ time complexity.
+
+
+% To evaluate the impact of query interval lengths, we explore five different lengths for query time intervals: $20\%$, $40\%$, $60\%$, $80\%$, and $100\%$ of $t_{max}$ respectively.
+% %
+% For each length, we execute 1000 queries with $t_s$ randomly selected. 
+% %
+% The query parameter $\delta$ is set to 10\% of each interval length.
+% %
+% The results, depicted in Figure \ref{fig:length}, illustrate the average query response times across all five graphs.
+% %
+% As the time interval widens, \OTTC and \DOTTT experience increased response times. Conversely, the response time of {\tt WT-Index} remains relatively stable, exhibiting a slight decrease. This stability arises from the fact that when the query interval spans the entire duration $[0,t_{max}]$, the {\tt WT-Index} entails only $O(1)$ time complexity for the response.
+
+% To evaluate the effect of the length of query intervals, for each graph, we fix the query $\delta$ and sampling factor as defaulted and consider five query time interval lengths, i.e., $20\%$, $40\%$, $60\%$, $80\%$, $100\%$ of $t_{max}$ respectively. For each length, we generate 10000 queries where $t_s$ is selected randomly (For the \EETTC algorithm on ST and GR, we only run 1000 queries due to the large time cost). Figure \ref{fig:length} reports the average time cost of answering one query on all five graphs as efficiency results. Note that since \DOTTT is designed only for different duration $\delta$ and it is not as efficient as our \online algorithm, we only use \online as our online algorithm. When the time interval becomes larger, \online and kd-tree take more time to respond, 
+% while \LSC's cost does not change much, even taking less time. Because when the query interval is $[0,t_{max}]$, the $t_s, t_e$ indexes only cost $O(1)$ time complexity to respond.
+
+$\bullet$ {\bf Effect of $\delta$.}
+%
+In this experiment, we set $[t_s,t_e]= [0, t_{max}]$, and vary $\delta = t_{max}\cdot y$ with $y\in \{10\%, 30\%, 50\%, 70\%, 90\%\}$.
+%
+For each $\delta$, we conduct 1,000 queries and record the average response time. The findings are summarized in Figure \ref{fig:query-delta}.
+%
+Clearly, the choice of $\delta$ demonstrates little impact on counting time cost because the time complexity of all {\color{black} four} algorithms is independent of $\delta$. 
+%
+Again, the {\tt WT-Index-query} is much faster than all other algorithms.
+
+
+% In this experiment, we investigate how varying the value of $\delta$ influences query efficiency. We maintain a constant time interval length $[0,t_{max}]$ and explore different ratios of $\delta$ to the length of time interval, selecting from the set $\{10\%, 30\%, 50\%, 70\%, 90\%\}$.
+% %
+% For each $\delta$ value, we conduct 1,000 queries and record the average response time. The findings are summarized in Figure \ref{fig:query-delta}.
+% %
+% Notably, the choice of $\delta$ demonstrates minimal impact on query time. Moreover, the index-based algorithm exhibits a significant performance advantage, with response speeds up to at most eight orders of magnitude faster compared to online approaches.
+
+
+
+$\bullet$ {\bf Time and space costs of index construction.}
+%
+In this experiment, we report the time and space costs of index construction for all graphs in Figure \ref{fig:cons}.
+%
+{\color{black} %(R2.A1)
+Since building the {\tt TSRjoin} index with all the converted $O(m^2)$ edges caused an out-of-memory error even for the second smallest dataset (i.e., EM), we only use the converted edges whose length equals one of the nine different $\delta$ values used in experiments for each dataset to build the index. 
+%
+As a result, the time and space costs of constructing the {\tt TSRjoin} index with only $O(m)$ edges are small.
+%
+Clearly, the time and space costs of the {\tt WT-Index} and {\tt TSRjoin} index increase as the graphs become larger.
+%
+Note that the space cost of {\tt WT-Index} on ST is larger than that of GR, mainly because the $t_{max}$ of ST is larger than that of GR, leading to a larger tree height for the {\tt WT-Index} of ST.
+%
+We also compare the space cost of our index with the graph size in Figure \ref{fig:cons}(b).
+%
+Note that in the CT dataset, the space cost of {\tt WT-Index} is 5000$\times$ larger than the graph size. This is due to the graph's high density; despite having only 28,244 edges and 274 nodes, it contains 15M C-points.
+%
+Since the number of C-points $\pi$ is bounded by $O(m^2)$, the space cost of our {\tt WT-Index} is larger than the graph size, but it is still affordable.}
+
+In the above experiments, the efficiency of the index-based counting algorithms is measured without considering index construction time, so it may be unfair when the indexing time should be considered. 
+%
+To make a fair comparison, we amortize the index construction time across the index-based queries and compare it with the online query algorithm \OTTC. 
+%
+Table \ref{tab:amortize} reports the number of counting queries required for our index method to surpass the online algorithm for each dataset, where the queries span the full-length time interval with randomly selected $\delta$.
+%
+These values are remarkably low compared to the total number of timestamps, especially for larger graphs.
+%
+Hence, even with a modest number of queries, the index-based algorithm consistently outperforms the online algorithm.
+
+
+% {\color{red} Why do we need to repeatedly query the number of triangles in the entire graph? The $\delta$ of each query will be different.}
+
+\begin{table}[htbp]
+  \small
+  \setlength{\abovecaptionskip}{0.15cm}
+  \caption{Number of counting queries to offset indexing time.}
+  \label{tab:amortize}
+  \centering
+  \begin{tabular}{c|c|c|c|c|c}
+    \hline
+     Dataset & CT & EM & WK & ST & GR \\
+    \hline\hline
+    Number of counting queries & 1.6K & 2.8K & 172 &41 & 11\\
+    \hline
+  \end{tabular}
+\end{table}
+
+
+
+
+$\bullet$ \textbf{Scalability test.}
+% 
+To evaluate the scalability of our index construction algorithm, we randomly select 20\%, 40\%, 60\%, 80\%, and 100\% of the edges from each graph, thereby obtaining five induced subgraphs from these edges.
+%
+We then build indices on these subgraphs of all datasets.
+%
+As shown in Figure \ref{fig:scalable}, the indexing time and space costs of our index construction algorithm increase linearly with the graph size, thereby demonstrating good scalability.
+
+$\bullet$ {\bf Index maintenance.}
+%
+In this experiment, we first build the {\tt WT-Index} by using edges in the range $[0,0.8t_{max}]$, and then update {\tt WT-Index} by sequentially considering the remaining edges from $[0.8t_{max}+1, t_{max}]$.
+%
+{\color{black} Table \ref{tab:update} presents the average time cost of updating {\tt WT-Index} for each new edge across various datasets.
+%
+Our results demonstrate that the proposed index maintenance algorithm is significantly faster than rebuilding {\tt WT-Index} from scratch.}
+
+\begin{table}[ht]
+  \small
+  \centering
+  \setlength{\abovecaptionskip}{0.15cm}
+  \caption{\color{black}Average time cost of updating {\tt WT-Index} 
+ for each edge.}
+  \label{tab:update}
+  % \small
+  \begin{tabular}{c|c|c|c|c|c}
+    \hline
+     Dataset & CT & EM & WK & ST & GR \\
+    \hline\hline
+    time costs $(ms)$ & 2.03 & 6.39 & 2.13 & 0.62 & 0.43\\
+    \hline
+  \end{tabular}
+\end{table}

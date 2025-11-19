@@ -1,0 +1,86 @@
+\subsection{Setup}
+\label{sec:experiment-setup}
+
+\begin{table}[h]
+    \small
+    \caption{Datasets used in our experiments.}
+    \label{tab:datasets}
+    \centering
+    \setlength{\tabcolsep}{0.7mm}{
+    \begin{tabular}{c|c|r|r|r|r|r}
+    \hline
+    Datasets & Abbr. & \multicolumn{1}{c|}{$n$} & \multicolumn{1}{c|}{$m$} & \multicolumn{1}{c|}{$t_{max}$} & \multicolumn{1}{c|}{$\pi$} & \multicolumn{1}{c}{$\kappa$} \\
+    \hline\hline
+    contact & CT & 274 & 28,244 & 15,661 & 15M & 39 \\
+    \hline
+    email-eu & EM & 986 & 332,334 & 207,879 & 211M & 34 \\
+    \hline
+    wiki-talk & WK & 1,140,149 & 7,833,140 & 5,799,205 & 651M & 119 \\
+    \hline
+    stackoverflow & ST & 2,601,977 & 63,497,050 & 41,484,768 & 2.7B &198 \\
+    \hline
+    graph500-23 & GR & 4,610,222 & 129,333,677 & 6,807,835 & 
+ 3.2B&1,222 \\
+    \hline
+    \end{tabular}
+    }
+\end{table}
+
+{\bf Datasets.}
+%
+We use four real-world temporal graphs sourced from SNAP \cite{leskovec2016snap} and KONECT \cite{konect}, along with a synthetic temporal graph generated from LDBC \cite{erling2015ldbc}.
+%
+Table \ref{tab:datasets} summarizes the statistics of each graph, including the number of vertices ($n$) and edges ($m$), the maximum timestamp ($t_{max}$), the number of C-points ($\pi$), and the degeneracy ($\kappa$).
+%
+The last graph does not have timestamps, so we randomly generate timestamps for it.
+
+
+{\bf Algorithms.} We mainly evaluate the following algorithms.
+
+\noindent $\bullet$ {\tt DOTTT}~\cite{pashanasangi2021faster}: SOTA online $\delta$-temporal triangle counting algorithm;
+    
+\noindent $\bullet$ {\tt OTTC}: our online $\delta$-temporal triangle counting algorithm;
+    
+%\item {\tt WT-Index}: the {\tt WT-Index} construction algorithm as illustrated in Section \ref{sec:overview-wavelet};
+
+{\color{black}
+\noindent $\bullet$ {\tt TSRjoin}~\cite{zhu2021leveraging}: an index-based $\delta$-temporal triangle counting algorithm, originally designed for counting temporal-clique subgraphs;}
+
+\noindent $\bullet$ {\tt WT-Index-query}: the {\tt WT-Index}-based $\delta$-temporal triangle counting algorithm;
+
+\noindent $\bullet$ {\tt B-DOTTT}: adapted \DOTTT for binary $\delta$-temporal triangle counting;
+
+\noindent $\bullet$ {\tt BTTC}: our online binary $\delta$-temporal triangle counting algorithm;
+
+%\noindent $\bullet$ {\tt KDT-Index}: the {\tt KDT-Index} construction algorithm to construct a {\tt KDT-Index}~\cite{10.1145/361002.361007, 10.1007/BF00263763} for all BC-points;
+
+\noindent $\bullet$ {\tt KDT-Index-query}: the {\tt KDT-Index}-based binary $\delta$-triangle counting algorithm.
+
+{\color{black}
+We have implemented all the algorithms above and placed the codes in a GitHub repository\footnote{\url{https://github.com/xqbf/counting-triangles}}.
+%
+Note that {\tt TSRjoin} was designed for counting temporal-clique subgraphs, but it can be adapted for counting $\delta$-temporal triangle as follows:
+%
+Given a temporal graph $G$ and a duration $\delta$, we first convert each temporal edge $(u,v,t)$ to an edge $(u,v)$ with a time interval $[t,t+\delta]$, then convert the query time interval $[t_s,t_e]$ to $[t_s+\delta, t_e]$, and finally apply the algorithm in \cite{zhu2021leveraging} to get the result.
+%
+Its time and space costs are analyzed as follows:
+%
+{\it (1) Index construction}: For a specific $\delta$, the index construction time for the {\tt TSRjoin} is $O(m \log(m) + n^2)$, with a space complexity $O(m)$.
+%
+To accommodate all possible values of $\delta$, the solution needs to convert one temporal edge into $O(m)$ edges with different time intervals and then build the index with total $O(m^2)$ converted edges.
+%
+Consequently, the overall time and space complexities become $O(m^2 \log(m) + n^2)$ and $O(m^2)$, respectively.
+%
+{\it (2) Query processing}: Given a specific $\delta$, {\tt TSRjoin} needs to enumerate the graph and all $\delta$-temporal triangles, costing $O(\max(m, \Delta))$ time.}
+
+To evaluate the efficiency, for each dataset, we consider 5 different interval lengths $|t_e-t_s|=t_{max}\cdot x$ with $x\in\{20\%, 40\%, 60\%, 80\%,$ $100\%\}$, and then for each interval length, we randomly generate 1,000 queries by varying $\delta = |t_e-t_s| \cdot y$ with $y\in \{10\%, 30\%, 50\%, 70\%,$ $90\%\}$, where the default interval length and $\delta$ are set to $100\% \times t_{max}$ and $10\%|t_e-t_s|$ respectively.
+%
+%Subsequently, we execute these queries sequentially and compute the average query time.
+%
+All algorithms are implemented in C++ and compiled with the g++ compiler at the -O3 optimization level.
+%
+The experiments are conducted on a Linux machine equipped with an Intel Xeon 2.90GHz CPU and 512GB RAM.
+%
+%Memory requirements are measured by the maximum RES memory used during the process.
+
+
