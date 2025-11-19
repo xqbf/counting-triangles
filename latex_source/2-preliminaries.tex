@@ -1,0 +1,103 @@
+\section{Preliminaries}
+\label{sec:preliminaries}
+
+In this section, we formally introduce the concepts of temporal graph and $\delta$-temporal triangles, and our studied counting problems.
+%
+The frequently used notations are provided in Table \ref{tab:notation}.
+
+\begin{definition}[Temporal graph]
+\label{def:temporalG}
+A temporal graph is a graph $G=(V, E)$ with a set $V$ of vertices and a set $E$ of edges, such that each edge $e \in E$ is a triplet $(u,v,t)$, where $t$ is a timestamp indicating the interaction time between two vertices $u$ and $v$.
+\end{definition}
+
+Given a temporal graph $G$ = ($V$, $E$), we use $n = |V|$ and $m = |E|$ to denote the numbers of vertices and edges in $G$ respectively.
+%
+For a vertex $u\in G$, the set of its neighbors in the $G$ is denoted as $N(u)$.
+% 
+We use $E(u,v)$ to denote the list of edges sharing end vertices $u$ and $v$, sorted in ascending order of their timestamps.
+%
+For simplicity, we assume there is no more than one edge with the same timestamp between any two vertices in the graph.
+%
+For instance, Figure \ref{fig:temporal_graph}(a) gives a temporal graph comprising five vertices and eight edges, where each edge is labeled with an integer representing the timestamp.
+%
+W.l.o.g., assume that all the edge timestamps fall within the range of consecutive integers in $[0,t_{max}]$, where $t_{max} \le m$.
+{\color{black}% (R1.A1-A2, R3.A5)
+Note that in real-world scenarios, for some real timestamps, there may not exist any temporal edge, so the total number of real timestamps could be larger than $m$.
+%
+However, these real timestamps without temporal edges can be ignored when counting the temporal triangles, so we simply skip them by mapping the real timestamps to a list of consecutive integers in $[0, t_{max}]$, such that there exist temporal edge(s) at each timestamp in $[0, t_{max}]$, so we have $t_{max} \leq m$, and $t_{max}=m$ is achieved when each edge has a distinct timestamp.
+%
+Additionally, when answering a counting query, the real query time window needs to be mapped as well, by following the mapping mechanism above before running the algorithm.
+}
+
+
+\begin{definition}[$\delta$-temporal triangle \cite{paranjape2017motifs}]
+\label{def:delta-trianggle}
+Given a temporal graph $G$ and duration $\delta$ ($\delta\geq0$), a $\delta$-temporal triangle is a subgraph of three temporal edges, i.e., $(v_1$, $v_2$, $t_1)$, $(v_2$, $v_3$, $t_2)$, and $(v_3$, $v_1$, $t_3)$, such that the gap between the timestamps of any two temporal edges is at most $\delta$, i.e., $\forall i,j\in [1,3]$, $|{t_i}-{t_j}|\leq\delta$.
+\end{definition}
+
+\begin{figure}[ht]
+    \small
+    \centering
+    \subfigure[The projected graph $G_{[0,2]}$]{
+    \includegraphics[width = .27\linewidth]{figure/projected graph example.pdf}
+    }
+    \subfigure[The static graph $G_{[0,2]}^*$]{
+    \includegraphics[width = .27\linewidth]{figure/static graph example.pdf}
+    }
+%
+    \caption{Illustrating the projected graph and static graph.}
+    \label{fig:tgraph}
+\end{figure}
+
+
+\begin{definition}[Projected graph]
+\label{def:pgraph}
+Given a temporal graph $G$ and a time window $[t_s,t_e]$, the projected graph of $G$ over $[t_s,t_e]$ is a temporal graph, denoted by $G_{[t_s,t_e]}$, that encompasses all the edges $(u,v,t) \in G$ with timestamps $t\in[t_s,t_e]$.
+\end{definition}
+
+
+\begin{problem}[$\delta$-temporal triangle counting \cite{paranjape2017motifs}]
+\label{prob:delta-counting}
+Given a temporal graph $G$, a time window $[t_s,t_e]$, and a duration $\delta$ ($\delta\geq0$), return the number of $\delta$-temporal triangles in $G_{[t_s,t_e]}$.
+\end{problem}
+
+
+
+For example, in the temporal graph of Figure \ref{fig:temporal_graph}(a), let $[t_s,t_e]$=[0,2] and $\delta$=1.
+%
+We can first obtain the projected graph $G_{[0,2]}$ as depicted in Figure \ref{fig:tgraph}(a), and then find that there is one 1-temporal triangle in $G_{[0,2]}$ as shown in the right part of Figure \ref{fig:temporal_graph}(b).
+
+\begin{table}[t]
+    \small
+    \caption{Notations and meanings.}
+    \label{tab:notation}
+    \begin{tabular}{ c | l }
+        \hline
+        \textbf{Notation(s)} & \textbf{Meaning}\\
+        \hline\hline
+        $G=(V,E)$ & \tabincell{l}{A temporal graph with vertex set $V$ and edge set $E$}\\
+        \hline
+        $( u,v,t)$ & \tabincell{l}{A temporal edge between $u$ and $v$ with timestamp $t$}\\
+        \hline
+        $n,m$ & \tabincell{l}{The number of vertices and edges of $G$ respectively}\\
+        \hline
+        $t_{max}$ & \tabincell{l}{The maximum timestamp in $G$}\\
+        \hline
+        $\kappa$ & \tabincell{l}{The degeneracy of $G$}\\
+        \hline
+        $N(u)$ & \tabincell{l}{The set of neighbors of $u\in V$}\\
+        \hline
+        $[t_s,t_e]$ & \tabincell{l}{A time window with $t_s\leq t_e$} \\
+        \hline
+        $E(u,v)$ & \tabincell{l}{A list of edges with ending vertices $u$ and $v$}\\
+        \hline
+        $\langle (x,y),c\rangle$ & \tabincell{l}{A C-point at $(x,y)$ with count $c$}\\
+        \hline
+        $\pi$ & \tabincell{l}{The total number of C-points of $G$}\\
+        \hline
+        $\Delta$ & \tabincell{l}{The number of counted $\delta$-temporal triangles in a query}\\
+        \hline
+        $\Delta_{u,v,w}$& \tabincell{l}{A static triangle with three vertices set $\{u,v,w\}$}\\
+        \hline
+    \end{tabular}
+\end{table}

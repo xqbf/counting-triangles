@@ -1,0 +1,279 @@
+\section{Introduction}
+\label{sec:intro}
+
+In many real-world applications (e.g., email networks,  social networks, and phone call networks), the relationships between entities can be modeled as a temporal graph \cite{zhao2019t,han2014chronos,erlebach2021temporal,kovanen2013temporal}, in which each edge is associated with a timestamp representing the interaction time.
+%
+Figure \ref{fig:temporal_graph}(a) depicts an example temporal graph, where the numbers on the edges represent their occurring timestamps.
+%
+For example, the two temporal edges between vertices $v_1$ and $v_4$ indicate that they have two interactions at timestamps $0$ and $2$.
+
+\begin{figure}[ht]
+    \small
+    \centering
+    \subfigure[An example temporal graph $G$]{
+    \includegraphics[width = .27\linewidth]{figure/temporal graph example.pdf}
+    }
+    \text{  }
+    \subfigure[Two 1-temporal  triangles]{
+    \includegraphics[width = .3\linewidth]{figure/weighted triangle example.pdf}
+    }
+    \caption{An example of counting $\delta$-temporal triangles.}
+    \label{fig:temporal_graph}
+\end{figure}
+\begin{comment}
+    Triangle counting is an essential task in network analysis and has been extensively researched, as indicated by many studies \cite{tsourakakis2011spectral}. This problem has a wide range of applications including spam detection\cite{becchetti2010efficient}, online link recommendation\cite{tsourakakis2011spectral}, and so on. 
+
+There are several works aiming for temporal triangle counting. 
+\end{comment}
+
+As a fundamental task in temporal graph analysis, triangle counting has received a great deal of attention \cite{lee2020temporal,paranjape2017motifs,pashanasangi2021faster}. Many analytical parameters contain the result of triangle counting, for instance, transitivity \cite{chu2011triangle} and clustering coefficient \cite{soffer2005network}. Besides, triangle counting plays an important role in many applications, such as spam detection \cite{becchetti2008efficient}, social network analysis \cite{pfeiffer2012fast},  community detection \cite{klymko2014using,gleich2012vertex}, and so on \cite{huang2018triangle, khan2011neighborhood}.
+%
+Different from triangles in static graphs, the triangles in temporal graphs often take the timestamps into consideration and several temporal triangle models have been developed, {\color{black}including $\delta$-temporal triangle \cite{paranjape2017motifs}, sliding-window triangle \cite{gou2021sliding}, $(\delta_{1,3}, \delta_{1,2}, \delta_{2,3})$-temporal triangle \cite{pashanasangi2021faster}, 
+and temporal-triangle subgraph \cite{zhu2019scalable}}. 
+%
+Among these models, the $\delta$-temporal triangle, proposed by Paranjape, Benson, and Leskovec \cite{paranjape2017motifs}, has been demonstrated effective in many real applications.
+%
+Conceptually, a $\delta$-temporal triangle is a triangle formed by three temporal edges, such that the gap between the timestamps of any two temporal edges is bounded by a threshold $\delta$.
+%
+Consider the temporal graph in Figure \ref{fig:temporal_graph}(a) and let $\delta$=1. Then there are two 1-temporal triangles as shown in Figure \ref{fig:temporal_graph}(b).
+
+In this paper, we study the problem of efficiently counting $\delta$-temporal triangles in large temporal graphs.
+%
+Given a temporal graph $G$, a duration $\delta$, and a time window $[t_s, t_e]$, the goal is to count all the $\delta$-temporal triangles within $[t_s, t_e]$.
+%
+{\color{black}For example, in Figure \ref{fig:temporal_graph}(a), assuming that $\delta$=1 and $[t_s,t_e]$=[0,3], then there are two 1-temporal triangles within the time window $[0,3]$ as depicted in Figure \ref{fig:temporal_graph}(b).}
+%
+As shown in the literature \cite{paranjape2017motifs,pashanasangi2021faster,bouritsas2022improving}, counting $\delta$-temporal triangles in temporal graphs has been demonstrated effective in many real applications, to name a few:
+%
+\begin{itemize}
+    \item \textbf{Graph cohesiveness analysis.} A triangle represents the strong and stable relationship among three vertices \cite{huang2014querying}. As a result, $\delta$-temporal triangle counting can be used to measure the cohesiveness of temporal graphs.
+    %
+    For example, the triangle density of a graph is defined as the total number of triangles over the number of vertices \cite{tsourakakis2015k,samusevich2016local}, and it can be used to identify graph communities \cite{fang2019efficient}.
+
+    \item \textbf{Graph transitivity.} Given a graph, its transitivity \cite{chu2011triangle} evaluates how strong the vertices are aggregated, and is defined as three times the number of triangles over the number of wedges, where a wedge is a path of two connected edges. The transitivity can be easily extended for temporal graphs by using $\delta$-temporal triangles.
+
+    \item \textbf{Higher-order network analysis.} As a typical higher-order structure, triangles are one building block of many networks \cite{benson2016higher}, and $\delta$-temporal triangle counting is useful in the analysis of users' behaviors (e.g., blocking communication and bitcoin transfer) in temporal networks \cite{paranjape2017motifs}.
+\end{itemize}
+
+{\color{black} %(R3.A1-A2) 
+Recently, we have also found that the $\delta$-temporal triangle counting can be used for analyzing the evolution of research topics in academic areas.
+%
+%To further demonstrate the effectiveness of $\delta$-temporal triangle counting, we present a case study in our experiments (Section \ref{sec:experiment-case-study}), analyzing the evolution of research topics within the KDD community from 2000 to 2023.
+%
+Specifically, we have tried to analyze the evolution of the research community of the KDD conference from 2000 to 2023.
+%
+We first construct two temporal co-authorship networks for the DB and AI communities respectively, and divide the entire time window [2000, 2023] into six disjoint intervals, each spanning four years.
+%
+We then adapt the triangle density \cite{samusevich2016local,tsourakakis2015k}, which is defined as the number of $\delta$-temporal triangles over the number of vertices, to analyze collaboration trends in the DB and AI communities within KDD.
+%
+Our finding of triangle density, depicted in Figure \ref{fig:case-study-weighted-intro}, shows that after 2016, the triangle density of the AI community surpassed that of the DB community.
+%
+This implies that the AI community has become more active than the traditional DB community since 2016.
+%
+Besides, the number of $\delta$-temporal triangles with $\delta$=1 is significantly higher than that with $\delta$=0, while the difference between $\delta$=2 and $\delta$=3  is minimal, suggesting that authors tend to collaborate more frequently over short time intervals.}
+
+\begin{figure}[t]
+        \subfigure[$\delta \in \{0,1\}$]{
+	\begin{tikzpicture}[scale = 0.5]
+	   \begin{axis}[
+                    width=0.7\textwidth,
+                    height=0.42\textwidth,
+				xtick={0,1,2,3,4,5,6},
+				xticklabels={,2000,2004,2008,2012,2016,2020},
+				xmin=0.5,xmax=6.5,
+				ymin=0,ymax=20,
+                    legend style = {
+                        legend columns=2,
+                        draw=none,
+                        at={(0.9,1)/}
+				},
+				% ymode = log,
+				mark size=5pt,
+                    line width=2.5pt,
+				% xlabel={\huge \bf $\delta$ length ratio},
+    ylabel={\bf $\delta$-temporal triangle density},
+				every axis plot/.append style={ultra thick},
+				every axis/.append style={ultra thick},
+				]
+				
+    \addplot [mark=x,color=c8,line width=2.5pt] table[x=time,y=AI0]{\weighteddensity};
+    \addplot [mark=o,color=c2,line width=2.5pt] table[x=time,y=DB0]{\weighteddensity};
+    \addplot [mark=x,color=c7,line width=2.5pt] table[x=time,y=AI1]{\weighteddensity};
+    \addplot [mark=o,color=c4,line width=2.5pt] table[x=time,y=DB1]{\weighteddensity};
+    \legend{{ { AI ($\delta = 0$)}}, {  DB ($\delta = 0$)}, { { AI ($\delta = 1$)}}, { { DB ($\delta = 1$)}}}
+    \end{axis}
+    \end{tikzpicture}
+    }
+        \subfigure[$\delta\in \{2,3\}$]{
+	\begin{tikzpicture}[scale = 0.5]
+	   \begin{axis}[
+                    width=0.7\textwidth,
+                    height=0.42\textwidth,
+				xtick={0,1,2,3,4,5,6},
+				xticklabels={,2000,2004,2008,2012,2016,2020},
+				xmin=0.5,xmax=6.5,
+				ymin=0.001,ymax=30,
+                    legend style = {
+                        legend columns=2,
+                        draw=none,
+                        at={(0.9,1)/}
+				},
+				mark size=5pt,
+                    line width=2.5pt,
+                    ylabel={\bf $\delta$-temporal triangle density},
+				every axis plot/.append style={ultra thick},
+				every axis/.append style={ultra thick},
+				]
+					
+                \addplot [mark=x,color=c8,line width=2.5pt] table[x=time,y=AI2]{\weighteddensity};
+			\addplot [mark=o,color=c2,line width=2.5pt] table[x=time,y=DB2]{\weighteddensity};
+                \addplot [mark=x,color=c7,line width=2.5pt] table[x=time,y=AI3]{\weighteddensity};
+			\addplot [mark=o,color=c4,line width=2.5pt] table[x=time,y=DB3]{\weighteddensity};
+                \legend{{ { AI($\delta = 2$)}}, {  DB($\delta = 2$)}, { { AI($\delta = 3$)}}, { { DB($\delta = 3$)}}}
+			\end{axis}
+	\end{tikzpicture}
+	}   
+    \caption{{\color{black}$\delta$-temporal triangle density.}}
+    \label{fig:case-study-weighted-intro}
+    \vspace{-0.05in}
+\end{figure}
+
+
+%The detailed studies of the above two applications are provided in Section \ref{sec:experiment-case-study}.
+
+%counting on static graphs, triangle counting on temporal graphs can take the temporal ordering of the edges into concern to get more information. Thus, Paranjape, Benson, and Leskovec introduced $\delta$-temporal triangles that all edges of the triangle have to occur within $\delta$ time stamps \cite{paranjape2017motifs}. Then Noujan and Seshadhri improved the time complexity of $\delta$-temporal triangle counting and generalized it into $(\delta_{1,3}, \delta_{1,2}, \delta_{2,3})$-temporal triangle counting \cite{pashanasangi2021faster}, which is the state-of-art algorithm for $\delta$-temporal triangle counting so far. However, the definition of $(\delta_{1,3}, \delta_{1,2}, \delta_{2,3})$-temporal triangle is too strict for applications where the specific relationships inside the triangle are irrelevant. Nowadays, many temporal graph applications analyze the graph problems in different time windows \cite{mertzios2019sliding,akrida2020temporal,gou2021sliding,xie2023querying}. Thus, we want to discuss counting $\delta$-temporal triangles in arbitrary time windows.
+
+Despite its wide usefulness, counting $\delta$-temporal triangles in large temporal graphs is a very challenging task, due to  the following two reasons:
+1) Different from counting triangles in static graphs, counting $\delta$-temporal triangles is more complicated since it needs to consider the timestamp of each edge;
+and 2) the number of $\delta$-temporal triangles is huge, especially when $\delta$ is large and the query time window covers a long duration.
+
+{\bf Prior works.} To tackle the above challenges, Paranjape et al.~\cite{paranjape2017motifs} developed a $\delta$-temporal triangle counting algorithm with $O(m\sqrt{\Gamma})$ time, where $m$ is the number of edges in the graph $G$ and $\Gamma\leq O(m^{1.5})$ is the number of static triangles in $G$, so it achieves a time complexity of $O(m^{1.75})$.
+%
+Noujan and Seshadhri proposed the state-of-the-art (SOTA) algorithm for $\delta$-temporal triangle counting, \DOTTT, with $O(m\kappa\log(m))$ time cost \cite{pashanasangi2021faster}, where $\kappa$ is the degeneracy of the graph and is up to $O(m^{0.5})$.
+%
+{\color{black} Additionally, Zhu et al. \cite{zhu2021leveraging} designed a temporal subgraph reporting method and it could be adapted for counting $\delta$-temporal triangles.}
+%
+Nevertheless, these algorithms are still inefficient for processing large temporal graphs. 
+% %
+% Besides, they are slower than the triangle counting algorithm for static graphs through enumeration, which can achieve $O(m\sqrt{m})$ \cite{al2018triangle} but cannot be applied for counting $\delta$-temporal triangles.
+% %
+% Note that although triangle counting through matrix multiplication can achieve a lower time complexity than $O(m\sqrt{m})$, the space complexity of matrix multiplication is up to $O(n^2)$, which is too large to be applied to large graphs, so $O(m\sqrt{m})$ is still the best bound for counting triangles on large graphs.
+% %
+% Hence, it is desirable to develop faster algorithms for counting $\delta$-temporal triangles.
+
+\textbf{Online solutions.} 
+To efficiently count $\delta$-temporal triangles, we first propose an efficient online algorithm \OTTC.
+%
+Specifically, given a duration $\delta$ and a query time window $[t_s,t_e]$, we first derive a projected graph $G_{[t_s,t_e]}$ by extracting edges appearing in $[t_s,t_e]$.
+%
+Then, we enumerate the temporal edges chronologically to count $\delta$-temporal triangles.
+%
+We theoretically show that \OTTC completes in $O(m\kappa)$ time, so it is faster than the SOTA algorithm \cite{pashanasangi2021faster} with $O(m\kappa \log(m))$ time cost, as shown in Table \ref{tab:overview}.
+
+\textbf{Index-based solutions.}
+Although the above online algorithm outperforms existing algorithms, it may not be efficient in some scenarios because in practice, to accomplish a specific task, users often have to frequently issue $\delta$-temporal triangle counting queries by varying the time window $[t_s,t_e]$ and duration $\delta$ multiple times.
+%
+In light of this, we propose an elegant index-based solution, which converts the triangle counting problem into a point counting problem.
+%
+Specifically, for each $\delta$-temporal triangle, we first convert it into a 2-dimensional point $(t_s,t_e)$, where $[t_s,t_e]$ is the minimal time interval that $G_{[t_s,t_e]}$ contains this $\delta$-temporal triangle.
+%
+Afterward, we employ the wavelet tree index to solve this 2-dimensional point counting problem.
+%
+{\color{black} 
+Besides, in many real-world applications, the temporal graphs often evolve frequently with many new inserted temporal edges as time goes on. 
+%
+For example, Yahoo! processed over 500M new communications between 33M IP addresses in one day\footnote{\url{https://webscope.sandbox.yahoo.com/catalog.php?datatype=g&guccounter=1}\label{web}}.
+%
+Given the dynamic nature of temporal graphs, it is crucial to efficiently maintain the index for dynamic temporal graphs.
+%
+Therefore, we also design a fast wavelet tree index maintenance algorithm to avoid rebuilding the index from scratch for every update.}
+
+Besides, in some real-world scenarios, we may only need to consider the existence of $\delta$-temporal triangles among three vertices, so we introduce the binary $\delta$-temporal triangle counting problem, which counts the number of vertex triplets that form one or more $\delta$-temporal triangles.
+%
+We also develop efficient online and index-based solutions to solve this variant.
+
+In addition, we have performed extensive experimental evaluations on four real and one synthetic temporal graphs, and the results show that our algorithms are highly efficient and scalable.
+%
+In particular, our online algorithm is up to 70$\times$ faster than the SOTA online algorithms, and our index-based algorithm runs up to $10^8\times$ faster than the online algorithms.
+%
+Besides, our algorithms for binary $\delta$-temporal triangle counting are also highly efficient.
+
+In summary, our principal contributions are as follows.
+%
+\begin{itemize}
+    \item We have developed an efficient online algorithm for counting $\delta$-temporal triangles, whose time complexity is lower than that of the SOTA algorithm.
+    
+    \item We have designed a novel index-based solution by converting the $\delta$-temporal triangles into 2-dimensional points.
+
+    \item We have introduced the binary $\delta$-temporal triangle counting problem and also developed efficient algorithms.
+
+    \item We have performed comprehensive experiments on both real and synthetic large temporal graphs, and the results show that our algorithms are highly effective and efficient.
+\end{itemize}
+
+\textbf{Outline.} 
+We present the $\delta$-temporal triangle counting problem in Section \ref{sec:preliminaries}.
+%
+We introduce our online and index-based solutions in Sections \ref{sec:online} and \ref{sec:weighted}, respectively.
+%
+In Section \ref{sec:binary}, we focus on binary $\delta$-temporal triangles counting.
+%
+Section \ref{sec:experiment} shows experimental results.
+%
+We review related works in Section \ref{sec:related} and conclude in Section \ref{sec:conclusion}.
+
+% {\color{black} (R3.A4) 
+% To better illustrate our solutions for $\delta$-temporal triangle counting, we provide a flow chart of our proposed solutions in Figure \ref{fig:flow-chart}. We have also provided the bird's-eye views in front of Section \ref{sec:edttc} and \ref{sec:weighted}.
+
+% \begin{figure}[ht]
+%     \centering
+%     \includegraphics[width=\linewidth]{figure/workflow of δ-temporal triangle counting.pdf}
+%     \caption{\color{black} Flow chart of our solutions.}
+%     \label{fig:flow-chart}
+% \end{figure}
+% }
+
+\begin{table}[t]
+  \small
+  \centering
+  \caption{Overview of the complexities of solutions.}
+  \label{tab:overview}
+  \begin{threeparttable}
+  \begin{tabular}{c|c|c|c|c}
+    \hline
+      \multirow{2}{*}{Algorithm} & \multicolumn{2}{c|}{Indexing complexity}  & \multicolumn{2}{c}{Counting complexity}\\
+     
+     \cline{2-5}
+     {} & time & space & time & space \\
+     \hline\hline
+     
+     \DOTTT \cite{pashanasangi2021faster} & -- & --  & $O(m \kappa \log(m))$ &$O(m)$\\
+     \cline{1-5}
+     
+     \OTTC & -- & --  & $O(m \kappa)$ &$O(m)$\\
+     \cline{1-5}
+    \color{black} {\tt TSRjoin} \cite{zhu2021leveraging} & 
+    \tabincell{c}{\color{black}$O(n^2+$ \color{black}$m^2\log(m))$}
+    & \color{black} $O(m^2)$ 
+    & \color{black} $O(\max(m, \Delta))$ &
+    \color{black} $O(m^2)$ \\
+    
+    \cline{1-5}
+     
+     {\tt WT-Index} & 
+     
+     %$O(m\kappa+ \Delta \times \log(\Delta))$
+     \tabincell{c}{\color{black}$O(m\kappa+$ \color{black}$\pi \log(m))$}
+     
+     &
+     
+     %$O(m+\Delta \log(\Bar{c}))$ 
+     \tabincell{c}{\color{black}$O(\pi)$}
+     
+     &\color{black}$O(poly\log(m))$ & 
+     \color{black}$O(\pi)$\\
+     \hline
+  \end{tabular}
+  {\color{black} \raggedright Note: given a temporal graph $G$, $n$ and $m$ are the numbers of vertices and edges in $G$ respectively, $\kappa$ is the degeneracy of $G$, $\pi$ is the number of C-points of $G$, and $\Delta$ is the number of counted $\delta$-temporal triangles in a query.
+  \par}
+  \end{threeparttable}
+\end{table}

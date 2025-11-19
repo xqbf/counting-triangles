@@ -1,0 +1,1458 @@
+\section{Experiments}
+\label{sec:experiment}
+
+We now present the experimental results.
+%
+We begin with the setup in Section \ref{sec:experiment-setup}, then show the efficiency results in Sections \ref{sec:experiment-weighted} and \ref{sec:experiment-binary}, and finally present case study results in Section \ref{sec:experiment-case-study}.
+
+
+\input{exp/6.1-setup}
+\input{exp/exp-fig}
+\input{exp/6.2-weighted}
+\input{exp/6.3-binary}
+\input{exp/6.4-case}
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & LSC &wavelet tree&online & kd-tree \\
+% 	0.2 & 0.05 & 0.02 & 47393& 4\\
+% 	0.4 & 0.07 & 0.02 & 134577& 8\\
+% 	0.6 & 0.07 & 0.02 & 225871& 13\\
+% 	0.8 & 0.05 & 0.01 & 376713& 19\\
+% 	1.0 & 0.01 &0.002 & 491971& 26\\
+% }\stackoverflow
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & LSC &wavelet tree&online& kd-tree \\
+% 	0.2 & 0.02 & 0.01 & 64280& 15\\
+% 	0.4 & 0.03 & 0.01 & 166448& 42\\
+% 	0.6 & 0.02 & 0.01 & 336011& 77\\
+% 	0.8 & 0.02 & 0.01 & 676620& 114\\
+% 	1.0 & 0.005 &0.002 & 1133938& 146\\
+% }\graphfive
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & LSC &wavelet tree&online& kd-tree \\
+% 	0.2 & 0.021 & 0.01 & 1489& 0.2\\
+% 	0.4 & 0.023 & 0.01 & 3490& 0.4\\
+% 	0.6 & 0.024 & 0.012 & 5718& 0.7\\
+% 	0.8 & 0.022 &0.009 & 8277& 1\\
+% 	1.0 & 0.007 &0.002 & 11915& 1.2\\
+% }\wiki
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & LSC &wavelet tree&online& kd-tree \\
+% 	0.2 & 0.011 & 0.007 & 30& 0.02\\
+% 	0.4 & 0.012 & 0.007 & 73& 0.04\\
+% 	0.6 & 0.012 & 0.008 & 124& 0.06\\
+% 	0.8 & 0.011 &0.006 & 181& 0.07\\
+% 	1.0 & 0.004 &0.002 & 238& 0.06\\
+% }\email
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & LSC &wavelet tree&online&kd-tree \\
+% 	0.2 & 0.0052 & 0.0041 & 5& 0.008\\
+% 	0.4 & 0.0046 & 0.004 & 12& 0.02\\
+% 	0.6 & 0.005 & 0.004 & 18& 0.02\\
+% 	0.8 & 0.004 &0.004 & 25& 0.02\\
+% 	1.0 & 0.003 &0.002 & 33& 0.03\\
+% }\tsv
+
+
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & LSC &DOTTT&TTC& kd-tree \\
+% 	0.1 & 0.0123 & 466289 & 135077& 26\\
+% 	0.3 & 0.0145 & 489479 & 129966& 24\\
+% 	0.5 & 0.0122 & 456316 & 131001& 19\\
+% 	0.7 & 0.0112 & 472154 & 143781& 15\\
+% 	0.9 & 0.0107 & 477172 & 144079& 12\\
+% }\stackoverflowd
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & LSC &DOTTT & TTC& kd-tree \\
+% 	0.1 & 0.0056 & 2235810 & 885420& 146\\
+% 	0.3 & 0.0057 & 2189250 & 998820& 193\\
+% 	0.5 & 0.0063 & 2107530 & 887647& 197\\
+% 	0.7 & 0.0073 & 2236160 & 902199&180\\
+% 	0.9 & 0.0056 &3149010 & 990356& 161\\
+% }\graphfived
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & LSC &DOTTT & TTC & kd-tree \\
+% 	0.1 & 0.0073 & 44509 & 11314 & 1.2\\
+% 	0.3 & 0.0081 & 43830 & 11479 & 6\\
+% 	0.5 & 0.0077 & 43723 & 11713 &  14.4\\
+% 	0.7 & 0.0078 & 43584 & 11376 & 28.8\\
+% 	0.9 & 0.0081 & 42510 & 11391 & 44.4\\
+% }\wikid
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & LSC &DOTTT & TTC & kd-tree \\
+% 	0.1 & 0.0042 & 3898 & 238 & 31\\
+% 	0.3 & 0.0049 & 3781 & 211 & 20\\
+% 	0.5 & 0.0052 & 3615 & 203 & 16\\
+% 	0.7 & 0.0056 & 3607 & 174 & 14.6\\
+% 	0.9 & 0.0054 & 3259 & 158 & 13\\
+% }\emaild
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & LSC &DOTTT&TTC& kd-tree \\
+% 	0.1 & 0.0026 & 742& 37 & 0.03 \\
+% 	0.3 & 0.0029 & 671& 34 & 0.018\\
+% 	0.5 & 0.0030 & 656& 33 & 0.016\\
+% 	0.7 & 0.0031 & 602& 29 & 0.014\\
+% 	0.9 & 0.0029 & 554& 24 & 0.014\\
+% }\tsvd
+
+
+
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & WTTC & DOTTT \\
+% 	0.1  & 135077 & 446289\\
+% 	0.3  & 129966 & 489479\\
+% 	0.5  & 131001 & 456316\\
+% 	0.7  & 143781 & 472154\\
+% 	0.9  & 144079 & 477172\\
+% }\stackoverflowonline
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & WTTC & DOTTT \\
+% 	0.1  & 885420 & 2235810\\
+% 	0.3  & 998820 & 2189250\\
+% 	0.5  & 887647 & 2107530\\
+% 	0.7  & 902199 & 2236160\\
+% 	0.9  & 990356 & 2149010\\
+% }\graphfiveonline
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & WTTC & DOTTT \\
+% 	0.1  & 11314 & 44509\\
+% 	0.3  & 11479 & 43830\\
+% 	0.5  & 11713 & 43723\\
+% 	0.7  & 11376 & 43584\\
+% 	0.9  & 11391 & 42510\\
+% }\wikionline
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & WTTC & DOTTT \\
+% 	0.1  & 238 & 3898\\
+% 	0.3  & 211 & 3781\\
+% 	0.5  & 203 & 3615\\
+% 	0.7  & 174 & 3607\\
+% 	0.9  & 158 & 3259\\
+% }\emailonline
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & WTTC & DOTTT \\
+% 	0.1  & 37 & 742\\
+% 	0.3  & 34 & 671\\
+% 	0.5  & 33 & 656\\
+% 	0.7  & 29 & 602\\
+% 	0.9  & 24 & 554\\
+% }\tsvonline
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & LSC &wavelet tree \\
+% 	0.01 & 577425 & 609146 \\
+% 	0.05 & 798674 & 808090 \\
+% 	0.1 & 918819 & 1154172 \\
+% 	0.2 & 1288712 & 1476684 \\
+% 	0.3 & 1973168 & 1983985 \\
+% }\stackoverflowf
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & LSC &wavelet tree \\
+% 	0.01 & 2038564 & 2172252 \\
+% 	0.05 & 2189398 &  2123597\\
+% 	0.1 & 2099664 &  2288220 \\
+% 	0.2 & 2208948 &  2259616\\
+% 	0.3 & 2288616 & 2471462 \\
+% }\graphfivef
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & LSC &wavelet tree \\
+% 	0.01 & 67333 & 74486 \\
+% 	0.05 & 104348 & 129932 \\
+% 	0.1 & 134255 & 163451 \\
+% 	0.2 & 237004 & 261851 \\
+% 	0.3 & 288011 & 353856 \\
+% }\wikif
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & LSC &wavelet tree \\
+% 	0.01 & 8393 & 9800 \\
+% 	0.05 & 18320 & 22861 \\
+% 	0.1 & 30235 & 39094 \\
+% 	0.2 & 50959 & 68203 \\
+% 	0.3 & 66685 & 94540 \\
+% }\emailf
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & LSC &wavelet tree \\
+% 	0.01 & 637 & 702 \\
+% 	0.05 & 1109 & 1316 \\
+% 	0.1 & 1687 & 2014 \\
+% 	0.2 & 2775 & 3319 \\
+% 	0.3 &  3676 & 4454 \\
+% }\tsvf
+
+
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & LSC &wavelet tree \\
+% 	0.01 & 0.053 & 0.0134 \\
+% 	0.05 & 0.0647 & 0.0154 \\
+% 	0.1 & 0.0748 & 0.016 \\
+% 	0.2 & 0.0856 & 0.0168 \\
+% 	0.3 & 0.1066 & 0.0245 \\
+% }\stackoverflowfq
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & LSC &wavelet tree \\
+% 	0.01 & 0.021 & 0.0113 \\
+% 	0.05 & 0.0361 &  0.0118\\
+% 	0.1 & 0.0314 &  0.0117 \\
+% 	0.2 & 0.0385 & 0.0121 \\
+% 	0.3 & 0.0404 & 0.0132 \\
+% }\graphfivefq
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & LSC &wavelet tree& kd-tree \\
+% 	0.01 & 0.0224 & 0.0091& 1 \\
+% 	0.05 & 0.0331 & 0.0124& 5\\
+% 	0.1 & 0.0422 & 0.0125&  12 \\
+% 	0.2 & 0.0485 & 0.0136& 24 \\
+% 	0.3 & 0.051 & 0.0141&37 \\
+% }\wikifq
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & LSC &wavelet tree&kd-tree \\
+% 	0.01 & 0.0109 & 0.006& 0.07 \\
+% 	0.05 & 0.0157 & 0.0073& 0.4 \\
+% 	0.1 & 0.018 & 0.0077& 0.7 \\
+% 	0.2 & 0.021 & 0.0084&1.4 \\
+% 	0.3 & 0.0218 & 0.0092& 2 \\
+% }\emailfq
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	length & LSC &wavelet tree \\
+% 	0.01 & 0.0042 & 0.0038 \\
+% 	0.05 & 0.0055 & 0.0045 \\
+% 	0.1 & 0.0059 & 0.0046 \\
+% 	0.2 & 0.0064 & 0.0048 \\
+% 	0.3 &  0.0069 & 0.005 \\
+% }\tsvfq
+
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	datasets &fetching& LSC &wavelet tree \\
+% 	1 & 2064077& 11557 & 19410 \\
+% 	2 & 524830& 40454 & 82720 \\
+% 	3 & 47308&7936 & 15302 \\
+% 	4 & 6043& 2806 & 4239 \\
+% 	5 &  530& 112 & 182 \\
+% }\construction
+
+% \pgfplotstableread[row sep=\\,col sep=&]{
+% 	datasets & LSC &wavelet tree & TTC \\
+% 	1 & 16179 & 18022 & 12083 \\
+% 	2 & 9318 & 51200 & 6451\\
+% 	3 & 1638 & 7680 & 1228\\
+% 	4 & 557 & 789 & 25\\
+% 	5 &  44 & 58 &6\\
+% }\constructionspace
+
+
+% \pgfplotstableread[row sep=\\, col sep = &]{
+%     length & LSC & TTC & kd-tree\\
+%     0.2 & 0.0398 & 14870& 1.2947\\
+%     0.4 &0.0395 & 33858& 2.8918\\
+%     0.6 &0.041 & 59278& 4.5552\\
+%     0.8 &0.0426 & 81808& 7.0367\\
+%     1 & 0.0181& 105739&10.5806\\
+% }\stackoverflowdirectcircle
+
+
+% \pgfplotstableread[row sep=\\, col sep = &]{
+%     length & LSC & TTC & kd-tree\\
+%     0.2 & 0.0255 & 966& 0.0825\\
+%     0.4 &0.0288 & 2089& 0.1846\\
+%     0.6 &0.0246 & 3131& 0.2971\\
+%     0.8 &0.0238 & 4568& 0.4229\\
+%     1 & 0.0143& 6551&0.5386\\
+% }\wikidirectcircle
+
+% \pgfplotstableread[row sep=\\, col sep = &]{
+% datasets & LSC & TTC & kd-tree & DOTTT\\
+% 1 & 0.005 & 885420& 146 & 2235810\\
+% 2 & 0.0123 & 135077 & 26 &466289\\
+% 3 & 0.007 & 11915 & 1.2 & 44509 \\
+% 4 & 0.004 & 238 & 0.06 & 3898\\
+% 5 & 0.003 & 33 & 0.03 & 742\\
+% }\baseline
+
+% \begin{figure*}[ht]
+%         \centering
+% 	\ref{named0}\\
+%         \vspace{-5pt}
+% 	\subfigure[GR]{
+% 	\begin{tikzpicture}[scale = 0.37]
+% 	   \begin{axis}[
+% 			    legend style = {
+% 				    legend columns=-1,
+% 				    font=\footnotesize,
+%                         draw=none,
+% 				},
+% 				legend to name=named0,
+%                     legend image post style={scale=0.8, ultra thick},
+%                     width=.5\textwidth,
+%                     height=0.4\textwidth,
+%                     xtick={0,0.1,0.3,0.5,0.7,0.9},
+% 				xticklabels={,$10\%$,$30\%$,$50\%$,$70\%$,$90\%$},
+% 				xmin=0,xmax=1,
+% 				ymin=0,ymax=10000000,
+% 				ymode = log,
+% 				mark size=4pt,
+%                     line width=2.5pt,
+% 				ylabel={\huge \bf Response time ($\mu$s)},
+% 				ylabel style={yshift=-2pt},
+% 				xlabel={\huge \bf $\delta$ length ratio},
+% 				ticklabel style={font=\huge},
+% 				every axis plot/.append style={ultra thick},
+% 				every axis/.append style={ultra thick},
+% 				]
+% 				\addplot [mark=x,color=c4] table[x=length,y=LSC]{\graphfived};
+				
+% 				\addplot [mark=o,color=c6] table[x=length,y=TTC]{\graphfived};		
+%     \addplot [mark=star,color=c8] table[x=length,y=kd-tree]{\graphfived};
+% 			\addplot [mark=o,color=c7] table[x=length,y=DOTTT]{\graphfived};
+% 				\legend{{\small \LSC},{\small \EDTTC}, {\small kd-tree}, {\small \DOTTT}}
+% 			\end{axis}
+% 	\end{tikzpicture}
+% 	}
+%  \quad
+%  \subfigure[ST]{
+% 	\begin{tikzpicture}[scale = 0.37]
+% 	   \begin{axis}[
+%                     width=.5\textwidth,
+%                     height=0.4\textwidth,
+% 				xtick={0,0.1,0.3,0.5,0.7,0.9},
+% 				xticklabels={,$10\%$,$30\%$,$50\%$,$70\%$,$90\%$},
+% 				xmin=0,xmax=1,
+% 				ymin=0,ymax=10000000,
+% 				ymode = log,
+% 				mark size=4pt,
+%                     line width=2.5pt,
+% 				% ylabel={\huge \bf Running time (ms)},
+% 				% ylabel style={yshift=-5pt},
+% 				xlabel={\huge \bf $\delta$ length ratio},
+% 				ticklabel style={font=\huge},
+% 				every axis plot/.append style={ultra thick},
+% 				every axis/.append style={ultra thick},
+% 				]
+% 				\addplot [mark=x,color=c4] table[x=length,y=LSC]{\stackoverflowd};
+				
+% 				\addplot [mark=o,color=c6] table[x=length,y=TTC]{\stackoverflowd};		
+%     \addplot [mark=star,color=c8] table[x=length,y=kd-tree]{\stackoverflowd};
+% 			\addplot [mark=o,color=c7] table[x=length,y=DOTTT]{\stackoverflowd};
+% 			\end{axis}
+% 	\end{tikzpicture}
+% 	}
+%  \quad
+%  \subfigure[WK]{
+% 	\begin{tikzpicture}[scale = 0.37]
+% 	   \begin{axis}[
+%                     width=.5\textwidth,
+%                     height=0.4\textwidth,
+% 				xtick={0,0.1,0.3,0.5,0.7,0.9},
+% 				xticklabels={,$10\%$,$30\%$,$50\%$,$70\%$,$90\%$},
+% 				xmin=0,xmax=1,
+% 				ymin=0,ymax=100000,
+% 				ymode = log,
+% 				mark size=4pt,
+%                     line width=2.5pt,
+% 				% ylabel={\huge \bf Running time (ms)},
+% 				% ylabel style={yshift=-5pt},
+% 				xlabel={\huge \bf $\delta$ length ratio},
+% 				ticklabel style={font=\huge},
+% 				every axis plot/.append style={ultra thick},
+% 				every axis/.append style={ultra thick},
+% 				]
+% 				\addplot [mark=x,color=c4] table[x=length,y=LSC]{\wikid};
+				
+% 				\addplot [mark=o,color=c6] table[x=length,y=TTC]{\wikid};		
+%     \addplot [mark=star,color=c8] table[x=length,y=kd-tree]{\wikid};
+% 			\addplot [mark=o,color=c7] table[x=length,y=DOTTT]{\wikid};
+% 			\end{axis}
+% 	\end{tikzpicture}
+% 	}
+%     \subfigure[EM]{
+% 	\begin{tikzpicture}[scale = 0.37]
+% 	   \begin{axis}[
+%                     width=.5\textwidth,
+%                     height=0.4\textwidth,
+% 				xtick={0,0.1,0.3,0.5,0.7,0.9},
+% 				xticklabels={,$10\%$,$30\%$,$50\%$,$70\%$,$90\%$},
+% 				xmin=0,xmax=1,
+% 				ymin=0,ymax=100000,
+% 				ymode = log,
+% 				mark size=4pt,
+%                     line width=2.5pt,
+% 				% ylabel={\huge \bf Running time (ms)},
+% 				% ylabel style={yshift=-5pt},
+% 				xlabel={\huge \bf $\delta$ length ratio},
+% 				ticklabel style={font=\huge},
+% 				every axis plot/.append style={ultra thick},
+% 				every axis/.append style={ultra thick},
+% 				]
+% 				\addplot [mark=x,color=c4] table[x=length,y=LSC]{\emaild};
+				
+% 				\addplot [mark=o,color=c6] table[x=length,y=TTC]{\emaild};		
+%     \addplot [mark=star,color=c8] table[x=length,y=kd-tree]{\emaild};
+% 			\addplot [mark=o,color=c7] table[x=length,y=DOTTT]{\emaild};
+% 			\end{axis}
+% 	\end{tikzpicture}
+% 	}
+%  \subfigure[CT]{
+% 	\begin{tikzpicture}[scale = 0.37]
+% 	   \begin{axis}[
+%                     width=.5\textwidth,
+%                     height=0.4\textwidth,
+% 				xtick={0,0.1,0.3,0.5,0.7,0.9},
+% 				xticklabels={,$10\%$,$30\%$,$50\%$,$70\%$,$90\%$},
+% 				xmin=0,xmax=1,
+% 				ymin=0,ymax=10000,
+% 				ymode = log,
+% 				mark size=4pt,
+%                     line width=2.5pt,
+% 				% ylabel={\huge \bf Running time (ms)},
+% 				% ylabel style={yshift=-5pt},
+% 				xlabel={\huge \bf $\delta$ length ratio},
+% 				ticklabel style={font=\huge},
+% 				every axis plot/.append style={ultra thick},
+% 				every axis/.append style={ultra thick},
+% 				]
+% 				\addplot [mark=x,color=c4] table[x=length,y=LSC]{\tsvd};
+				
+% 				\addplot [mark=o,color=c6] table[x=length,y=TTC]{\tsvd};		
+%     \addplot [mark=star,color=c8] table[x=length,y=kd-tree]{\tsvd};
+% 			\addplot [mark=o,color=c7] table[x=length,y=DOTTT]{\tsvd};
+% 			\end{axis}
+% 	\end{tikzpicture}
+% 	}
+% \caption{Effect of the ratio of query $\delta$.}
+% \label{fig:query-delta}
+%  \end{figure*}
+
+
+
+% \begin{figure*}[ht]
+%         \centering
+% 	\ref{named1}\\
+%         \vspace{-5pt}
+% 	\subfigure[GR]{
+% 	   \begin{tikzpicture}[scale=0.38]
+% 	   \begin{axis}[
+% 			    legend style = {
+% 				    legend columns=-1,
+% 				    font=\footnotesize,
+%                         draw=none,
+% 				},
+% 				legend to name=named1,
+%                     legend image post style={scale=0.8, ultra thick},
+%                     width=.5\textwidth,
+%                     height=0.4\textwidth,
+%                     xtick={0,0.2,0.4,0.6,0.8,1},
+% 				xticklabels={,$20\%$,$40\%$,$60\%$,$80\%$,$100\%$},
+% 				xmin=0.1,xmax=1.1,
+% 				ymin=0,ymax=10000000,
+% 				ymode = log,
+% 				mark size=4pt,
+%                     line width=2.5pt,
+% 				ylabel={\huge \bf Response time ($\mu$s)},
+% 				ylabel style={yshift=-5pt},
+% 				xlabel={\huge \bf Interval length ratio},
+% 				ticklabel style={font=\huge},
+% 				every axis plot/.append style={ultra thick},
+% 				every axis/.append style={ultra thick},
+% 				]
+% 				\addplot [mark=x,color=c4] table[x=length,y=LSC]{\graphfive};
+				
+% 				\addplot [mark=o,color=c6] table[x=length,y=online]{\graphfive};
+%     \addplot [mark=star,color=c8] table[x=length,y=kd-tree]{\graphfive};
+    
+% 				\legend{{\small \LSC}, {\small  \EDTTC},{\small kd-tree} }
+% 			\end{axis}
+% 	\end{tikzpicture}
+% 	}
+%         \subfigure[ST]{
+% 	   \begin{tikzpicture}[scale=0.38]
+% 	   \begin{axis}[
+%                     width=.5\textwidth,
+%                     height=0.4\textwidth,
+% 				xtick={0,0.2,0.4,0.6,0.8,1},
+% 				xticklabels={$0\%$,$20\%$,$40\%$,$60\%$,$80\%$,$100\%$},
+% 				xmin=0.1,xmax=1.1,
+% 				ymin=0,ymax=10000000,
+% 				ymode = log,
+% 				mark size=4pt,
+%                     line width=2.5pt,
+% 				% ylabel={\huge \bf Running time (ms)},
+% 				% ylabel style={yshift=-5pt},
+% 				xlabel={\huge \bf Interval length ratio},
+% 				ticklabel style={font=\huge},
+% 				every axis plot/.append style={ultra thick},
+% 				every axis/.append style={ultra thick},
+% 				]
+%                     \addplot [mark=x,color=c4] table[x=length,y=LSC]{\stackoverflow};
+				
+% 				\addplot [mark=o,color=c6] table[x=length,y=online]{\stackoverflow};		
+%     \addplot [mark=star,color=c8] table[x=length,y=kd-tree]{\stackoverflow};
+% 			\end{axis}
+% 	\end{tikzpicture}
+% 	}
+%         \subfigure[WK]{
+% 	   \begin{tikzpicture}[scale=0.38]
+% 	   \begin{axis}[
+%                     width=.5\textwidth,
+%                     height=0.4\textwidth,
+% 				xtick={0,0.2,0.4,0.6,0.8,1},
+% 				xticklabels={,$20\%$,$40\%$,$60\%$,$80\%$,$100\%$},
+% 				xmin=0.1,xmax=1.1,
+% 				ymin=0,ymax=100000,
+% 				ymode = log,
+% 				mark size=4pt,
+%                     line width=2.5pt,
+% 				% ylabel={\huge \bf Running time (ms)},
+% 				% ylabel style={yshift=-5pt},
+% 				xlabel={\huge \bf Interval length ratio},
+% 				ticklabel style={font=\huge},
+% 				every axis plot/.append style={ultra thick},
+% 				every axis/.append style={ultra thick},
+% 				]
+% 				\addplot [mark=x,color=c4] table[x=length,y=LSC]{\wiki};
+				
+% 				\addplot [mark=o,color=c6] table[x=length,y=online]{\wiki};
+%     \addplot [mark=star,color=c8] table[x=length,y=kd-tree]{\wiki};
+% 			\end{axis}
+% 	\end{tikzpicture}
+% 	}
+%         \subfigure[EM]{
+% 	   \begin{tikzpicture}[scale=0.38]
+% 	   \begin{axis}[
+%                     width=.5\textwidth,
+%                     height=0.4\textwidth,
+% 				xtick={0,0.2,0.4,0.6,0.8,1},
+% 				xticklabels={,$20\%$,$40\%$,$60\%$,$80\%$,$100\%$},
+% 				xmin=0.1,xmax=1.1,
+% 				ymin=0,ymax=100000,
+% 				ymode = log,
+% 				mark size=4pt,
+%                     line width=2.5pt,
+% 				% ylabel={\huge \bf Running time (ms)},
+% 				% ylabel style={yshift=-5pt},
+% 				xlabel={\huge \bf Interval length ratio},
+% 				ticklabel style={font=\huge},
+% 				every axis plot/.append style={ultra thick},
+% 				every axis/.append style={ultra thick},
+% 				]
+% 				\addplot [mark=x,color=c4] table[x=length,y=LSC]{\email};
+				
+% 				\addplot [mark=o,color=c6] table[x=length,y=online]{\email};
+%     \addplot [mark=star,color=c8] table[x=length,y=kd-tree]{\email};
+% 			\end{axis}
+% 	\end{tikzpicture}
+% 	}
+%         \subfigure[CT]{
+% 	   \begin{tikzpicture}[scale=0.38]
+% 	   \begin{axis}[
+%                     width=.5\textwidth,
+%                     height=0.4\textwidth,
+% 				xtick={0,0.2,0.4,0.6,0.8,1},
+% 				xticklabels={,$20\%$,$40\%$,$60\%$,$80\%$,$100\%$},
+% 				xmin=0.1,xmax=1.1,
+% 				ymin=0,ymax=100000,
+% 				ymode = log,
+% 				mark size=4pt,
+%                     line width=2.5pt,
+% 				% ylabel={\huge \bf Running time (ms)},
+% 				% ylabel style={yshift=-5pt},
+% 				xlabel={\huge \bf Interval length ratio},
+% 				ticklabel style={font=\huge},
+% 				every axis plot/.append style={ultra thick},
+% 				every axis/.append style={ultra thick},
+% 				]
+% 				\addplot [mark=x,color=c4] table[x=length,y=LSC]{\tsv};
+				
+% 				\addplot [mark=o,color=c6] table[x=length,y=online]{\tsv};
+%     \addplot [mark=star,color=c8] table[x=length,y=kd-tree]{\tsv};
+% 			\end{axis}
+% 	\end{tikzpicture}
+% 	}
+% \caption{Effect of the length of query interval.}
+% \label{fig:length}
+% \end{figure*}
+
+
+
+% \subsection{Overall result}
+% \label{sec:experiment-overall}
+% We will provide the average response time under default settings as the overall experiment results. For each dataset, we generate 1000 queries with the default setting and record the average response time of each algorithm. Note that although weighted counting and binary counting are different problems, the online algorithms and query format of these two problems are the same. So we put the experiment results of these two problems into the same figure, Figure \ref{fig:overall}. From Figure \ref{fig:overall}, we can conclude that our online algorithm \EDTTC runs faster than \DOTTT in every dataset. Besides, the running time of \LSC remains extremely low in every dataset no matter the dataset size. The response time of kd-tree increases with the dataset size, but it remains very efficient.
+
+% \begin{figure}[ht]	
+% 	\centering
+
+% 	\begin{tikzpicture}[scale=0.7]
+%     		\begin{axis}[
+%     			ybar,
+%     			bar width=0.2cm,
+%     			width=.5\textwidth,
+%                     height=0.4\textwidth,
+%     			xtick={1,2,3,4,5},	xticklabels={GR,ST,WK,EM,CT},
+%     			x tick label style={rotate=0},
+%     			legend style = {
+%                         legend columns=-1,
+%             		font=\footnotesize,
+%                         draw=none,
+%                     },
+%     			legend entries={DOTTT, EDTTC, kd-tree, LSC},
+%     			xmin=0,xmax = 6,
+%     			ymin=0,ymax=100000000,
+%     			ymode =log,
+%             log origin=infty,
+%     			ylabel style={yshift=-5pt},
+%     			ylabel={\Large Average response time ($\mu$s)},
+%     			ticklabel style={font=\large},
+% 				every axis plot/.append style={ultra thick},
+% 				every axis/.append style={ultra thick},
+%     			]
+%     			\addplot[pattern=north west lines, pattern color=orange] table[x=datasets,y=DOTTT]{\baseline};
+%     			\addplot[pattern = grid, pattern color=blue] table[x=datasets,y=TTC]{\baseline};
+%     			\addplot[pattern = crosshatch dots,pattern color=green] table[x=datasets,y=kd-tree]{\baseline};
+%        \addplot[pattern = crosshatch dots,pattern color=red] table[x=datasets,y=LSC]{\baseline};
+%     		\end{axis}
+%     \end{tikzpicture}
+%     	\caption{Overall result under default settings on different datasets.}
+% 	\label{fig:overall}
+% \end{figure}
+
+% \subsection{Effect of different query settings}
+% \label{sec:experiment-query}
+% \subsubsection{Effect of the ratio of query duration $\delta$}
+
+% We will first evaluate the effect of query $\delta$. For each graph, we fix the query interval length and sampling factor as defaulted. We consider five types of $\delta$, i.e., $10\%$, $30\%$, $50\%$, $70\%$, $90\%$ of the query interval length respectively. For each $\delta$, we generate 1000 queries where $t_s$ is selected randomly. Figure \ref{fig:query-delta} shows the testing result. Note that only kd-tree's time complexity is affected by the duration $\delta$. So only the response time of kd-tree varies with the change of $\delta$, while the other three algorithms' response times don't change too much. 
+
+ 
+
+
+% \subsubsection{Effect of the length of query intewrval}
+
+
+% To evaluate the effect of the length of query intervals, for each graph, we fix the query $\delta$ and sampling factor as defaulted and consider five query time interval lengths, i.e., $20\%$, $40\%$, $60\%$, $80\%$, $100\%$ of $t_{max}$ respectively. For each length, we generate 10000 queries where $t_s$ is selected randomly (For the \EDTTC algorithm on ST and GR, we only run 1000 queries due to the large time cost). Figure \ref{fig:length} reports the average time cost of answering one query on all five graphs as efficiency results. Note that since \DOTTT is designed only for different duration $\delta$ and it is not as efficient as our \online algorithm, we only use \online as our online algorithm. When the time interval becomes larger, \online and kd-tree take more time to respond, 
+% while \LSC's cost does not change much, even taking less time. Because when the query interval is $[0,t_{max}]$, the $t_s, t_e$ indexes only cost $O(1)$ time complexity to respond.
+
+% \subsection{Effect of different construction settings}
+% \label{sec:experiment-construction-settings}
+% \subsubsection{Weighted counting}
+% %
+% We analyze the query runtime variation caused by different sampling factors as well. For each graph, we choose five different values of sampling factor $k$, i.e., $1\%$, $5\%$, $10\%$, $20\%$, and $30\%$. We generate 10000 queries with default attributes and select $t_s$ randomly. We answer the queries with indexes with different sampling factors and compute the average responding time. Note the increasing rate of responding time is much slower than the increasing rate of sampling factor.
+
+
+% \begin{figure}[ht]
+%         \centering
+% 	\ref{named4}\\
+% 	\subfigure[WK]{
+% 	\begin{tikzpicture}[scale=0.38]
+% 	   \begin{axis}[
+% 			    legend style = {
+% 				    legend columns=-1,
+% 				    font=\footnotesize,
+%                         draw=none,
+% 				},
+% 				legend to name=named4,
+%                 legend image post style={scale=0.8, ultra thick},
+%                  width=.5\textwidth,
+%                 height=0.4\textwidth,
+%                 xtick={0.01,0.05,0.1,0.2,0.3},
+% 				xticklabels={$1\%$,$5\%$,$10\%$,$20\%$,$30\%$},
+% 				xmin=0,xmax=0.3,
+% 				ymin=0,ymax=0.1,
+% 				ymode = log,
+% 				mark size=4pt,
+% 				ylabel={\huge \bf Running time ($\mu$s)},
+% 				ylabel style={yshift=-5pt},
+% 				xlabel={\huge \bf sampling factor},
+% 				ticklabel style={font=\huge},
+% 				every axis plot/.append style={ultra thick},
+% 				every axis/.append style={ultra thick},
+% 				]
+% 				\addplot [mark=x,color=c4] table[x=length,y=LSC]{\wikifq};
+				
+				
+				
+% 				\legend{{\small \LSC}, {\small kd-tree}, {\small  \EDTTC}}
+% 			\end{axis}
+% 	\end{tikzpicture}
+% 	}
+%  \subfigure[EM]{
+% 	\begin{tikzpicture}[scale=0.38]
+% 	   \begin{axis}[
+%     width=.5\textwidth,
+%                 height=0.4\textwidth,
+% 				xtick={0.01,0.05,0.1,0.2,0.3},
+% 				xticklabels={$1\%$,$5\%$,$10\%$,$20\%$,$30\%$},
+% 				xmin=0,xmax=0.3,
+% 				ymin=0,ymax=0.1,
+% 				ymode = log,
+% 				mark size=4pt,
+% 				xlabel={\huge \bf sampling factor},
+% 				ticklabel style={font=\huge},
+% 				every axis plot/.append style={ultra thick},
+% 				every axis/.append style={ultra thick},
+% 				]
+% 				\addplot [mark=x,color=c4] table[x=length,y=LSC]{\emailfq};
+				
+				
+% 			\end{axis}
+% 	\end{tikzpicture}
+% 	}
+%  \caption{Effect of the sampling factor for querying.}
+% \label{fig:factor}
+% \end{figure}
+
+
+\begin{comment}
+     \subfigure[WK]{
+	\begin{tikzpicture}[scale=0.28]
+	   \begin{axis}[
+				xtick={0.01,0.05,0.1,0.2,0.3},
+				xticklabels={$1\%$,$5\%$,$10\%$,$20\%$,$30\%$},
+				xmin=0,xmax=0.3,
+				ymin=0,ymax=1,
+				ymode = log,
+				mark size=4pt,
+				ylabel={\huge \bf Running time (ms)},
+				ylabel style={yshift=-5pt},
+				xlabel={\huge \bf sampling factor},
+				ticklabel style={font=\huge},
+				every axis plot/.append style={ultra thick},
+				every axis/.append style={ultra thick},
+				]
+				\addplot [mark=x,color=c4] table[x=length,y=LSC]{\wikifq};
+				\addplot [mark=square,color=c5] table[x=length,y=wavelet tree]{\wikifq};
+				
+			\end{axis}
+	\end{tikzpicture}
+	}
+ \subfigure[EM]{
+	\begin{tikzpicture}[scale=0.28]
+	   \begin{axis}[
+				xtick={0.01,0.05,0.1,0.2,0.3},
+				xticklabels={$1\%$,$5\%$,$10\%$,$20\%$,$30\%$},
+				xmin=0,xmax=0.3,
+				ymin=0,ymax=1,
+				ymode = log,
+				mark size=4pt,
+				ylabel={\huge \bf Running time (ms)},
+				ylabel style={yshift=-5pt},
+				xlabel={\huge \bf sampling factor},
+				ticklabel style={font=\huge},
+				every axis plot/.append style={ultra thick},
+				every axis/.append style={ultra thick},
+				]
+				\addplot [mark=x,color=c4] table[x=length,y=LSC]{\emailfq};
+				\addplot [mark=square,color=c5] table[x=length,y=wavelet tree]{\emailfq};
+				
+			\end{axis}
+	\end{tikzpicture}
+	}
+ \subfigure[CT]{
+	\begin{tikzpicture}[scale=0.28]
+	   \begin{axis}[
+				xtick={0.01,0.05,0.1,0.2,0.3},
+				xticklabels={$1\%$,$5\%$,$10\%$,$20\%$,$30\%$},
+				xmin=0,xmax=0.3,
+				ymin=0,ymax=1,
+				ymode = log,
+				mark size=4pt,
+				ylabel={\huge \bf Running time (ms)},
+				ylabel style={yshift=-5pt},
+				xlabel={\huge \bf sampling factor},
+				ticklabel style={font=\huge},
+				every axis plot/.append style={ultra thick},
+				every axis/.append style={ultra thick},
+				]
+				\addplot [mark=x,color=c4] table[x=length,y=LSC]{\tsvfq};
+				\addplot [mark=square,color=c5] table[x=length,y=wavelet tree]{\tsvfq};
+				
+			\end{axis}
+	\end{tikzpicture}
+	}
+
+  
+
+
+Last, we will show the affection of the sampling factor to the entire processing time, including index construction and query solving. We choose five different values of sampling factor $k$, i.e., $1\%$, $5\%$, $10\%$, $20\%$, and $30\%$. Figure 16 reports the processing results. Note that  Additionally, even the construction time complexity of LSC and wavelet tree are the same. The construction of LSC is faster than that of the wavelet tree, possibly because it does not need any recursion, which reduces the constant factor.
+
+
+\begin{figure}[ht]
+        \centering
+	\ref{named3}\\
+	\subfigure[WK]{
+	\begin{tikzpicture}[scale=0.38]
+	   \begin{axis}[
+			    legend style = {
+				    legend columns=-1,
+				    font=\footnotesize,
+                        draw=none,
+				},
+				legend to name=named3,
+                legend image post style={scale=0.8, ultra thick},
+                width=.5\textwidth,
+                height=0.4\textwidth,
+                xtick={0.01,0.05,0.1,0.2,0.3},
+				xticklabels={$1\%$,$5\%$,$10\%$,$20\%$,$30\%$},
+				xmin=0,xmax=0.3,
+				ymin=0,ymax=400000,
+				ymode = normal,
+				mark size=4pt,
+				ylabel={\huge \bf Processing time (ms)},
+				ylabel style={yshift=-5pt},
+				xlabel={\huge \bf sampling factor},
+				ticklabel style={font=\huge},
+				every axis plot/.append style={ultra thick},
+				every axis/.append style={ultra thick},
+				]
+				\addplot [mark=x,color=c4] table[x=length,y=LSC]{\wikif};
+				\addplot [mark=square,color=c5] table[x=length,y=wavelet tree]{\wikif};
+				
+				
+				\legend{{\small LSC}, {\small Wavelet Tree}, {\small  DOTTT}}
+			\end{axis}
+	\end{tikzpicture}
+	}
+ \subfigure[EM]{
+	\begin{tikzpicture}[scale=0.38]
+	   \begin{axis}[
+                width=.5\textwidth,
+                height=0.4\textwidth,
+				xtick={0.01,0.05,0.1,0.2,0.3},
+				xticklabels={$1\%$,$5\%$,$10\%$,$20\%$,$30\%$},
+				xmin=0,xmax=0.3,
+				ymin=0,ymax=100000,
+				ymode = normal,
+				mark size=4pt,
+				xlabel={\huge \bf sampling factor},
+				ticklabel style={font=\huge},
+				every axis plot/.append style={ultra thick},
+				every axis/.append style={ultra thick},
+				]
+				\addplot [mark=x,color=c4] table[x=length,y=LSC]{\emailf};
+				\addplot [mark=square,color=c5] table[x=length,y=wavelet tree]{\emailf};
+				
+			\end{axis}
+	\end{tikzpicture}
+	}
+
+     \subfigure[GR]{
+	\begin{tikzpicture}[scale=0.28]
+	   \begin{axis}[
+				xtick={0.01,0.05,0.1,0.2,0.3},
+				xticklabels={$1\%$,$5\%$,$10\%$,$20\%$,$30\%$},
+				xmin=0,xmax=0.3,
+				ymin=0,ymax=5000000,
+				ymode = normal,
+				mark size=4pt,
+				ylabel={\huge \bf Construction time (ms)},
+				ylabel style={yshift=-5pt},
+				xlabel={\huge \bf sampling factor},
+				ticklabel style={font=\huge},
+				every axis plot/.append style={ultra thick},
+				every axis/.append style={ultra thick},
+				]
+				\addplot [mark=x,color=c4] table[x=length,y=LSC]{\graphfivef};
+				\addplot [mark=square,color=c5] table[x=length,y=wavelet tree]{\graphfivef};
+				
+			\end{axis}
+	\end{tikzpicture}
+	}
+ 
+  \subfigure[WK]{
+	\begin{tikzpicture}[scale=0.28]
+	   \begin{axis}[
+				xtick={0.01,0.05,0.1,0.2,0.3},
+				xticklabels={$1\%$,$5\%$,$10\%$,$20\%$,$30\%$},
+				xmin=0,xmax=0.3,
+				ymin=0,ymax=500000,
+				ymode = normal,
+				mark size=4pt,
+				ylabel={\huge \bf Construction time (ms)},
+				ylabel style={yshift=-5pt},
+				xlabel={\huge \bf sampling factor},
+				ticklabel style={font=\huge},
+				every axis plot/.append style={ultra thick},
+				every axis/.append style={ultra thick},
+				]
+				\addplot [mark=x,color=c4] table[x=length,y=LSC]{\wikif};
+				\addplot [mark=square,color=c5] table[x=length,y=wavelet tree]{\wikif};
+				
+			\end{axis}
+	\end{tikzpicture}
+	}
+ 
+ \subfigure[CT]{
+	\begin{tikzpicture}[scale=0.28]
+	   \begin{axis}[
+				xtick={0.01,0.05,0.1,0.2,0.3},
+				xticklabels={$1\%$,$5\%$,$10\%$,$20\%$,$30\%$},
+				xmin=0,xmax=0.3,
+				ymin=0,ymax=10000,
+				ymode = normal,
+				mark size=4pt,
+				ylabel={\huge \bf Construction time (ms)},
+				ylabel style={yshift=-5pt},
+				xlabel={\huge \bf sampling factor},
+				ticklabel style={font=\huge},
+				every axis plot/.append style={ultra thick},
+				every axis/.append style={ultra thick},
+				]
+				\addplot [mark=x,color=c4] table[x=length,y=LSC]{\tsvf};
+				\addplot [mark=square,color=c5] table[x=length,y=wavelet tree]{\tsvf};
+				
+			\end{axis}
+	\end{tikzpicture}
+	}
+
+ 
+\caption{Effect of the sampling factor for the entire process.}
+\label{fig:factor}
+\end{figure}
+
+\end{comment}
+
+% Last, we will report the accuracy of the sampling algorithm with different sampling factors. For each graph, we choose five different values of sampling factor $k$, i.e., $1\%$, $5\%$, $10\%$, $20\%$, and $30\%$. We generate 10000 queries with default attributes and select $t_s$ randomly. Suppose the exact answer is $a$ and the sampling answer is $b$, we will measure the accuracy by using the relative error, $\frac{|b-a|}{a}$. As is shown in table \ref{tab:accuracy}, storing only $1\%$ of the C-points can keep the relative error less than one thousandth. 
+% And if we store $20\%$ of the points, we can keep the relative error less than one ten-thousandth. Thus, the sampling algorithm performs well on large graphs.
+% \begin{table}[ht]
+% \centering
+%     \scalebox{0.8}{
+%     \begin{tabular}{c|c|c|c|c|c}
+%     \hline
+%      \diagbox{Datasets}{$k$}    &  $1\%$ & $5\%$ & $10\%$ & $20\%$ & $30\%$ \\
+%     \hline\hline
+%          GR& $0.0666\%$ & $0.0361\%$ & $0.0208\%$ & $0.0071\%$& $0.0039\%$
+% \\
+%     \hline
+%      ST & $0.0166\%$ & $0.0098\%$ & $0.0076\%$ & $0.0095\%$ & $0.0073\%$\\
+%      \hline
+%     \end{tabular}
+%     }
+%     \caption{Sampling accuracy measured by relative error for weighted counting.}
+%     \label{tab:accuracy}
+% \end{table}
+%
+
+% \subsubsection{Binary counting}
+
+% We will first evaluate the effect of the length of the query intervals. Similar to what we did in the weighted part, for each graph, we fix the time intervals, i.e., $20\%$, $40\%$, $60\%$, $80\%$, $100\%$ of $t_{max}$ respectively. For each length, we generate 10000 queries where $t_s$ is selected randomly. Figure \ref{fig:length} reports the average time cost of answering one query on all five graphs as efficiency results. Note that although binary counting is a 3D point counting problem and harder than weighted counting, our index-based solution still runs up to $10^4\times$ faster than the online algorithm.
+
+\begin{comment}
+Then we will evaluate the influence of query $\delta$. For each graph, we fix the query interval length and sampling factor as defaulted. We consider five types of $\delta$, i.e., $10\%$, $30\%$, $50\%$, $70\%$, $90\%$ of the query interval length respectively. For each $\delta$, we generate 10000 queries where $t_s$ is selected randomly. Figure \ref{fig:deltaB} shows the testing result. Note that for kd-tree, $\delta$ also affects the running time, which is different from the other algorithms. This is because the converted binary counting is a 3D counting problem and $\delta$ is one of the dimensions. 
+
+\begin{figure}[ht]
+        \centering
+	\ref{named6}\\
+	\subfigure[GR]{
+	\begin{tikzpicture}[scale=0.38]
+	   \begin{axis}[
+			    legend style = {
+				    legend columns=-1,
+				    font=\footnotesize,
+                        draw=none,
+				},
+				legend to name=named6,
+                legend image post style={scale=0.8, ultra thick},
+                width=.5\textwidth,
+                height=0.4\textwidth,
+                xtick={0,0.1,0.3,0.5,0.7,0.9},
+				xticklabels={$0\%$,$10\%$,$30\%$,$50\%$,$70\%$,$90\%$},
+				xmin=0,xmax=1,
+				ymin=0,ymax=200,
+				ymode = normal,
+				mark size=4pt,
+				ylabel={\huge \bf Running time ($\mu$s)},
+				ylabel style={yshift=-5pt},
+				xlabel={\huge \bf $\delta$ length ratio},
+				ticklabel style={font=\huge},
+				every axis plot/.append style={ultra thick},
+				every axis/.append style={ultra thick},
+				]
+				\addplot [mark=star,color=c8] 
+				table[x=length,y=kd-tree]{\graphfived};
+				\legend{{\small  kd-tree}}
+			\end{axis}
+	\end{tikzpicture}
+	}
+ \subfigure[ST]{
+	\begin{tikzpicture}[scale=0.38]
+	   \begin{axis}[
+                width=.5\textwidth,
+                height=0.4\textwidth,
+				xtick={0,0.1,0.3,0.5,0.7,0.9},
+				xticklabels={$0\%$,$10\%$,$30\%$,$50\%$,$70\%$,$90\%$},
+				xmin=0,xmax=1,
+				ymin=0,ymax=20,
+				ymode = normal,
+				mark size=4pt,
+				xlabel={\huge \bf $\delta$ length ratio},
+				ticklabel style={font=\huge},
+				every axis plot/.append style={ultra thick},
+				every axis/.append style={ultra thick},
+				]
+				\addplot [mark=star,color=c8] 
+				table[x=length,y=kd-tree]{\stackoverflowd};
+			\end{axis}
+	\end{tikzpicture}
+	}
+ \caption{Effect of the ratio of query $\delta$.}
+\label{fig:deltaB}
+\end{figure}
+
+\end{comment}
+
+% We analyze the query runtime variation caused by different sampling factors as well. The method of evaluation is the same as the one for weighted counting. As is shown in Figure \ref{fig:factorB}, the increase rate of kd-tree's response time is linear to the sampling factor's increase rate.
+
+
+% \begin{figure}[ht]
+%         \centering
+% 	\ref{named6}\\
+% 	\subfigure[WK]{
+% 	\begin{tikzpicture}[scale=0.38]
+% 	   \begin{axis}[
+% 			    legend style = {
+% 				    legend columns=-1,
+% 				    font=\footnotesize,
+%                         draw=none,
+% 				},
+% 				legend to name=named6,
+%                 legend image post style={scale=0.8, ultra thick},
+%                  width=.5\textwidth,
+%                 height=0.4\textwidth,
+%                 xtick={0.01,0.05,0.1,0.2,0.3},
+% 				xticklabels={$1\%$,$5\%$,$10\%$,$20\%$,$30\%$},
+% 				xmin=0,xmax=0.3,
+% 				ymin=0,ymax=40,
+% 				ymode = normal,
+% 				mark size=4pt,
+% 				ylabel={\huge \bf Running time ($\mu$s)},
+% 				ylabel style={yshift=-5pt},
+% 				xlabel={\huge \bf sampling factor},
+% 				ticklabel style={font=\huge},
+% 				every axis plot/.append style={ultra thick},
+% 				every axis/.append style={ultra thick},
+% 				]
+% 				\addplot [mark=star,color=c8] table[x=length,y=kd-tree]{\wikifq};
+				
+				
+% 				\legend{{\small  kd-tree}}
+% 			\end{axis}
+% 	\end{tikzpicture}
+% 	}
+%  \subfigure[EM]{
+% 	\begin{tikzpicture}[scale=0.38]
+% 	   \begin{axis}[
+%     width=.5\textwidth,
+%                 height=0.4\textwidth,
+% 				xtick={0.01,0.05,0.1,0.2,0.3},
+% 				xticklabels={$1\%$,$5\%$,$10\%$,$20\%$,$30\%$},
+% 				xmin=0,xmax=0.3,
+% 				ymin=0,ymax=5,
+% 				ymode = normal,
+% 				mark size=4pt,
+% 				xlabel={\huge \bf sampling factor},
+% 				ticklabel style={font=\huge},
+% 				every axis plot/.append style={ultra thick},
+% 				every axis/.append style={ultra thick},
+% 				]
+% 				\addplot [mark=star,color=c8] table[x=length,y=kd-tree]{\emailfq};
+				
+				
+% 			\end{axis}
+% 	\end{tikzpicture}
+% 	}
+%  \caption{Effect of the sampling factor for querying.}
+% \label{fig:factorB}
+% \end{figure}
+
+% Last, we will report the accuracy of the sampling algorithm with different sampling factors. The setup and measurement are the same as what we do in the weighted counting part.
+% As is shown in table \ref{tab:accuracyB}, storing only $1\%$ of the C-points can keep the relative error around one thousandth. 
+% And if we store $30\%$ of the points, we can keep the relative error less than three ten-thousandth. Thus, the sampling algorithm also performs well on large graphs for binary counting.
+% \begin{table}[ht]
+% \centering
+%     \scalebox{0.8}{
+%     \begin{tabular}{c|c|c|c|c|c}
+%     \hline
+%      \diagbox{Datasets}{$k$}    &  $1\%$ & $5\%$ & $10\%$ & $20\%$ & $30\%$ \\
+%     \hline\hline
+%          GR& $0.0323\%$ & $0.0664\%$ & $0.0226\%$ & $0.0212\%$& $0.0264\%$
+% \\
+%     \hline
+%      ST & $0.1675\%$ & $0.1388\%$ & $0.0787\%$ & $0.0456\%$ & $0.0284\%$\\
+%      \hline
+%     \end{tabular}
+%     }
+%     \caption{Sampling accuracy measured by relative error for binary counting.}
+%     \label{tab:accuracyB}
+% \end{table}
+%
+
+
+% \subsection{Index construction}
+% \label{sec:experiment-index}
+% \subsubsection{\LSC index}
+
+% We report the time and space cost of index construction on all graphs with the default sampling factor in Table \ref{tab:LSC-construction}. Note that, the space costs of the \LSC index match the sizes of the large graphs. For the small graph, the ratio of $\frac{m}{n}$ is large so that the number of triangles will be far larger than the number of edges of the small graph. For instance, to address the weighted counting problem in dataset WK, we need to store 6599388 C-points in \LSC, while for EM, 3634450 C-points will be stored. Although WK is 23 times larger than EM, its C-point number is just two times that of EM. So the space costs of the index are relatively large in the small graphs.
+
+
+% \begin{table}[ht]
+%     \centering
+%     \scalebox{0.88}{
+%     \begin{tabular}{c|c|c|c|c|c}
+%     \hline
+%     \diagbox{costs}{Datasets}     & GR&ST&WK&EM&CT \\
+%     \hline\hline
+%      time($\mu$s)    & 5,636,728 & 8,491,875 & 723,897& 292,519& 11,488\\
+%      \hline
+%      space(mb) & 77,107 & 339,456 & 81,612 & 26,215 & 1,946\\
+%      \hline
+%     \end{tabular}
+%     }
+%     \caption{Construction costs for weighted counting.}
+%     \label{tab:LSC-construction}
+% \end{table}
+
+% \begin{figure}[h]	
+% 	\centering
+% 	\begin{tikzpicture}[scale=0.37]
+%     		\begin{axis}[
+%     			ybar,
+%     			bar width=0.8cm,
+%     			width=.65\textwidth,
+%                     height=0.3\textwidth,
+%     			xtick={1,2,3,4,5},	
+%                     xticklabels={GR,ST,WK,EM,CT},
+%     			legend style = {
+%                         legend columns=-1,
+%             		font=\large,
+%                         draw=none,
+%                         at={(0.8,1)/}
+%                     },
+%     			legend entries={{\tt LSC}},
+%     			xmin=0,xmax = 6,
+%     			ymin=0,ymax=100000000,
+%     			ymode =log,
+%                     log origin=infty,
+%     			ylabel style={yshift=-4pt},
+%     			ylabel={\LARGE Time ($\mu$s)},
+%     			ticklabel style={font=\LARGE},
+% 				every axis plot/.append style={ultra thick},
+% 				every axis/.append style={ultra thick},
+%     		]
+%     		% \addplot[pattern=north west lines, pattern color=orange] table[x=datasets,y=DOTTT]{\baseline};
+%     		% \addplot[pattern = grid, pattern color=blue] table[x=datasets,y=TTC]{\baseline};
+%     		% % \addplot[pattern = crosshatch dots,pattern color=green] table[x=datasets,y=kd-tree]{\baseline};
+%                 \addplot[pattern = crosshatch dots,pattern color=red] table[x=datasets,y=LSC]{\constructiontime};
+%         \end{axis}
+%         \end{tikzpicture}
+
+%         \begin{tikzpicture}[scale=0.37]
+%     		\begin{axis}[
+%     			ybar,
+%     			bar width=0.8cm,
+%     			width=.65\textwidth,
+%                     height=0.3\textwidth,
+%     			xtick={1,2,3,4,5},	
+%                     xticklabels={GR,ST,WK,EM,CT},
+%     			legend style = {
+%                         legend columns=-1,
+%             		font=\large,
+%                         draw=none,
+%                         at={(0.8,1)/}
+%                     },
+%     			legend entries={{\tt LSC}},
+%     			xmin=0,xmax = 6,
+%     			ymin=0,ymax=1000000,
+%     			ymode =log,
+%                     log origin=infty,
+%     			ylabel style={yshift=-4pt},
+%     			ylabel={\LARGE Space (mb)},
+%     			ticklabel style={font=\LARGE},
+% 				every axis plot/.append style={ultra thick},
+% 				every axis/.append style={ultra thick},
+%     		]
+%     		% \addplot[pattern=north west lines, pattern color=orange] table[x=datasets,y=DOTTT]{\baseline};
+%     		% \addplot[pattern = grid, pattern color=blue] table[x=datasets,y=TTC]{\baseline};
+%     		% % \addplot[pattern = crosshatch dots,pattern color=green] table[x=datasets,y=kd-tree]{\baseline};
+%                 \addplot[pattern = crosshatch dots,pattern color=blue] table[x=datasets,y=LSC]{\constructionspace};
+%         \end{axis}
+%         \end{tikzpicture}
+%         \caption{Index construction time and space.}
+% 	\label{fig:overall}
+% \end{figure}
+
+
+
+
+\begin{comment}
+\begin{figure}[h]	
+	\centering
+ \subfigure[time costs]{
+	\begin{tikzpicture}[scale=0.38]
+    		\begin{axis}[
+    			ybar,
+    			bar width=0.2cm,
+    			width=.5\textwidth,
+                    height=0.4\textwidth,
+    			xtick=data,	xticklabels={GR,ST,WK,EM,CT},
+    			x tick label style={rotate=-15,anchor=west},
+    			legend style = {
+                        legend columns=-1,
+            		font=\footnotesize,
+                        draw=none,
+                    },
+    			legend entries={TTM, LSC, wavelet tree},
+    			xmin=0,xmax = 6,
+    			ymin=0,ymax=20000000,
+    			ymode =log,
+    			ylabel style={yshift=-5pt},
+    			ylabel={\Large Constrution time ($\mu$s)},
+    			ticklabel style={font=\large},
+				every axis plot/.append style={ultra thick},
+				every axis/.append style={ultra thick},
+    			]
+    			\addplot[pattern=north west lines, pattern color=orange] table[x=datasets,y=fetching]{\construction};
+    			\addplot[pattern = grid, pattern color=blue] table[x=datasets,y=LSC]{\construction};
+    			\addplot[pattern = crosshatch dots,pattern color=green] table[x=datasets,y=wavelet tree]{\construction};
+    		\end{axis}
+    \end{tikzpicture}
+    }
+    \subfigure[space costs]{
+	\begin{tikzpicture}[scale=0.38]
+    		\begin{axis}[
+    			ybar,
+    			bar width=0.2cm,
+    			width=.5\textwidth,
+                    height=0.4\textwidth,
+    			xtick=data,	xticklabels={GR,ST,WK,EM,CT},
+    			x tick label style={rotate=-15,anchor=west},
+                    legend style = {
+                        legend columns=-1,
+            		font=\footnotesize,
+                        draw=none,
+                    },
+    			legend entries={LSC, wavelet tree},
+    			xmin=0,xmax = 6,
+    			ymin=0,ymax=200000,
+    			ymode =log,
+    			ylabel style={yshift=-5pt},
+    			ylabel={\Large Space cost (mb)},
+    			ticklabel style={font=\large},
+				every axis plot/.append style={ultra thick},
+				every axis/.append style={ultra thick},
+    			]
+    			\addplot[pattern=north west lines, pattern color=orange] table[x=datasets,y=TTC]{\constructionspace};
+    			\addplot[pattern = grid, pattern color=blue] table[x=datasets,y=LSC]{\constructionspace};
+    			\addplot[pattern = crosshatch dots,pattern color=green] table[x=datasets,y=wavelet tree]{\constructionspace};
+    		\end{axis}
+    \end{tikzpicture}
+    }
+	\caption{Construction on different data sets ($k=0.01$).}
+	\label{fig:construction}
+\end{figure}
+
+\end{comment}
+% Last, for each graph, we represent the minimum number of full-length queries needed to make the index algorithm based on \LSC faster than the online algorithm based on \EDTTC in Table \ref{tab:amortize}. These numbers are very small compared with the number of timestamps, especially for the large graph. So the index-based algorithm performs better than the online algorithm even if we only need a small number of queries.
+
+% \begin{table}[htbp]
+%   \centering
+  
+  
+%   \small
+%   \begin{tabular}{c|c|c|c|c|c}
+%     \hline
+%      Datasets & GR & ST & WK & EM & CT \\
+%     \hline\hline
+%     Numbers & 7 & 63 & 61 & 1230 & 311\\
+%     \hline
+%   \end{tabular}
+%   \caption{Number of queries with default setting required to amortize the index construction cost.}
+%   \label{tab:amortize}
+% \end{table}
+
+% \subsubsection{kd-tree}
+
+%
+% For binary counting, we will report the time costs and the space costs of all graphs in one table, with the default sampling factor.
+% \begin{table}[ht]
+%     \centering
+%     \scalebox{0.88}{
+%     \begin{tabular}{c|c|c|c|c|c}
+%     \hline
+%     Datasets     & GR&ST&WK&EM&CT \\
+%     \hline\hline
+%      time($\mu$s)    & 13,001,082 & 1,280,309 & 50,188& 752 & 154\\
+%      \hline
+%      space(mb) & 137,830 & 17,203 & 1,638 & 45 & 13\\
+%      \hline
+%     \end{tabular}
+%     }
+%     \caption{Construction costs for binary counting.}
+%     \label{tab:my_label}
+% \end{table}
+%
+% For binary counting, we will report the time costs and the space costs of all graphs in one table, with the default sampling factor.
+% We will also report the minimum number of full-length queries needed to make the index algorithm faster than the \EDTTC algorithm.
+% \begin{table}[htbp]
+%   \centering
+  
+  
+%   \small
+%   \begin{tabular}{c|c|c|c|c|c}
+%     \hline
+%      Datasets & GR & ST & WK & EM & CT \\
+%     \hline\hline
+%     Numbers & 12 & 10 & 5 & 4 & 5\\
+%     \hline
+%   \end{tabular}
+%   \caption{Number of queries with default setting required to amortize the index construction cost for binary counting.}
+%   \label{tab:amortize}
+% \end{table}
+% For binary counting, we will report the time costs and the space costs of all graphs in one table, with the default sampling factor.
+% We will also report the minimum number of full-length queries needed to make the index algorithm faster than the \EDTTC algorithm.
+% Note that for all datasets, the number needed is small, so for binary counting, our index-based algorithm performs better than the online algorithm even if there are only a few queries needed.
+%
+% \subsection{Experiments for extensions}
+% \label{sec:experiment-extension}
+% We will first report the experiments in directed graphs by evaluating the effect of the query interval length on both weighted query and binary query. We fix the query $\delta$ and sampling factor as defaulted and consider five different query time interval lengths, i.e.,  $20\%$, $40\%$, $60\%$, $80\%$, $100\%$ of $t_{max}$ respectively. For each length, we generate 10000 queries where $t_s$ is selected randomly (For the \EDTTC algorithm on ST, we only generate 1000 queries due to the large time cost). Figure \ref{fig:direct} reports the average time cost of answering one query as efficiency results. Note that the experiment results of directed graphs are very similar to the results of undirected graphs, indicating that our algorithms can be applied to directed graphs as well.
+
+% \begin{figure}[ht]
+%         \centering
+% 	\ref{named19}\\
+% 	\subfigure[ST]{
+% 	   \begin{tikzpicture}[scale=0.38]
+% 	   \begin{axis}[
+% 			    legend style = {
+% 				    legend columns=-1,
+% 				    font=\footnotesize,
+%                         draw=none,
+% 				},
+% 				legend to name=named19,
+%                     legend image post style={scale=0.8, ultra thick},
+%                     width=.5\textwidth,
+%                     height=0.4\textwidth,
+%                     xtick={0,0.2,0.4,0.6,0.8,1},
+% 				xticklabels={,$20\%$,$40\%$,$60\%$,$80\%$,$100\%$},
+% 				xmin=0.1,xmax=1.1,
+% 				ymin=0,ymax=10000000,
+% 				ymode = log,
+% 				mark size=4pt,
+%                     line width=2.5pt,
+% 				ylabel={\huge \bf Running time ($\mu$s)},
+% 				ylabel style={yshift=-5pt},
+% 				xlabel={\huge \bf Interval length ratio},
+% 				ticklabel style={font=\huge},
+% 				every axis plot/.append style={ultra thick},
+% 				every axis/.append style={ultra thick},
+% 				]
+% 				\addplot [mark=x,color=c4] table[x=length,y=LSC]{\stackoverflowdirectcircle};
+% 				\addplot [mark=o,color=c6] table[x=length,y=TTC]{\stackoverflowdirectcircle};
+%     \addplot [mark=star,color=c8] table[x=length,y=kd-tree]{\stackoverflowdirectcircle};
+% 				\legend{{\small LSC}, {\small  TTC},{\small kd-tree}}
+% 			\end{axis}
+% 	\end{tikzpicture}
+% 	}
+%         \subfigure[WK]{
+% 	   \begin{tikzpicture}[scale=0.38]
+% 	   \begin{axis}[
+%                     width=.5\textwidth,
+%                     height=0.4\textwidth,
+% 				xtick={0,0.2,0.4,0.6,0.8,1},
+% 				xticklabels={,$20\%$,$40\%$,$60\%$,$80\%$,$100\%$},
+% 				xmin=0.1,xmax=1.1,
+% 				ymin=0,ymax=100000,
+% 				ymode = log,
+% 				mark size=4pt,
+%                     line width=2.5pt,
+% 				% ylabel={\huge \bf Running time (ms)},
+% 				% ylabel style={yshift=-5pt},
+% 				xlabel={\huge \bf Interval length ratio},
+% 				ticklabel style={font=\huge},
+% 				every axis plot/.append style={ultra thick},
+% 				every axis/.append style={ultra thick},
+% 				]
+% 				\addplot [mark=x,color=c4] table[x=length,y=LSC]{\wikidirectcircle};
+% 				\addplot [mark=o,color=c6] table[x=length,y=TTC]{\wikidirectcircle};
+%     \addplot [mark=star,color=c8] table[x=length,y=kd-tree]{\wikidirectcircle};
+% 			\end{axis}
+% 	\end{tikzpicture}
+% 	}
+        
+%  \caption{Effect of the length of query interval for directed graph.}
+% \label{fig:direct}
+
+% \end{figure}
+% Then we will evaluate the efficiency of index maintenance. We will first build the LSC index with edges in $[0,0.8t_{max}]$. Then, we update the index with the remaining edges in $[0.8t_{max}+1, t_{max}]$. Table \ref{tab:update} shows the average time for updating one edge in the \LSC index of different datasets. It is obvious that updating the index is faster than rebuilding the index from scratch.
+
+
+% \subsection{Case study for dataset WK}
+
+% \label{sec:experiment-case-study}
+% We have settled a series of queries for tracking the trend of counting results in dataset WK.
+% Formally speaking, the query settings will be $t_e -t_s = 0.2t_{max}$, $\delta = 0.1(t_e-t_s)$, and sampling factor $k = 1$ (storing every C-point to keep the accuracy). Then we generate 1000 queries and the $t_s$ of $ith$ query is $\frac{0.8t_{max}}{1000}\times i$.
+
+% Now we can track the trend of counting results, and the result is shown in Figure \ref{fig:case_study}. Note that for dataset WK, the sharp decline of the number of $\delta$-temporal triangles at the beginning is obvious, which means something unusual happened during that time in this dataset.
+
+% \begin{figure}[h]
+%     \centering
+%     \centering %图片居中
+%     {
+%         \begin{tikzpicture}[scale=0.9] %tikz图片
+%         \begin{axis}[
+%             xlabel= {\footnotesize \bf Query id}, %横坐标名
+%             ylabel= {\footnotesize \bf Number of $\delta$-temporal triangles}, %纵坐标名
+%             % ylabel style={yshift=-12pt},
+%             xlabel style={yshift=5pt},
+%             ymode = normal,
+%             xmode = normal,
+%             xmin=-10,xmax=1010,
+%             ymin=1,ymax=3e8,
+%             mark size=0.0pt,
+%             width=0.515\textwidth,
+%             height=0.24\textwidth,
+%             ticklabel style={font=\footnotesize},
+%             every axis plot/.append style={line width= 1.1pt},
+%             %ytick = {1e3, 1e5, 1e8},
+%             ytick = {5e7,1e8,1.5e8,2e8,2.5e8},
+%             xtick = {1, 250, 500, 750, 1000},
+%             every axis/.append style={line width= 0.8pt},
+%             legend style = {
+%                 at={(0.92,1)},
+%     		legend columns=5,
+%                 font=\footnotesize,
+%                 draw=none,
+%     	},
+%          ]
+        
+%         % \addplot[smooth,mark=*,c3] table {figure/trend/res_CT.txt};
+%         % \addlegendentry{CT}
+%         \addplot[smooth,mark=*,c1] table {figure/trend/rw_WK.txt};
+%         \addlegendentry{Number of $\delta$-temporal triangles in WK}
+%      \end{axis}
+%      \end{tikzpicture}
+%  }
+ 
+%  \setlength{\abovecaptionskip}{-0.001cm}
+%  \setlength{\belowcaptionskip}{-5pt}
+% \caption{Trends of counting result in dataset WK.}
+% \label{fig:case_study}
+% \end{figure}

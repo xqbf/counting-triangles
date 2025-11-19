@@ -1,0 +1,44 @@
+\vspace{-0.1in}
+\section{Related Work}
+\label{sec:related}
+
+In this section, we review the related works of triangle counting in static and temporal graphs.
+
+$\bullet$ {\bf Triangle counting in static graphs.}
+%
+As an essential problem in network analysis, triangle counting has garnered significant research attention.
+%
+Most existing works have concentrated on static undirected graphs.
+%
+The exact counting solution, relying on enumeration, is bounded by $O(m\kappa)$~\cite{chiba1985arboricity}. 
+%
+Alternatively, counting triangles through matrix multiplication improves time complexity~\cite{al2018triangle}.
+%
+Recent advancements have pushed the time complexity bottleneck of matrix multiplication to $O(n^{2.371552})$~\cite{williams2024new}.
+
+Additionally, some works focus on approximating the number of triangles either through local or global counting methods.
+%
+For example, Kolountzakis and Miller~\cite{kolountzakis2012efficient} presented a method for approximating the local number of triangles, while several studies \cite{tsourakakis2009approximate,eden2017approximately,chen2018mining} focused on estimating global triangle counting.
+%
+Despite this positive research progress, these methods cannot be directly applied to triangle counting in temporal graphs since they do not consider temporal information.
+
+$\bullet$ {\bf Triangle counting in temporal graphs.}
+%
+Several recent works have studied triangle counting in temporal graphs.
+\cite{paranjape2017motifs} defined the $\delta$-temporal triangle and provided an algorithm of counting $\delta$-temporal triangles. \cite{pashanasangi2021faster} further defined $(\delta_{1,3},\delta_{1,2},\delta_{2,3})$-temporal triangles and provided an algorithm based on degeneracy order to count the $(\delta_{1,3},\delta_{1,2},\delta_{2,3})$-temporal triangles.
+%
+There are several papers \cite{jha2015counting,gou2021sliding} that counted the triangles within a sliding time window.
+%
+\cite{buriol2006counting,lee2020temporal} proposed efficient sampling methods for updating the number of triangles in continuously updating temporal graphs.
+%
+To the best of our knowledge, our work is the first to study counting $\delta$-triangles within arbitrary time windows in temporal graphs.
+
+In addition, many works study the counting of motifs, which are more general than triangles \cite{boekhout2019efficiently,paranjape2017motifs,liu2018sampling, zhu2021leveraging, zhu2019scalable}.
+%
+For instance, \cite{paranjape2017motifs} proposed the concept of $\delta$-temporal motif and provided a counting method for it; \cite{zhu2021leveraging} developed a temporal subgraph reporting method which could be used for solving our $\delta$-temporal triangle counting problem.
+%
+Some works focus on counting special motifs like clique \cite{himmel2016enumerating} and butterfly \cite{sanei2018butterfly,cai2023efficient}.
+%
+Besides, counting and enumerating motifs, especially the cliques, are commonly used in data mining \cite{wang2024approach,wang2023clique,wang2022preference}.
+
+\vspace{-0.1in}

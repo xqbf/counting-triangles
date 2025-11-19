@@ -1,0 +1,244 @@
+\section{Online Algorithms}
+%\section{Online algorithms for counting $\delta$-temporal triangles}
+\label{sec:online}
+
+We begin with the concept of static graph: the static graph of a temporal graph $G$=$(V,E)$ is a graph, denoted by $G^*$=($V$, $E^*$), that only stores the static edges of $G$, where $E^*=\{(u,v)|(u,v,t)\in E\}$.
+%
+To count triangles in static graphs, researchers often use the concepts of degeneracy and degeneracy order \cite{chiba1985arboricity,pashanasangi2021faster}:
+
+\begin{definition}[Degeneracy and degeneracy order \cite{pashanasangi2021faster}]
+\label{def:degeneracy}
+Given a static graph $G^*$=$(V, E^*)$, its degeneracy is the smallest integer $\kappa$, such that there exists an order $P$ of all the vertices, $v_1\prec v_2 \prec \cdots \prec v_n$, a.k.a. degeneracy order, satisfying $d^+(v) \leq \kappa$ for each $v \in V$,
+% \begin{equation}
+%     
+% \end{equation}
+where $d^+(v)$ is the size of set $N^+(v)$ of $v$'s neighbors with larger orders in $P$, i.e., $N^+(v)=\{u|v \prec u\}$.
+\end{definition}
+
+Multiple degeneracy orders may exist in a static graph. %and one degeneracy order can be efficiently computed by using an algorithm whose time complexity is linear to the number of edges in the graph \cite{matula1983smallest}.
+%
+For instance, Figure \ref{fig:tgraph}(b) depicts the static graph $G^*_{[0,2]}$ of the projected graph $G_{[0,2]}$.
+%
+Both $v_1\prec v_3 \prec v_4 \prec v_2$ and $v_3\prec v_1\prec v_4\prec v_2$ can be the possible $P$ of $G^*_{[0,2]}$, and the degeneracy of $G^*_{[0,2]}$ is two.
+
+%In the following, we first present the state-of-the-art (SOTA) algorithm \DOTTT \cite{pashanasangi2021faster} and then introduce our proposed algorithm.
+
+\subsection{The SOTA Algorithm \DOTTT}
+\label{sec:sota}
+
+To solve Problem \ref{prob:delta-counting}, a natural idea is to first extract the projected graph $G_{[t_s,t_e]}$, and then employ the algorithm of counting $\delta$-temporal triangles in $G_{[t_s,t_e]}$.
+%
+To the best of our knowledge, the SOTA algorithm is \DOTTT \cite{pashanasangi2021faster}, which has three steps:
+%
+\begin{enumerate}
+    \item Derive the degeneracy order $P$ of all vertices in $G^*_{[t_s,t_e]}$;
+    
+    \item Enumerate all the (static) triangles $\Delta_{u,v,w}$ in ${G^*_{[t_s,t_e]}}$;
+    
+    \item For each triangle in ${G^*_{[t_s,t_e]}}$, derive the number $R$ of $\delta$-temporal triangles in $G_{[t_s,t_e]}$ which share its three vertices.
+\end{enumerate}
+
+In step (1), by continually removing the vertices with the smallest degrees from the graph, we can get the degeneracy order as the deletion order. This step completes in $O(n+m)$ time \cite{matula1983smallest}.
+
+In step (2), we can use a classic triangle counting algorithm \cite{chiba1985arboricity} which costs $O(m\kappa)$ time by using the degeneracy order.
+%
+Specifically, for each edge $(u,v)$ in ${G^*_{[t_s,t_e]}}$, we first obtain $N^+(u)$ and $N^+(v)$, and then get their intersection to enumerate the triangles.
+
+In step (3), for each static triangle $\Delta_{u,v,w}$, \DOTTT counts all the $\delta$-temporal triangles containing vertices $\{u,v,w\}$, within $O( (|E(u,v)|+|E( u,w)|) \log (|E(v,w)|))$ time.
+%
+Since the details of step (3) are very complicated, we omit the introduction here.
+
+As a result, by considering all the static triangles, \DOTTT achieves a time complexity of 
+$O(\sum_{\{u,v,w\}}  ($ $|E(u,v)|+|E(u,w)|) \log (|E(v,w)|))$.
+%
+It is proved in \cite{pashanasangi2021faster} that $O(\sum_{\{u,v,w\}}  (|E( u,v)|+|E(u,w)|))= O(m\kappa)$, where $u$ has the smallest degeneracy order among $\{u,v,w\}$.
+%
+Hence, \DOTTT costs $O(m\kappa\log (m))$ time in total.
+
+\subsection{Our Online Algorithm \OTTC}
+\label{sec:edttc}
+
+In this section, we propose a faster online algorithm \OTTC with $O(m\kappa)$ time cost, 
+%
+{\color{black} %(R3.A4)
+which counts the number of $\delta$-temporal triangles by enumerating the temporal edges chronologically and tracking the number of temporal edges and wedges.
+%
+We further illustrate the steps of \OTTC by a flowchart in Figure \ref{fig:workflow-of-online}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figure/workflow of online.pdf}
+    \caption{\color{black} The flowchart of \OTTC.}
+    \label{fig:workflow-of-online}
+\end{figure}
+}
+
+
+{\color{black}
+Similar to \DOTTT, \OTTC also runs in three steps:
+%
+\begin{enumerate}
+    \item Derives the degeneracy order $P$ of $G^*_{[t_s,t_e]}$;
+    
+    \item Sequentially enumerates the timestamps $t_i\in [t_s,t_e]$, and dynamically maintains the numbers of temporal edges and wedges for each vertex pair in a sliding window of size $\delta$;
+    
+    \item Derive the counting result by exploiting the numbers of temporal edges and wedges maintained above.
+\end{enumerate}
+}
+%
+Here, a {\it temporal wedge} is formed by two temporal edges $(v_1,v_2,t)$ and $(v_1,v_3,t')$ satisfying $v_1\prec v_2$, $v_1\prec v_3$, and $|t-t'|\leq\delta$.
+%
+In Figure \ref{fig:tgraph}(a), for instance, assuming $\delta$=1, then $(v_2,v_1,1)$ and $(v_1,v_4,2)$ form a temporal wedge where the center is $v_1$.
+
+The step (1) above is the same as the step (1) of \DOTTT.
+%
+In step (2), we dynamically maintain the set $I(u,v)$ of temporal edges and the set $\Lambda(u,v)$ of temporal wedges.
+%
+Specifically, assume $I(u,v)$ has stored the number of temporal edges between $u$ and $v$, and $\Lambda(u,v)$ has stored the number of temporal wedges that take $u$ and $v$ as end vertices, in a time window $[{t_i}-\delta -1,t_i -1]$.
+%
+Then, when sliding to the next timestamp $t_{i}$, we update $I(u,v)$ and $\Lambda(u,v)$ by throwing historical edges and taking new edges (always assume $u\prec v$):
+%
+\begin{itemize}
+    \item {\bf Throw historical edges:} For each historical edge $(u,v,t_i-\delta-1)$, decrease $I(u,v)$ by 1 since this edge is not in the new time window $[t_i-\delta,t_i]$.
+    %
+    Meanwhile, decrease $\Lambda(v,w)$ by $I(u,w)$ for each vertex $w\in N^+(u)$, since removing this edge will eliminate temporal wedges that use $u$ as the centers.
+
+    \item {\bf Take new edges:} For each new edge $(u,v,t_i)$, increase $I(u,v)$ by 1 since this edge is in a new time window $[t_i-\delta,t_i]$.
+    %
+    Meanwhile, increase $\Lambda(v,w)$ by $I(u,w)$ for each vertex $w\in N^+(u)$, since adding this edge will generate temporal wedges that use $u$ as the centers.
+\end{itemize}
+
+In step (3), with the updated $I(u,v)$ and $\Lambda(u,v)$, we can count the number of temporal triangles with vertices $\{u,v,w\}$ that include the temporal edge $e=(u,v,t_i)$, by considering two different cases:
+%
+\begin{enumerate}
+    \item \textbf{$w$ has the smallest order ($w\prec u \wedge w\prec v$)}: The number of $\delta$-temporal triangles containing $e$ is $\Lambda(u,v)$, since each of them includes a temporal wedge between $u$ and $v$.
+
+    \item \textbf{$u$ has the smallest order ($u \prec w \wedge u\prec v$)} : The number of $\delta$-temporal triangles containing $e$ is $\sum_{w\in N^+(u)}I(u,w)\times I(v,w)$, since any temporal edge between $u$ and $w$ forms a triangle with any temporal edge between $v$ and $w$, and $e$.
+\end{enumerate}
+
+Note that since we assume $u\prec v$ and $v$ cannot have the smallest order, there are only two cases above.
+%
+Algorithm \ref{alg:ottc} shows \OTTC.
+%
+We first obtain $G^*_{[t_s,t_e]}$ and $P$, and initialize $I(u,v)$ and $\Lambda(u,v)$ (lines 1-2).
+%
+Then, we sequentially enumerate the timestamps (lines 4-15), during which we dynamically maintain $I(u,v)$ and $\Lambda(u,v)$ in a sliding window of duration $\delta$.
+%
+For each timestamp $t_i$, we first throw historical edges (lines 5-8), then consider each new edge, and count the number of temporal triangles containing it (lines 9-15).
+%
+Finally, we obtain the result $\Delta$ (line 16).
+
+\begin{algorithm}[ht]
+\small
+\caption{\OTTC}
+\label{alg:ottc}
+
+\KwIn{A temporal graph $G$, a time window $[t_s,t_e]$, a threshold $\delta$.}
+
+\KwOut{The number of $\delta$-temporal triangles in $G_{[t_s,t_e]}$.}
+
+Extract the static graph $G^*_{[t_s,t_e]}$ and derive its degeneracy order $P$\;
+
+\textbf{foreach} {\it $(u,v)\in G^*_{[t_s,t_e]}$} \textbf{do} $I(u,v)\gets0$, $\Lambda(u,v)\gets0$\;
+
+$\Delta \gets 0$\;
+
+\ForEach{$t_i\in [t_s,t_e]$}{
+    
+    \ForEach{$(u,v,t)\in G_{[t_s,t_e]}$ with $t  = t_i-\delta-1$}{
+        W.l.o.g., assume $u \prec v$ under $P$\;
+
+        \textbf{foreach} {$w\in N^+(u)$} \textbf{do} $\Lambda(v,w) \gets \Lambda(v,w)-I(u,w)$\;
+
+        $I(u,v) \gets I(u,v) - 1$\;
+    }
+    \ForEach{$(u,v,t_i) \in G_{[t_s,t_e]}$}{
+        W.l.o.g., assume $u \prec v$ under $P$\;
+        \ForEach{$w\in N^+(u)$}{
+            $\Lambda(v,w) \gets \Lambda(v,w) + I(u,w)$\;
+            
+            $\Delta \gets \Delta + I(u,w) \times I(v,w)$\;
+        }
+        $I(u,v) \gets I(u,v) + 1$\;
+        $\Delta \gets \Delta + \Lambda(u,v)$\;
+    }
+    
+}
+
+\Return $\Delta$\;
+
+\end{algorithm}
+
+Example \ref{eg:OTTC} further illustrates our algorithm \OTTC.
+
+\begin{example}
+\label{eg:OTTC}
+Consider the temporal graph in Figure \ref{fig:temporal_graph}(a) and let $[t_s,t_e]$ = [0,2] and $\delta$ = 1.
+%
+We first obtain the static graph $G^*_{[0,2]}$ shown in Figure \ref{fig:tgraph}(b) and derive its degeneracy order $P: v_1 \prec v_3 \prec v_4 \prec v_2$.
+%
+Then, we sequentially enumerate the timestamps in [0,2], during which we dynamically maintain $I(u,v)$ and $\Lambda(u,v)$, with values in Table \ref{tab:array}, where each cell is presented in the form $(I(u,v),\Lambda(u,v))$.
+
+Let's take the vertex pair $(v_2,v_4)$ as an example to show how to update $I(v_2,v_4)$ and $\Lambda(v_2,v_4)$.
+%
+We sequentially enumerate all the edges:
+%
+(1) $(v_1,v_2,1)$: as there is a temporal wedge between $v_2$ and $v_4$, we increase $\Lambda(v_2,v_4)$ to 1.
+%
+(2) $(v_1,v_4,2)$: the temporal wedge of $(v_1,v_4,0)$ and $(v_1,v_2,1)$ expires since $(v_1,v_4,0)$ is a historical edge, but there is another temporal wedge between $v_2$ and $v_4$, so $\Lambda(v_1,v_2)$ is still 1.
+%
+(3) $(v_2,v_4,2)$: we increase $I(v_2,v_4)$ to 1.
+\end{example}
+
+\begin{table}[ht]
+    \small
+    \centering
+    \caption{Dynamically maintain $I(u,v)$ and $\Lambda(u,v)$.}
+    \label{tab:array}
+    \resizebox{\textwidth}{!}{
+     % Adjust the font size
+    \setlength{\tabcolsep}{3pt} % Adjust horizontal padding
+    \renewcommand{\arraystretch}{1.1} % Adjust vertical padding
+    \begin{tabularx}{\textwidth}{c*{6}{|>{\centering\arraybackslash}X}}
+    \hline
+    
+    Static edges & \multicolumn{6}{c}{Temporal edges}\\
+    \hline 
+   -- &  $(v_1,v_4,0)$ & {$(v_3,v_4,0)$} & {$(v_1,v_2,1)$} & {$(v_1,v_4,2)$} & {$(v_2,v_3,2)$}  & {$(v_2,v_4,2)$} \\
+    \hline\hline
+    
+       $(v_1,v_4)$  & (1 , 0) & (1 , 0)  & (1 , 0) & (1 , 0) & (1 , 0) & (1 , 0) \\
+    \hline
+    
+        $(v_1,v_2)$ & (0 , 0) & (0 , 0)  & (1 , 0) & (1 , 0) & (1 , 0) & (1 , 0)\\
+    \hline
+    
+        $(v_2,v_4)$ & (0 , 0) & (0 , 0)  & (0 , 1) & (0 , 1) & (0 , 1) & (1 , 1)\\
+    \hline
+    
+        $(v_2,v_3)$ & (0 , 0) & (0 , 0)  & (0 , 0) & (0 , 0) & (1 , 0) & (1 , 0)\\
+    \hline
+    
+        $(v_3,v_4)$ & (0 , 0) & (1 , 0)  & (1 , 0) & (0 , 0) & (0 , 0) & (0 , 0)\\
+    \hline
+    \end{tabularx}
+    }
+\end{table}
+
+
+
+
+
+
+
+\begin{lemma}
+\label{lemma:OTTCTime}
+Given a temporal graph $G$, a query time window $[t_s,t_e]$, and a threshold $\delta$, \OTTC completes in $O(m\kappa)$ time.
+\end{lemma}
+
+\begin{proof}
+In \OTTC, for each temporal edge $(u,v,t)$, we need to access each vertex in $N^+(u)$ constant times.
+%
+Since $|N^+(u)| = d^+(u) \le \kappa$, the total time complexity of \OTTC is $O(m\kappa)$.
+\end{proof}
+

@@ -1,0 +1,203 @@
+\documentclass[acmsmall]{acmart}
+\usepackage{graphicx} % Required for inserting images
+%
+\usepackage[linesnumbered,vlined,boxed,commentsnumbered, ruled, english]{algorithm2e}
+\usepackage{tikz}
+\usepackage{diagbox}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{subfigure}
+\usepackage{color}
+\usepackage{pgfplots}
+\usepackage{multirow}
+\usetikzlibrary{patterns}
+\usepackage{balance}
+\usepackage{subfiles}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{tikz-qtree}
+\usepackage[english]{babel}
+\usetikzlibrary{plotmarks}
+\usepackage{verbatim}
+\usepackage{xcolor}
+\usepackage{algpseudocode}
+\usepackage{array}
+% \usepackage{extpfeil}
+
+\usepackage{threeparttable}
+
+
+\renewcommand{\multirowsetup}{\centering}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example} 
+\newtheorem{problem}{Problem} 
+\newtheorem{theorem}{Theorem} 
+\newtheorem{lemma}{Lemma}
+
+\lstset{
+     % columns = fixed,       
+     basicstyle = \linespread{0.7} \sffamily,             % 设置行距，字体
+     numbers = left,                                      % 在左侧显示行号
+     numberstyle = \tiny \color{gray},                    % 设定行号格式
+     keywordstyle = \bfseries \color[RGB]{40,40,255},     % 设定关键字颜色
+     numberstyle = \footnotesize \color{darkgray},           
+     commentstyle = \color[RGB]{0,96,96},                 % 设置代码注释的格式
+     stringstyle = \color[RGB]{128,0,0},                  % 设置字符串格式
+     frame = single,                                      % 不显示背景边框
+     backgroundcolor = \color[RGB]{245,245,244},          % 设定背景颜色
+     showstringspaces = false,                            % 不显示字符串中的空格
+     language=python                                          % 设置语言
+}
+
+\pgfplotsset{compat=1.11,
+	/pgfplots/ybar legend/.style={
+		/pgfplots/legend image code/.code={
+			\draw [#1] (0cm,-0.12cm) rectangle (0.6cm,0.15cm);},
+	},
+}
+
+
+\definecolor{c1}{RGB}{42,99,172} % Basic3D
+\definecolor{c2}{RGB}{255,88,93}
+\definecolor{c3}{RGB}{255,181,73}
+\definecolor{c4}{RGB}{119,71,64} % Fast3D
+\definecolor{c5}{RGB}{228,123,121} % Basic2D
+\definecolor{c6}{RGB}{208,167,39} % Graph size
+\definecolor{c7}{RGB}{0,51,153}
+\definecolor{c8}{RGB}{56,140,139} % Fast2D
+\definecolor{c9}{RGB}{0,0,0} % black
+\definecolor{c10}{RGB}{140,138,185} % purple
+
+\pgfplotstableread[row sep=\\,col sep=&]{
+time&AI0& AI1 & AI2 & AI3 &DB0 &DB1 &DB2&DB3 \\
+6 & 5.451 & 13.196 & 17.584 & 19.212 & 2.702 & 5.694 &7.353 & 7.46\\
+5 & 1.638& 2.689 & 3.261 & 3.564 & 1.156 & 1.923 &2.397& 2.666\\
+4 & 0.742& 1.183 & 1.418 & 1.519 & 1.145 & 1.598 & 2.199 & 2.264\\
+3 & 0.241& 0.329 & 0.48 & 0.498& 0.328 & 0.649 & 0.752 & 0.795\\
+2 & 0.092& 0.133& 0.141 & 0.145 & 0.172 & 0.262 & 0.28 & 0.284\\
+1 & 0.005& 0.006& 0.006 & 0.006& 0.013& 0.018 & 0.018 & 0.018\\
+}\weighteddensity
+
+
+\newcommand{\TTM} {{\tt TTM}\xspace}
+\newcommand{\OTTC} {{\tt OTTC}\xspace}
+\newcommand{\BTTC} {{\tt BTTC}\xspace}
+\newcommand{\DOTTT}{{\tt DOTTT}\xspace}
+\newcommand{\wavelet}{\xspace{wavelet tree}\xspace}
+
+\newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}
+
+% \acmConference[SIGMOD ’25]{International Conference on Management of Data}{June 9 - June 15, 2025}{Berlin, Germany}
+% \acmPrice{15.00}
+
+\AtBeginDocument{%
+  \providecommand\BibTeX{{%
+    \normalfont B\kern-0.5em{\scshape i\kern-0.25em b}\kern-0.8em\TeX}}}
+% \acmConference
+% \acmBooktitle
+\setcopyright{acmlicensed}
+% See completed rightsreview form for your code
+\acmJournal{PACMMOD}
+\acmYear{2025} \acmVolume{3} \acmNumber{1 (SIGMOD)}
+\acmArticle{38} \acmMonth{2} \acmPrice{15.00}
+\acmDOI{10.1145/3709688}
+
+\textfloatsep 1mm plus 1mm \intextsep 1mm plus 1mm
+%\renewcommand{\baselinestretch}{0.995}
+
+\title{Efficiently Counting Triangles in Large Temporal Graphs}
+
+% \author{Yuyang Xia}
+% \date{August 2023}
+
+\begin{document}
+
+
+\author{Yuyang Xia}
+\email{yuyangxia@link.cuhk.edu.cn}
+\affiliation{%
+  \institution{The Chinese University of Hong Kong, Shenzhen}
+  \state{Guangdong}
+  \country{China}
+}
+
+\author{Yixiang Fang}
+\authornote{Corresponding author.}
+\email{fangyixiang@cuhk.edu.cn}
+\affiliation{%
+  \institution{The Chinese University of Hong Kong, Shenzhen}
+  \state{Guangdong}
+  \country{China}
+}
+
+\author{Wensheng Luo}
+\email{luowensheng@cuhk.edu.cn}
+\affiliation{%
+  \institution{The Chinese University of Hong Kong, Shenzhen}
+  \state{Guangdong}
+  \country{China}
+}
+
+\begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10002950.10003624.10003633.10010917</concept_id>
+<concept_desc>Mathematics of computing~Graph algorithms</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10003752.10003809.10003635.10010038</concept_id>
+<concept_desc>Theory of computation~Dynamic graph algorithms</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10003752.10003809.10010031</concept_id>
+<concept_desc>Theory of computation~Data structures design and analysis</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
+
+
+
+\ccsdesc[500]{Mathematics of computing~Graph algorithms}
+\ccsdesc[500]{Theory of computation~Dynamic graph algorithms}
+\ccsdesc[500]{Theory of computation~Data structures design and analysis}
+\renewcommand{\shortauthors}{Yuyang Xia, Yixiang Fang, and Wensheng Luo}
+\input{0-abstract}
+% \settopmatter{printfolios=true}
+
+\maketitle
+
+
+
+\input{1-introduction}
+
+\input{2-preliminaries}
+
+\input{3-online solution}
+
+\input{4-weighted counting}
+
+\input{5-binary counting}
+
+\input{6-experiment}
+
+\input{7-related work}
+
+\input{8-conclusion}
+
+
+\bibliographystyle{ACM-Reference-Format}
+\balance
+\bibliography{reference}
+
+
+%\input{technical report}
+
+\received{July 2024}
+\received[revised]{September 2024}
+\received[accepted]{November 2024}
+
+\end{document}

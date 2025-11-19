@@ -1,0 +1,252 @@
+\section{Binary $\delta$-Temporal Triangle Counting}
+\label{sec:binary}
+
+As shown in Definition \ref{def:delta-trianggle}, multiple $\delta$-temporal triangles may share the same three vertices, due to the existence of multiple temporal edges between two vertices.
+%
+In many real-world scenarios, we may only need to consider the existence of $\delta$-temporal triangle among three vertices \cite{jung2019furl,gou2021sliding}, so we introduce the binary $\delta$-temporal triangle counting problem:
+
+\begin{problem}[Binary $\delta$-temporal triangle counting]
+\label{prob:binary-delta-counting}
+Given a temporal graph $G$, a time window $[t_s,t_e]$, and a duration $\delta$ ($\delta\geq0$), return the number of sets of vertices, each of which contains three vertices and forms at least one $\delta$-temporal triangle within $G_{[t_s,t_e]}$, where each such set is called a binary $\delta$-temporal triangle.
+\end{problem}
+
+We illustrate Problem \ref{prob:binary-delta-counting} via Example \ref{eg:deltaCounting}.
+
+\begin{example}
+\label{eg:deltaCounting}
+In the temporal graph of Figure \ref{fig:temporal_graph}(a), let $[t_s,t_e]$=[0,2] and $\delta$=2.
+%
+The projected graph $G_{[0,2]}$ is depicted in Figure \ref{fig:tgraph}(a).
+%
+Clearly, there are two binary 2-temporal triangles in $G_{[0,2]}$, i.e., $\{v_1,v_2,v_4\}$ and $\{v_2,v_3,v_4\}$.
+%
+Note that there are three 2-temporal triangles since two 2-temporal triangles share a vertex set $\{v_1,v_2,v_4\}$.
+\end{example}
+
+To solve Problem \ref{prob:binary-delta-counting}, we propose an efficient online algorithm and an index-based solution in Sections \ref{sec:bttc-algo} and \ref{sec:binary-index}, respectively.
+
+\subsection{Our Online Algorithm \BTTC}
+\label{sec:bttc-algo}
+
+In Problem \ref{prob:binary-delta-counting}, when multiple $\delta$-temporal triangles share the same set of three vertices, they will be counted only once, thereby making both  \OTTC and \DOTTT inapplicable.
+%
+Nevertheless, we can adapt \DOTTT to solve Problem \ref{prob:binary-delta-counting} by slightly changing step (3) of \DOTTT; that is, after deriving the value $R$, if $R\textgreater 1$, we lower it to 1.
+%
+We denote the adapted algorithm by {\tt B}-\DOTTT.
+
+However, {\tt B}-\DOTTT is inefficient due to the complex process of computing $R$.
+%
+We further develop a novel faster algorithm, denoted as \BTTC, which follows the three steps of \DOTTT, but changes its step (3) to check the existence of a $\delta$-temporal triangle.
+%
+Specifically, given a static triangle $\Delta_{u,v,w}$ of $G^*_{[t_s,t_e]}$, we enumerate each edge $(u,v,t)$ in $E(u,v)$, and find edges $e_1 \in E(u,w), e_2 \in E(v,w)$ such that both of them appear in a time interval either $[t,t+\delta]$ or $[t-\delta,t]$.
+%
+If such two edges exist, we identify a $\delta$-temporal triangle with $(u,v,t)$ as the first edge or last edge.
+%
+The edge $(u,v,t)$ may also serve as the middle edge in the $\delta$-temporal triangle, and to find such triangles, we find $\delta$-temporal triangles with $(u,w,t')$ as the first edge or last edge through a similar process.
+
+Algorithm \ref{alg:bttc} presents \BTTC.
+%
+We first extract $G^*_{[t_s,t_e]}$ and $P$, and initialize $R$ (lines 1-2).
+%
+Then, we enumerate static triangles in $G^*_{[t_s,t_e]}$, and check the existence of $\delta$-temporal triangle sharing the vertices in each static triangle (lines 3-18).
+%
+We initialize the flag of existence and find $u$ (line 5).
+%
+For each edge $(u,v,t)$, check the existence of $\delta$-temporal triangle with $(u,v,t)$ as the first edge or the last edge (lines 6-11).
+%
+We also enumerate edges $\in E(u,w)$ to check the existence of $\delta$-temporal triangle with $(u,w,t')$ as the first edge or the last edge (lines 12-17).
+%
+Finally, we get the result (lines 18-19).
+
+\begin{algorithm}[t]
+    \small
+    \caption{\BTTC}
+    \label{alg:bttc}
+    
+    \KwIn{A temporal graph $G$, a time window $[t_s,t_e]$, a threshold $\delta$}
+    \KwOut{The number of binary $\delta$-temporal triangles in $G_{[t_s,t_e]}$}
+
+    Extract the static graph $G^*_{[t_s,t_e]}$ and derive its degeneracy order $P$\;
+
+    $R \gets 0$\;
+    
+    Enumerate the static triangles in $G^*_{[t_s,t_e]}$\;
+    
+    \ForEach{static triangle $\Delta_{u,v,w} \in G^*_{[t_s,t_e]}$}{
+        $f \gets 0$, $u \gets$ vertex with the minimum degeneracy order\;
+        \ForEach{$(u,v,t) \in E(u,v)$}{
+            $S_1 \gets \{(u,w,t')|(u,w,t')\in E(u,w), t' \in [t,t+\delta]\}$\;
+            $S_2 \gets \{(v,w,t'')|(v,w,t'')\in E(v,w), t'' \in [t,t+\delta]\}$\;
+            $S_3 \gets \{(u,w,t')|(u,w,t')\in E(u,w), t' \in [t-\delta,t]\}$\;
+            $S_4 \gets \{(v,w,t'')|(v,w,t'')\in E(v,w), t'' \in [t-\delta,t]\}$\;
+            {\bf if }{($|S_1|$ and $|S_2| >0$) or ($|S_3|$ and $|S_4| >0$)} {\bf then}{
+                $f \gets 1$\;
+            }
+        }
+
+        \ForEach{$(u,w,t') \in E(u,w)$}{
+            $S_1 \gets \{(u,v,t)|(u,v,t)\in E(u,v), t \in [t',t'+\delta]\}$\;
+            $S_2 \gets \{(v,w,t'')|(v,w,t'')\in E(v,w), t'' \in [t',t'+\delta]\}$;
+            
+            $S_3 \gets \{(u,v,t)|(u,v,t)\in E(u,v), t \in [t'-\delta,t']\}$\;
+            $S_4 \gets \{(v,w,t'')|(v,w,t'')\in E(v,w), t'' \in [t'-\delta,t']\}$\;
+            {\bf if }{($|S_1|$ and $|S_2| >0$) or ($|S_3|$ and $|S_4| >0$)} {\bf then}{
+                $f \gets 1$\;
+            }
+        }
+        $R \gets R+f$\;
+    }
+    \Return $R$\;
+\end{algorithm}
+
+%Example \ref{eg:bttc} further illustrates the \BTTC.
+
+\begin{example}
+\label{eg:bttc}
+Consider the temporal graph in Figure \ref{fig:temporal_graph}(a) and let $[t_s,t_e] = [0,2] $and $\delta = 2$.
+%
+We first get the static graph $G^*_{[0,2]}$ with 2 static triangles $\Delta_{v_1,v_2,v_4}$ and $\Delta_{v_2,v_3,v_4}$, shown in Figure \ref{fig:tgraph} and derive its degeneracy order $P: v_1 \prec v_3 \prec v_4 \prec v_2$.
+%
+Then, for $\Delta_{v_1,v_2,v_4}$, when enumerating edge $(v_1,v_2,1)$, we find $(v_1,v_4,2)$ and $(v_2,v_4,2)$, so there is a binary 2-temporal triangle $\{v_1,v_2,v_4\}$.
+%
+For $\Delta_{v_2,v_3,v_4}$, we can also find a binary 2-temporal triangle.
+%
+Hence, the counting result is 2.
+\end{example}
+
+
+\begin{lemma}
+Given a temporal graph $G$, a query time window $[t_s,t_e]$, and a duration $\delta$, \BTTC completes in $O(m\kappa \log(m))$ time.
+\end{lemma}
+
+\begin{proof}
+As analyzed in Section \ref{sec:sota}, the time cost of steps (1) and (2) is $O(m\kappa)$.
+%
+Step (3) (lines 4-18 in Algorithm \ref{alg:bttc}) costs $O(\sum_{\Delta_{u,v,w}}$ $(|E(u,v)|+|E(u,w)|) \log(m))$  = $O(m\kappa \log(m))$ time.
+%
+Hence, the lemma holds.
+\end{proof}
+
+\subsection{An Index-Based Solution}
+\label{sec:binary-index}
+
+%In this section, we present an index-based solution to support efficient frequent binary $\delta$-temporal triangle counting queries.
+%
+%In the following, we first present the main idea of our index, and then show the detailed index-based solution.
+
+\subsubsection{Main Idea}
+\label{sec:bc-points}
+Similar to {\tt WT-Index}, we propose to convert the binary $\delta$-temporal triangle counting problem into a point counting problem.
+%
+However, the idea of converting $\delta$-temporal triangle to C-points cannot be applied to binary $\delta$-temporal triangle as multiple $\delta$-temporal triangles may be regarded as a single binary $\delta$-temporal triangle.
+%
+%For instance, in Figure \ref{fig:temporal_graph}(a), there are two $\delta$-temporal triangles sharing the vertices $\{v_1,v_2,v_4\}$, corresponding to two C-points $\langle (0,2),1 \rangle$ and $\langle (1,2),1 \rangle$, but there is only one binary $\delta$-temporal triangle.
+
+To resolve the above issue, we proposed to store the binary $\delta$-temporal triangle counting results, rather than the binary $\delta$-temporal triangles.
+%
+A naive idea is to run \BTTC for every possible time window $[x,y]$ and duration $z$, and then keep a 3-dimensional point $\langle(x,y,z),c_{(x,y,z)}\rangle$ where $c_{(x,y,z)}$ denotes the number of binary $z$-temporal triangles in $[x,y]$.
+%
+However, it costs $O(t_{max}^3)$ space and $O(m\kappa\log(m)\times t_{max}^3)$ time to build the index, thereby being impractical for large $t_{max}$.
+%
+To alleviate this issue, we propose to compress these 3-dimensional points into some BC-points, defined as follows, by only storing the differences between counting results.
+
+\begin{definition}[BC-point]
+Given a temporal graph $G$, a time window $[x,y]$, and a duration $z$, a BC-point, denoted by $\langle (x,y,z),d\rangle$, is a 3-dimensional point with 
+$$
+{\begin{split}
+        d = c_{(x,y,z)}-c_{(x,y,z-1)}-c_{(x,y-1,z)}-c_{(x+1,y,z)}+ c_{(x+1,y-1,z)}\\+
+    c_{(x+1,y,z-1)}+c_{(x,y-1,z-1)}-c_{(x+1,y-1,z-1)}.
+\end{split}}
+$$
+\end{definition}
+
+Note that when $d=0$, we omit the BC-point due to the zero difference.
+%
+Clearly, given all the BC-points, the number of binary $\delta$-temporal triangles in the time window $[t_s,t_e]$ equals the summarized $d$ values of BC-points in the cube $[t_s,t_e]\times [t_s,t_e]\times [0,\delta]$.
+%We further illustrate this by Example \ref{eg:bcp}.
+
+\begin{figure}[ht]
+    \small
+    \centering
+    \subfigure[A temporal graph $G_2$]{\includegraphics[width=.2\linewidth]{figure/B-temporal-graph-example.pdf}}
+    \subfigure[3-dimensional points]{\includegraphics[width=.21\linewidth]{figure/binary-c-value.pdf}}
+    \subfigure[All the BC-points]{\includegraphics[width=.21\linewidth]{figure/BC-point.pdf}}
+    \caption{A temporal graph and its 3-dimensional points before and after compression (we omit points with $c=d=0$).}
+    \setlength{\abovecaptionskip}{-0.2cm}
+ \setlength{\belowcaptionskip}{-2pt}
+    \label{fig:bcp}
+\end{figure}
+
+\begin{example}
+\label{eg:bcp}
+In Figure \ref{fig:bcp}, we present a temporal graph $G_2$, and its 3-dimensional points before and after compression, where points with $c$ and $d$ being 0 are omitted.
+%
+For instance, there is a BC-point $\langle (0,2,1),-1\rangle$ because $c_{(0,2,1)}-0-c_{(0,1,1)}-c_{(1,2,1)} + 0 + 0 + 0 - 0 = -1$.
+\end{example}
+
+To obtain BC-points, a naive method is to enumerate all the possible time windows and durations and compress the 3-dimensional points, requiring $O(m\kappa \log(m)\times t_{max}^3)$ time, which is very costly.
+%
+To speed up this process, we generate BC-points from each static triangle.
+%
+Specifically, for each static triangle $\Delta_{u,v,w}$, we first fetch all the timestamps of edges in $E(u,v)$, $E(u,w)$, and $E(w,v)$, denoted by a set $\Phi$.
+%
+Then, we only need to obtain the $c_{(x,y,z)}$ for $\Delta_{u,v,w}$ with every time window $[x,y]$ and duration $z$ where $x,y,z \in \Phi$.
+%
+Finally, we get all the BC-points.
+
+As aforementioned, to answer a counting query, we need to summarize the $d$ values of BC-points in the cube $[t_s,t_e]\times [t_s,t_e]\times[0,\delta]$, which actually is a 3-dimensional point counting problem.
+%
+Many index structures have been developed to solve this problem, such as KD-tree \cite{10.1145/361002.361007}, wavelet tree \cite{grossi2003high}, and segment tree \cite{de2000computational}.
+%
+Given {\color{black} $O(\pi)$} BC-points, since KD-tree costs {\color{black} $O(\pi)$ space}, while the other two indexes cost {\color{black} $O(\pi \log(m))$ space}, we employ the KD-tree in this paper and denote the KD-tree-based index by {\tt KDT-Index}.
+
+\subsubsection{\tt KDT-Index}
+\label{sec:kdt-index}
+
+Given a BC-point list $L$, a {\tt KDT-Index} is a binary tree, where each node stores a BC-point and the information of BC-points in its subtrees, with four components in total:
+\begin{enumerate}
+    \item \textbf{A BC-point} $\langle (x,y,z),d \rangle$.
+    
+    \item \textbf{A selected dimension} $D$: It indicates the construct rule of the KD-tree. For any BC-point, if its coordinate in $D$-th dimension is smaller than or equal to the $D$-th dimension of $\langle (x,y,z),d \rangle$, it will be in the left child of the node; otherwise, it will be in the right child of the node.
+    
+    \item \textbf{A cube} $A$: The smallest cube containing all BC-points in the subtree of the node, denoted by $[x_1,x_2]\times [y_1,y_2]\times [z_1,z_2]$.
+    
+    \item \textbf{An integer} $S$: It records the summarized $d$ value of all BC-points in the subtree of the node.
+\end{enumerate}
+%
+We further illustrate the {\tt KDT-Index} via Example \ref{eg:kdt}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.35\linewidth]{figure/kd-tree.pdf}
+    \caption{The {\tt KDT-Index} for the BC-points in Figure \ref{fig:bcp}.}
+    \label{fig:kd-tree}
+    \vspace{-5pt}
+\end{figure}
+
+\begin{example}
+\label{eg:kdt}
+Figure \ref{fig:kd-tree} depicts the {\tt KDT-Index} built for all BC-points in Figure \ref{fig:bcp}.
+%
+Let us take the root node as an example: we pick a BC-point $\langle (0,2,1),-1\rangle$ and select the $x$ dimension ($D=x$).
+%
+The smallest cube $A$ to contain all the BC-points is $[0,1]\times[1,2]\times[1,1]$.
+%
+Since the summarized $d$ value of all BC-points is 2, 
+$S=2$.
+\end{example}
+
+The result of a counting query equals the summarized $S$ values of nodes in the {\tt KDT-Index} whose cubes are contained by the cube $[t_s,t_e]\times[t_s,t_e]\times[0,\delta]$.
+%
+We apply a recursive method starting from the root to find the counting result.
+%
+For lack of space, we show the counting algorithm, {\tt KDT-Index} construction and maintenance algorithms \cite{10.1007/BF00263763,10.1145/361002.361007,de2008orthogonal} in the appendix of our technical report \cite{github}.
+
+{\color{black}
+$\bullet$ \textbf{Extension for counting other patterns.}
+%(R1.A5)
+Our index-based solution above can be easily extended for counting other patterns.
+%
+Given a target pattern, we first fetch all the static instances from the static graph.
+%
+Then, we can generate the BC-points from each static instance following the approach described in Section \ref{sec:bc-points}, and apply our {\tt KDT-Index} to manage the BC-points.}

@@ -1,0 +1,584 @@
+\section{An Index-Based Solution}
+%\section{Index-based solutions for counting $\delta$-temporal triangles}
+\label{sec:weighted}
+
+%In practice, to accomplish a specific task, users often have to issue $\delta$-temporal triangle counting queries by varying the query time window $[t_s,t_e]$ and duration $\delta$ multiple times.
+%
+%In such scenarios, the online solution may incur significant overhead due to frequent access to the projected graph for each query.
+
+To enable frequent $\delta$-temporal triangle counting queries, in this section, we propose an index-based solution that offers accelerated response times while keeping acceptable preprocessing time and space costs.
+%
+One direct index-based solution is to run the online algorithm for all possible time windows $[t_s,t_e]$ and durations $\delta$, and then store the counting results.
+%
+This, however, incurs an index space cost of $O(t_{max}^3)$ and requires $O(m\kappa\times t_{max}^3)$ time to build the index, making it impractical for large $t_{max}$.
+
+To alleviate this issue, we propose a novel index-based solution using the \wavelet, which significantly reduces the indexing time and space costs.
+%
+Moreover, the index-based counting algorithm is much faster than \OTTC.
+%
+In the following, we first present the main idea of our index, and then show the detailed solution.
+%
+{\color{black} %(R3.A4)
+We also illustrate the index-based solution in a flowchart below.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.6\linewidth]{figure/workflow of index.pdf}
+    \caption{\color{black} The flowchart of our index-based solution.}
+    \label{fig:workflow-of-index}
+\end{figure}
+}
+
+\subsection{Main Idea}
+\label{sec:index-overview}
+{\color{black}
+
+%(R3.A4)
+%
+% We first observe a necessary condition for a $\delta$-temporal triangle to be considered in a query: the time interval formed by the minimum and maximum timestamps of its three edges must be completely encompassed by the query interval. 
+%
+% This observation inspires us to construct a 2-dimensional space, where one axis represents the minimum timestamps of $\delta$-temporal triangles and the other represents the maximum timestamps, providing a framework to facilitate answering queries.
+% 
+We begin with a necessary condition for a $\delta$-temporal triangle to be considered in a query: the minimum and maximum timestamps of its three edges must be fully covered by the query interval $[t_s,t_e]$.
+%
+This condition motivates us to treat each $\delta$-temporal triangle as a 2-dimensional point, whose two dimension values are the minimum and maximum timestamps of its three edges respectively, and further indexing the 2-dimensional points of all $\delta$-temporal triangles for answering the counting queries.
+%
+%This condition motivates us to construct an index for points in a 2-dimensional space, with one axis representing the minimum timestamps and the other the maximum timestamps of $\delta$-temporal triangles, providing a structured approach for answering queries.
+%
+Therefore, our core idea is to convert $\delta$-temporal triangles to points in this 2-dimensional space, referred to as {\it counting-points} or {\it C-points}, and demonstrate that the $\delta$-temporal triangle counting problem can be reduced to counting C-points.
+}
+% Our main idea is to convert the $\delta$-temporal triangles to some points, called {\it counting-points} or {\it C-points}, in the 2-dimensional space, and then show that the $\delta$-temporal triangle counting problem can be solved by counting C-points.
+%
+We first formally define C-point as follows.
+
+\begin{definition}[C-point]
+\label{def:c-point}
+Given a temporal graph $G$, a C-point, denoted by $\langle (x,y),c \rangle$, means that the number of $\delta$-temporal triangles in $G$ satisfying: 1) $\delta$=$\infty$ and 2) the minimum and maximum timestamps of each triangle are exactly $x$ and $y$ respectively, is $c$.
+%Given a temporal graph $G$, a C-point is a 2-dimensional point $(x, y)$ associated with count $c$, denoted by $\langle (x,y),c \rangle$, meaning that there are $c$ $\delta$-temporal triangles in $G$ such that for each of them, the minimum and maximum timestamps of its three edges are exactly $x$ and $y$, respectively.
+\end{definition}
+
+In the above definition, we set $\delta$=$\infty$, which means that any three temporal edges that form a triangle structure in the time window $[x,y]$ will be considered a $\delta$-temporal triangle.
+%
+Assuming that $G$ has $t_{max}$ timestamps, there are{ \color{black}$O(t_{max}^2) = O(m^2)$ }possible different time windows, so the total number of C-points, denoted as $\pi$, is bounded by {\color{black} $O(t_{max}^2) = O(m^2)$}.
+%
+Meanwhile, the number of C-points is also bounded by the number of all the possible $\delta$-temporal triangles in $G$.
+%
+All these C-points can be placed on a 2-dimensional space of $x$ and $y$, or more precisely in the area above the curve $y=x$ since $x\leq y$.
+%
+Example \ref{eg:cp} further illustrates the concept of C-point.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=.5\linewidth]{figure/weighted C-point.pdf}
+    \caption{C-points of the temporal graph in Figure \ref{fig:temporal_graph}.}
+    \label{fig:C-point}
+\end{figure}
+
+\begin{example}
+\label{eg:cp}
+In Figure \ref{fig:temporal_graph}, there are 5 $\delta$-temporal triangles in total ($\delta$=$\infty$), but there are 4 C-points, as depicted in the 2-dimensional space of Figure \ref{fig:C-point}. 
+%
+For instance, the C-point $\langle (1,2),1\rangle$ indicates that in the time window $[1,2]$, there is one $\delta$-temporal triangle whose minimum and maximum timestamps are exactly 1 and 2 respectively, since its three edges are $(v_1,v_2,1)$, $(v_1,v_4,2)$, and $(v_2,v_4,2)$.
+\end{example}
+
+After converting all the $\delta$-temporal triangles in the temporal graph to C-points, we can directly count the number of $\delta$-temporal triangles for any arbitrary query parameters $\delta$ and  $[t_s,t_e]$, by only using these C-points without accessing the original graph.
+%
+Specifically, we can first collect all the C-points $\langle (x, y),c\rangle$ satisfying $x\geq t_s$, $y \leq t_e$, and $y-x\leq \delta$.
+%
+Afterward, we just need to add their $c$ values together to get the final counting result.
+
+With careful observation, we find that all these C-points are actually covered by a trapezoid area and a rectangle area :
+%
+\begin{itemize}
+    \item {\bf Trapezoid area:} $y-\delta \leq x\leq t_e$ and $t_s + \delta < y \leq t_e$.
+
+    \item {\bf Rectangle area:} $t_s\leq x\leq t_e$ and $t_s\leq y\leq t_s+\delta$.
+\end{itemize}
+
+\begin{example}
+\label{eg:areas}
+Reconsider Example \ref{eg:cp} and let $[t_s,t_e]$ = $[0,3]$ and $\delta$=2.
+%
+To answer this counting, we need to collect all the C-points (marked in blue) covered by a square area ($0\leq x\leq 3$ and $0\leq y\leq 2$) and a trapezoid area ($y-2 \leq x\leq3$ and $2 < y\leq 3$) which are marked in two different colored areas.
+%
+The counting result is the sum of all the $c$ values of these C-points, i.e.,  2 + 1 + 1 = 4.
+\end{example}
+
+%Next, we would like to discuss the algorithms of how to efficiently convert $\delta$-temporal triangles to C-points and how to effectively index C-points to support $\delta$-temporal triangle counting.
+
+Next, we introduce efficient algorithms for generating C-points and indexing C-points to support $\delta$-temporal triangle counting.
+
+\subsubsection{Converting $\delta$-temporal Triangles to C-points}
+\label{sec:convert-triangle-to-C-point}
+%
+To generate C-points, we sequentially enumerate the edges in $G$, and for each edge $(u,v,t)$, we count the number of $\delta$-temporal triangles $(\delta = \infty)$ that include $u$ and $v$ and take $t$ as the maximum timestamp in three steps:
+%
+\begin{enumerate}
+    \item Find the vertex set $W = N(u) \cap N(v)$;
+
+    \item For each vertex $w \in W$, we enumerate each edge $(w,v,t')$ in $E(w,v)$, then count the number $c$ of $\delta$-temporal triangles that take $t'$ and $t$ as the minimum and maximum timestamps respectively which can be completed efficiently by using binary search, and finally obtain a C-point $\langle (t',t), c\rangle$.
+
+    \item For each vertex $w \in W$, we also enumerate each edge in $E(u,w)$ and obtain a list of C-points in a similar manner.
+\end{enumerate}
+
+\begin{algorithm}[ht]
+\small
+\caption{Convert $\delta$-temporal triangles to C-points}
+\label{alg:ttm}
+
+\KwIn{A temporal graph $G=(V,E)$}
+
+\KwOut{A list of C-points $L$}
+
+$L$ $\leftarrow$ $\emptyset$\;
+\textbf{foreach} {\it $(u,v,t)\in G$} \textbf{do} $E(u,v)\gets \emptyset$\;    
+    
+\ForEach{$( u,v,t)\in G$ with timestamps in ascending order}{
+append $(u,v,t)$ to $E(u,v)$\;
+    \ForEach{$w \in N(u) \cap N(v)$}{
+        \ForEach{$( w,v,t') \in E( w,v)$ in ascending order of $t'$}{
+            $c \gets |\{(u,w,t'') | (u,w,t'') \in G \wedge t'' \in [t',t]\}$|\;
+        
+            append $\langle (t',t),c \rangle$ to $L$\;
+        }
+    
+        \ForEach{$( u,w,t') \in E(u,w)$ in ascending order of $t'$}{
+            $c$ $\gets$ |$\{(w,v,t'') | ( w,v,t'') \in G \wedge t'' \in (t',t]\}$|\;
+    
+            append $\langle (t',t),c \rangle$ to $L$\;
+        }
+    }
+}
+
+\Return $L$\;
+\end{algorithm}
+
+Algorithm \ref{alg:ttm} shows the details.
+%
+We first initialize a list $L$ and some edge lists (lines 1-2).
+%
+Then, we generate C-points by enumerating the edges chronologically (lines 3-11).
+%
+Specifically, we first update $E(u,v)$ (line 4), then find a vertex set $W = N(u) \cap N(v)$ (line 5), and count the number of $\delta$-temporal triangles $(\delta$=$\infty)$ that include vertices $\{u,v,w\}$ and take $t$ as the maximum timestamp to obtain the C-points (lines 6-11).
+%
+Finally, we get all the C-points (line 12).
+
+\begin{lemma}
+\label{lemma:alg:ttm-time}
+Given a temporal graph $G$, Algorithm \ref{alg:ttm} completes in {\color{black} $O(m\kappa + \pi \log(m))$ time.}
+\end{lemma}
+
+\begin{proof}
+For lines 3-5, the time cost of finding $N(u) \cap N(v)$ is the same as that of finding static triangles in $G^*$, which is $O(m\kappa)$ \cite{al2018triangle}.
+%
+For lines 6-11, we can finish counting in $O(|E( w,v)| \log(|E(u,w)|) + |E( u,w)| \log(|E(w,v)|))$ time.
+%
+Note that $O(|E(w,v)|+|E(u,w)|)$ equals the time complexity of the for-loops at lines 6-9, where each iteration produces a C-point, so the time cost of lines 6-9 is {\color{black}$O(\pi)$}.
+%
+The total time cost of lines 6-11 is bounded by {\color{black}$O(\pi\log(m))$}.
+%
+Hence, Algorithm \ref{alg:ttm} costs {\color{black} $O(m\kappa + \pi\log(m))$} time.
+\end{proof}
+
+\subsubsection{Indexing C-points for Counting $\delta$-temporal Triangles} After obtaining all the C-points, a natural method to count the $\delta$-temporal triangles is to collect all the C-points $\langle (x, y),c\rangle$ satisfying $x\geq t_s$, $y \leq t_e$, and $y-x\leq \delta$, and summarize their $c$ values together.
+%
+This method, however, is very costly since it takes $O(\pi)$ time, and may be slower than our online algorithm \OTTC in some cases.
+
+We notice that in the literature, many effective index structures, such as wavelet tree \cite{grossi2003high}, kd-tree \cite{10.1145/361002.361007}, Fenwick tree \cite{fenwick1994new}, segment tree \cite{de2000computational}, etc., have been developed for supporting range search, which aim to efficiently count the number of points in an arbitrary rectangle area in the 2-dimensional space.
+%
+As aforementioned, the C-points for counting the $\delta$-temporal triangles in $[t_s,t_e]$ are actually covered by a rectangle area and a trapezoid area.
+%
+For the C-points in the rectangle area, we can efficiently count them by building these index structures for all the C-points of the whole graph.
+
+However, for the C-points in the trapezoid area, they cannot be counted directly by employing these index structures since they focus on rectangle areas.
+%
+To resolve this issue, we propose to change the 2-dimensional location of each C-point, so that the set of C-points in any original trapezoid area can be covered by a rectangle area, making the above existing index structures applicable.
+%
+Recall that for any C-point $\langle (x,y),c \rangle$ in the trapezoid area, we have
+%
+\begin{equation}
+\begin{cases}
+y-\delta \leq x\leq t_e\\
+x \le y
+\end{cases}
+\stackrel{}{\Longrightarrow }
+0 \le y - x\leq \delta
+\end{equation}
+
+Since $x \le y$ and $y-x\leq\delta$, by setting $z=y-x$, we further obtain 
+%
+\begin{equation}
+\begin{cases}
+0\leq y-x\leq \delta\\
+t_{s} +\delta < y\leq t_{e}
+\end{cases}
+%
+\stackrel{z=y-x}{\Longrightarrow}
+%
+\begin{cases}
+0\leq z\leq \delta\\
+t_{s} +\delta < y\leq t_{e}
+\end{cases}
+\end{equation}
+
+Hence, for any C-point $\langle (x,y),c \rangle$ in the 2-dimensional space of $x$ and $y$, by changing $x$ to $z=y-x$, we can obtain another kind of C-point $\langle (z,y),c \rangle$, which is in the 2-dimensional space of $z$ and $y$.
+%
+To distinguish it from the original C-point, we call it a $\widehat {\text{C}}$-point.
+%
+{\color{black} Clearly, the number of $\widehat {\text{C}}$-points is also bounded by $\pi$.}
+
+A nice feature of all the $\widehat {\text{C}}$-points is that they must be in a rectangle area.
+%
+Thus, by making such changes, all the C-points in the original trapezoid area can be covered by a rectangle area, so the existing index structures for range search can also be used.
+%
+%Example \ref{eg:trapezoid-area} further illustrates the $\widehat {\text{C}}$-points.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.4\linewidth]{figure/converted-area.pdf}
+    \caption{Changing C-points to $\widehat {\text{C}}$-points.}
+    \label{fig:hat-C-points}
+\end{figure}
+
+\begin{example}
+\label{eg:trapezoid-area}
+Consider all the C-points in the 2-dimensional space of $x$ and $y$ in Figure \ref{fig:C-point}.
+%
+By changing $x$ to $z=y-x$ for each C-point, we get all the $\widehat {\text{C}}$-points in another 2-dimensional space of $z$ and $y$ in Figure \ref{fig:hat-C-points}.
+%
+For instance, a C-point $\langle (1,3),1\rangle$ is changed to $\langle(2,3),1\rangle$.
+%
+Besides, for all the C-points in the trapezoid area of Figure \ref{fig:C-point}, their corresponding $\widehat {\text{C}}$-points are in a rectangle area marked in grey.
+\end{example}
+
+As shown in the literature, the Chazelle's structure \cite{chazelle1988functional}, a.k.a. wavelet tree \cite{grossi2003high}, achieves a better balance between time and space than others for counting points in the 2-dimensional space \cite{deng2023space}.
+%
+Thus, in this paper we employ it to index all the C-points and $\widehat {\text{C}}$-points respectively, and call the wavelet tree-based index {\tt WT-Index}.
+
+\subsection{Our {\tt WT-Index}-Based Solution}
+\label{sec:wavelet}
+
+We first introduce the {\tt WT-Index} for all the C-points, then discuss the index-based counting algorithm, and finally show the index maintenance algorithm for dynamic temporal graphs.
+%
+The {\tt WT-Index} for $\widehat {\text{C}}$-points can be built similarly, so we omit the details.
+
+\subsubsection{Overview of {\tt WT-Index}}
+\label{sec:overview-wavelet}
+
+Given a C-point list $L$, a {\tt WT-Index} is a binary tree, where each node\footnote{To avoid ambiguity, we use ``node'' to mean a node of the tree index, and use ``vertex'' to denote a graph vertex in this paper.} has a time interval and stores the information of C-points whose $x$ value falls in this interval.
+%
+To ease the illustration, we declare that a tree node \textit{includes} a C-point if its time interval covers the C-point's $x$ value.
+%
+Specifically, each node of {\tt WT-Index} has three key components:
+%
+\begin{enumerate}
+    \item {\bf A time interval [$l$, $r$]:} It indicates that the node stores the information of all the C-points $\langle (x,y),c\rangle$ with $x\in [l,r]$.
+    %
+    The root node has the largest interval $[0,T]$ with $T\textless 2t_{max}$.
+    %
+    For each node, if $l \neq r$, then it has two children whose time intervals are $\left[l,\lfloor \frac{l+r}{2} \rfloor\right]$ and $\left[\lfloor \frac{l+r}{2} \rfloor +1, r\right]$ respectively; otherwise, it is a leaf node with $l=r$.
+
+    \item {\bf An integer array $C$[ ]:} It stores the $c$ values of all the C-points included by the node, where all the C-points are assumed to be sorted in ascending order of their $y$ values.
+
+    \item {\bf A boolean array $Pos$[ ]:} It records which child nodes include the C-points that the current node includes.
+    %
+    Given that all the C-points included in the current node are sorted in ascending order of their $y$ values if the $i$-th C-point is also included by the left node, then $Pos[i]$=0; otherwise, $Pos[i]$=1.
+    %
+    For leaf nodes, their $Pos$[ ] = $\emptyset$.
+\end{enumerate}
+
+In addition, to enable efficient retrieval, we add a prefix sum array for $C$[ ] and $Pos$[ ] in each node, respectively.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.37\linewidth]{figure/wavelet tree.pdf}
+    \caption{{\tt WT-Index} for the C-points in Figure \ref{fig:C-point}.}
+    \label{fig:wavelet-tree}
+\end{figure}
+
+We further illustrate the {\tt WT-Index} via Example \ref{eg:wavelet}.
+
+\begin{example}
+\label{eg:wavelet}
+Figure \ref{fig:wavelet-tree} depicts the {\tt WT-Index} built for all the C-points in Figure \ref{fig:C-point}.
+%
+For instance, the internal node with time interval $[0,1]$, it includes three C-points, i.e., $\langle(0,2),2\rangle$,  $\langle(0,3),1\rangle$and $\langle(1,2),1\rangle$, so $C[1]=2$, $C[2]=1$, and $C[3]=1$.
+%
+Since these three C-points are also included by its left and right child nodes respectively, we have $Pos[1]=0$, $Pos[2]=1$, and $Pos[3]=0$.
+\end{example}
+
+As shown in \cite{chazelle1988functional}, given a list of 2-dimensional points, we can build the  {\tt WT-Index} efficiently in a bottom-up manner: we first initialize all the leaf nodes, and then iteratively build their parent nodes by merging child nodes' information until the root is built, which is similar to the process of MergeSort.
+%
+The indexing time and space costs \cite{chazelle1988functional} of building the {\tt WT-Index} are {\color{black} $O(\pi\log(m))$ and $O(\pi)$ respectively}, and the space cost of {\tt WT-Index} is {\color{black} $O(\pi)$}.
+
+\subsubsection{{\tt WT-Index}-Based Counting Algorithm}
+\label{sec:indexCounting}
+
+Recall that the number of $\delta$-temporal triangles in $[t_s,t_e]$ equals the summarized value of the $c$ values of all the C-points in a rectangle area and a trapezoid area.
+%
+Since the trapezoid area can be transferred to a rectangle area by changing C-points to $\widehat{\text{C}}$-points.
+%
+Therefore, the key question is that given a rectangle area: $t_s \le x \le t_e$ and $t_s \le y \le t_s +\delta$, how to obtain the summarized value of the $c$ values of all the C-points it covers.
+%
+%Recall that the number of $\delta$-temporal triangles in $[t_s,t_e]$ equals to the summarized value of the $c$ values of all the C-points in the rectangle area: $t_s \le x \le t_e -\delta$ and $t_s \le y \le t_s +\delta$.
+%
+Since this rectangle is the difference of the other two rectangle areas: (1) $t_s \le x \le t_e$ and $0 \le y \le t_s +\delta$ and (2) $t_s \le x \le t_e$ and $0\leq y \le t_s-1$, we can derive the summarized values from them respectively and subtract them.
+%
+As these two rectangle areas can be processed by the same procedure, we design an efficient algorithm to obtain the summarized value of the $c$ values of all the C-points in a rectangle area with $t_s \le x \le t_e $ and $0 \le y \le \theta$ where $\theta\in\{t_s+\delta,t_s-1\}$.
+
+Specifically, we start from the root of the {\tt WT-Index} and recursively find all the nodes whose time intervals are covered by $[t_s,t_e]$ level by level in a top-down manner, during which we add the $c$ values of all the C-points whose $y \le \theta$ in these nodes.
+%
+Algorithm \ref{alg:summarize-cvalue} shows the details.
+%
+We first get the root and obtain the number of C-points whose $y\le \theta$ (lines 1-2).
+%
+Then, we use a function {\tt sum} to sum the $c$ values recursively (lines 3-10).
+%
+For each node, if its time interval is covered by $[t_s,t_e]$, we sum up the $c$ values of the C-points whose $y\le \theta$ and included by the node (lines 5-6);
+if its time interval is not intersected with $[t_s,t_e]$, the count is 0; otherwise, we need to traverse its left and right child nodes and get the summarized result recursively (lines 7-10).
+
+\begin{algorithm}[ht]
+\small
+\caption{Sum the $c$ values of C-points in a rectangle}
+\label{alg:summarize-cvalue}
+\KwIn{{\tt WT-Index}, a rectangle area $t_s \le x \le t_e $ and $0 \le y \le \theta$}
+
+\KwOut{The summarized $c$ values of C-points in the rectangle}
+
+$node\gets$root of the {\tt WT-Index}\;
+
+$p \gets \#$  of C-points whose $y \leq \theta$\;
+
+\SetKwFunction{query}{{\tt sum}}
+    \SetKwProg{Fn}{Function}{:}{}
+    \Fn{\query {$node, p$}} { 
+        $[l,r] \gets$the time interval of $node$\;
+
+        \If{$[l,r]\subseteq[t_s,t_e]$}{
+            \Return $\sum_{i=1}^{p} node.C[i]$\;
+        }
+        
+        \Else{
+            $o \gets \sum_{i=1}^{p} node.Pos[i]$\;
+
+            {\bf if} $[l,r]\cap[t_s,t_e]=\emptyset$ {\bf then} {\bf return} 0\;
+
+            {\bf else return }{\tt sum}($node.lChild$, $p$--$o$)+{\tt sum}($node.rChild$, $o$)\;
+       }
+    }
+
+\end{algorithm}
+
+According to \cite{chazelle1988functional}, {\color{black} by storing $\sum_{i=1}^p node.Pos[i]$ and $\sum_{i=1}^p node.C[i]$ for $p \% \log(m) = 0$} to accelerate the calculation, Algorithm \ref{alg:summarize-cvalue}  can complete in {\color{black} $O(poly\log(m))$} time.
+%
+Thus, the overall time cost of the index-based counting algorithm is also {\color{black} $O(poly\log(m))$}.
+
+\subsubsection{Index Maintenance}
+\label{sec:WT-index-maintain}
+
+In real-world applications, the temporal graphs are often  continually updating, due to the generation of new temporal edges,
+which requires the {\tt WT-Index} to be updated as well.
+%
+A simple method of updating the index is to rebuild the {\tt WT-Index} from scratch whenever a new temporal edge is inserted, but it is extremely costly when the new edges are frequently inserted.
+%
+A few works have studied the maintenance of wavelet trees, but they are often limited to very specific scenarios.
+%
+For instance, \cite{da2017online} presents an algorithm for maintaining the wavelet tree, but it aims to count the frequency of some texts, which actually counts points in a 1-dimensional space, so it cannot process our C-points.
+
+In this paper, we develop a novel efficient maintenance algorithm to update the {\tt WT-Index} for the C-points after inserting a new temporal edge ($u$, $v$, $t_{max}+1$) into the graph.
+%
+The {\tt WT-Index} for the $\widehat {\text{C}}$-points can be maintained similarly, so we omit its details.
+%
+Our key idea is that after an edge insertion, we first identify all the newly formed $\delta$-temporal triangles ($\delta$=$\infty$) and convert them into some C-points, which can be easily implemented by following Algorithm \ref{alg:ttm} since it generates C-points by sequentially processing the temporal edges one by one.
+%
+Afterward, we update the {\tt WT-Index} to incorporate the information of the new C-points.
+%
+Specifically, for each new C-point $\langle(x,y),c\rangle$, we consider two cases:
+\begin{enumerate}
+    \item[1)] {\bf $\langle(x,y),c\rangle$ is included by the root:} we can start from the root of the {\tt WT-Index} and recursively update the information of all the nodes including the new C-point level by level in a top-down manner.
+
+    \item[2)] {\bf $\langle(x,y),c\rangle$ is not included by the root:} Let the time interval of the root be $[0, T]$. We first create a new root with a time interval $[0, 2T]$ and initialize its arrays using the information in the original root, then continue the generating process until the new root includes $\langle (x,y),c\rangle$, and finally use the idea of case 1) to update the remaining nodes.
+\end{enumerate}
+
+Algorithm \ref{alg:update} shows our maintenance algorithm.
+%
+We first generate new C-points by Algorithm \ref{alg:ttm} (line 1).
+%
+Then, for each new C-point $\langle (x,y),c \rangle$, we check whether it is included by the root of {\tt WT-Index} (lines 2-4).
+%
+If not, we generate new roots until the new root includes it (lines 5-6).
+%
+Next, we use a recursive function to update the nodes' information from the root node (lines 7-16).
+%
+In {\tt update}, we append the $c$ value to $node.C$[ ] of the current node (line 9), then if the current node is a leaf node, we terminate the recursion (line 10); otherwise, we check which child node includes the new C-point to update $node.Pos$[ ] and continue the recursion (lines 11-16).
+
+\begin{algorithm}[ht]
+\small
+
+\caption{{\tt WT-Index} maintenance algorithm}
+\label{alg:update}
+
+\KwIn{$G$, {\tt WT-Index} for $G$, and a new edge ($u$, $v$, $t_{max}$+1)}
+
+\KwOut{The updated {\tt WT-Index}}
+
+run lines 3-11 of Algorithm \ref{alg:ttm} to generate a new list $L'$ of C-points\;
+
+\ForEach{C-point $\langle (x,y),c\rangle \in L'$}{
+
+    $node \gets$ root of the {\tt WT-Index} with time interval $[0,T]$\;
+
+    \While{$node$ does not include $\langle (x,y),c\rangle$}{
+        generate a new root with time interval $[0,2T]$ storing the information of the original C-points\;
+        
+        $node \gets$ new root of the {\tt WT-Index}\;
+    }
+
+    {\tt update}($node$, $\langle (x,y),c \rangle$)\;
+}
+\SetKwFunction{update}{{\tt update}}
+\SetKwProg{Fn}{Function}{:}{}
+\Fn{\update {$node, \langle(x,y),c\rangle$}}{
+    
+    append $c$ to the end of $node.C$[ ]\;
+    
+    {\bf if} {\it $node$ is a leaf node} {\bf then} return\;
+    
+    \If{ $node.lChild$ includes $\langle (x,y),c \rangle$ }{
+        append 0 to the end of $node.Pos$[ ]\;
+        {\tt update}($node.lChild$,$\langle(x,y),c\rangle$)\;
+    }
+    \Else{
+        append 1 to the end of $node.Pos$[ ]\;
+        {\tt update}($node. rChild$,$\langle(x,y),c\rangle$)\;
+    }
+}
+
+\end{algorithm}
+
+%We illustrate the above maintenance algorithm by Example \ref{eg:maintain}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.65\linewidth]{figure/wavelet update2.pdf}
+    \caption{An example of updating {\tt WT-Index}.}
+    \label{fig:wavelet-update2}
+\end{figure}
+
+\begin{example}
+\label{eg:maintain}
+Figure \ref{fig:wavelet-update2}(a) shows the {\tt WT-Index} for C-points of the projected graph $G_{[0,2]}$ in Figure \ref{fig:tgraph}(a).
+%
+After inserting edges with timestamp 3, we get a new C-point $\langle (2,3),1\rangle$.
+%
+By Algorithm \ref{alg:update}, since 2 $\notin [0,1]$, we first generate a new root node with time interval $[0,2]$.
+%
+We then use {\tt update} function to update {\tt WT-Index}. 
+%
+Specifically, we first append 1 to $C$[ ] and $Pos$[ ] of the root node, then go to the right child of the root since it includes the new C-point, and finally append 1 to $C$[ ] of the leaf node with time interval $[2,2]$.
+\end{example}
+
+
+\begin{lemma}
+\label{lemma:maintain-time}
+Given a temporal graph $G$ and its {\tt WT-Index}, Algorithm \ref{alg:update} costs {\color{black} $O(\pi \log(m))$} time to process an edge insertion.
+\end{lemma}
+
+\begin{proof}
+Assume the root node of the {\tt WT-Index} has a time interval $[0, T]$ where $T \textless 2t_{max}$.
+%
+Then, the tree height of {\tt WT-Index} is {\color{black} $O(\log (t_{max})) = O(\log(m))$}.
+%
+To generate a new root node, we have to copy all the information from the original root, which takes {\color{black} $O(\pi)$} time, and the number of new root nodes is bounded by {\color{black} $O(\log(m))$}, so generating the root nodes costs at most {\color{black} $O(\pi \log(m))$} time.
+%
+Besides, the time complexity of running {\tt update} is linear to the height of the tree, so it costs {\color{black}$O(\log(m))$} time.
+%
+Since there are $|L'|$ C-points, the overall cost of running {\tt update} is {\color{black} $O(|L'|\log(m))$} time.
+%
+Hence, the total time cost of Algorithm \ref{alg:update} is  {\color{black} $O(\pi \log(m))$}.
+\end{proof}
+
+{\color{black}
+The time cost of generating new root nodes is high, but there will be at most $O(\log(m))$ new root nodes, so the total time cost of Algorithm \ref{alg:update} is faster than rebuilding {\tt WT-Index} from scratch.
+%
+We will experimentally evaluate Algorithm \ref{alg:update} in Section \ref{sec:experiment-weighted}.
+
+% The total time cost of invoking Algorithm \ref{alg:update} to process multiple edge insertions remains $O(m^2 \log(m))$. Because multiple edge insertions create only more new C-points instead of more new root nodes. As a result, the time complexity of generating root nodes remains $O(m^2 \log(m))$, and the time complexity of updating new C-points is $O(|L'|\log(m))$. Since $|L'| = O(\pi)  = O(m^2)$, the total time cost of invoking Algorithm \ref{alg:update} to process multiple edge insertions is still $O(m^2 \log(m))$, which is much faster than rebuilding {\tt WT-Index} from scratch multiple times. The experiment results in Section \ref{sec:experiment-weighted} also depict that our method is efficient.
+}
+
+
+{\color{black}$\bullet$ \textbf{Extension for counting other patterns.}
+%(R1.A5)
+Our index-based solution above can be easily extended for counting other patterns, like rectangles \cite{zhu2018fast}, cliques (of constant size) \cite{jain2020power}, and stars \cite{finocchi2024stars}. 
+%
+Given a target pattern, we can first enumerate the matched instances from the graph, and then for each instance, we fetch the minimum and maximum timestamps, denoted by $x$ and $y$ respectively.
+%
+As a result, each instance can be converted to a C-point $\langle (x,y):1 \rangle$.
+%
+Finally, we can apply our index-based solution by using these C-points.
+}
+
+\begin{comment}
+\subsubsection{Approximate $\delta$-temporal triangle counting}
+\label{sec:index-approximate}
+
+Recall that the {\tt WT-Index} costs $O(\Delta \log(\Bar{c}))$ space.
+%
+When the number of C-points is extremely large, its space cost may not be affordable.
+%
+To tackle this issue, we propose a sampling-based indexing approach with theoretical error guarantee.
+%
+The main idea is that we first sample a small proportion of the C-points and then build a smaller {\tt WT-Index} for them.
+%
+Specifically, given a list of original C-points $L$ and a sampling factor $\alpha \in (0,1]$, we sample a new list $\widehat{L}$ of C-points uniformly at random by selecting $\alpha \cdot |L|$ C-points from $L$. 
+%
+Then, for each C-point $\langle (x,y),c \rangle$ in $\widehat{L}$, we enlarge its $c$ value to $\frac{c}{\alpha}$.
+%
+Finally, we construct the {\tt WT-Index} based on $\widehat{L}$ rather than $L$.
+%
+When answering the counting problem, our index-based counting algorithm in Section \ref{sec:indexCounting} can be applied directly.
+
+Now we analyze the error caused by sampling.
+%
+Given the $c$ values of original C-points are $c_1,c_2,\cdots, c_{|L|}$, assume that their expectation and variance are $\mu$ and $\sigma^2$ respectively.
+%
+Then, for the $c$ values of C-points in $\widehat{L}$, their expectation and variance should be $\frac{\mu}{\alpha}$ and $\frac{\sigma^2}{\alpha^2}$, respectively.
+
+Given a time window $[t_s,t_e]$ and a duration $\delta$, to count the $\delta$-temporal triangles, let the expected number of C-points that are involved in the counting process from $L$ be $g$.
+%
+Then, the expected number of C-points that are involved in the counting process from $\widehat{L}$ should be $\alpha\cdot g$.
+%
+As a result, the expected numbers of $\delta$-triangles by using $L$ and $\widehat{L}$ are $g \cdot \mu$, but their variances are $g\times \sigma^2$ and $g\times \frac{\sigma^2}{\alpha}$ respectively.
+%
+By the central limit theorem \cite{kwak2017central}, if the C-point counting query is randomly issued, we can model the distributions of the counting results on $L$ and $\widehat{L}$ with the Gaussian distribution, and further derive the following error bound:
+
+\begin{lemma}
+\label{lem:error}
+Given two lists of C-points $L$ and $\widehat{L}$, let $R$ and $\widehat{R}$ denote the counting results using $L$ and $\widehat{L}$ respectively.
+%
+Then, the error can be bounded by
+%
+\begin{equation}
+     \Pr\left[|R-\widehat{R}|\geq \epsilon \cdot g \cdot \mu\right] \leq \frac{\sigma^2 \cdot (1+\alpha)}{g\cdot \mu^2 \cdot \alpha\cdot \epsilon^2},
+\end{equation}
+where $\epsilon > 0$ is a user-specific parameter.
+\end{lemma}
+
+\begin{proof}
+Since the distributions of the counting results on $L$ and $\widehat{L}$ with the Gaussian distribution, we can conclude $E[R- \widehat{R}] = 0$  and $Var[R - \widehat{R}] =g \cdot \sigma^2+ g\cdot \frac{\sigma^2}{\alpha} =\frac{g \cdot \sigma^2 \cdot (1+\alpha)}{\alpha}$.
+
+By using Chebyshev's inequality \cite{alsmeyer2011chebyshev}, we know that the probability that the error exceeds $\epsilon \cdot g \cdot \mu$ with a sampling factor $\alpha$ is bounded by:
+%
+\begin{equation}
+    \Pr\left[|R-\widehat{R}|\geq \epsilon\cdot g\cdot \mu\right] \le \frac{g\times \sigma^2 \cdot (1+\alpha)}{g^2\cdot \mu^2\cdot \alpha \cdot \epsilon^2} = \frac{\sigma^2 \cdot (1+\alpha)}{g\cdot \mu^2 \cdot \alpha \cdot \epsilon^2}.
+\end{equation}
+\end{proof}
+
+Clearly, as the number of sampled C-points increases, the difference between the counting results using $L$ and $\widehat{L}$ becomes small.
+%
+For instance, on the StackOverflow dataset ($|V|$ = 2.6M, $|E|$ = 63M, $t_{max}$ = 41M) \footnote{https://snap.stanford.edu/data/sx-stackoverflow.html}, we have $\mu$=5.6074, $\sigma^2$=293.453, and the expected counting result $g \cdot \mu = 2.7\times 10^9$.
+%
+If we set $\alpha=0.01$, then the probability of the relative error exceeding $0.01$ is less than $0.03$ by Lemma \ref{lem:error}.
+%
+In other words, by only using $1\%$ of the C-points, we can achieve a relative error of 0.01 with a probability of $0.97$.
+\end{comment}
