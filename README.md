@@ -50,6 +50,28 @@ In the graph file, each line indiactes a temporal edge following the format { $u
 
 In the query file, each line is a query following the format { $t_s$, $t_e$, $\delta$ }.
 
+# System Requirements & Performance Note (Important)
+
+**1. Memory Requirements (RAM)**
+* **Small/Medium Datasets (EM, WK, CT):** 128 GB RAM is sufficient.
+* **Large Dataset (Graph500-23 / GR):** This dataset is extremely large (Scale 23).
+    * **Requirement:** We strongly recommend ** >= 512 GB RAM** to run experiments on this dataset.
+    * **Troubleshooting:** If you encounter a **`std::bad_alloc`** error (especially with the Baseline algorithm), it is likely due to insufficient memory in your testing environment. In this case, please use a smaller dataset (e.g., Graph500-20) or sample the graph using the provided scripts.
+
+**2. Execution Time (Online Algorithm)**
+* Our method (OTTC) is an **online algorithm**, processing queries sequentially. Running the full 10,000 queries on Graph500-23 takes a significant amount of time.
+* **For Efficient Verification:** We recommend running the **first 200 queries**.
+    * Since queries are independent, the performance metrics (avg time per query) for the first 200 queries are statistically representative of the full workload.
+    * You can generate a subset of queries using `head -n 200 query.txt > query_sample.txt`.
+
+
+# Reproducibility: Source Code & Plotting
+
+To facilitate the verification of experimental results and figure trends:
+* We have uploaded the **full LaTeX source code** and **experimental data** to the `latex_source/` directory in this repository.
+* The figures in the paper (Figures 12–19) were generated using **PGFPlots** directly from this source.
+* **Verification:** Reviewers can plug their collected data into the corresponding `exp/` data files to reproduce the PDF figures and verify the trends.
+
 # Reproducing figures guideline:
 
 To help you reproduce Figures 12–19 more directly, here is how the current scripts map to the figures:
