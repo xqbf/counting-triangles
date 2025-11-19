@@ -56,7 +56,7 @@ In the query file, each line is a query following the format { $t_s$, $t_e$, $\d
 * **Small/Medium Datasets (EM, WK, CT):** 128 GB RAM is sufficient.
 * **Large Dataset (Graph500-23 / GR):** This dataset is extremely large (Scale 23).
     * **Requirement:** We strongly recommend ** >= 512 GB RAM** to run experiments on this dataset.
-    * **Troubleshooting:** If you encounter a **`std::bad_alloc`** error (especially with the Baseline algorithm), it is likely due to insufficient memory in your testing environment. In this case, please use a smaller dataset (e.g., Graph500-20) or sample the graph using the provided scripts.
+    * **Troubleshooting:** If you encounter a **`std::bad_alloc`** error (especially with the Baseline algorithm), it is likely due to insufficient memory in your testing environment. In this case, please use a smaller dataset.
 
 **2. Execution Time (Online Algorithm)**
 * Our method (OTTC) is an **online algorithm**, processing queries sequentially. Running the full 10,000 queries on Graph500-23 takes a significant amount of time.
