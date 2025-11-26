@@ -11,7 +11,7 @@ void putProcess(double procedure, double time_used) {
 std::stringstream timeFormatting(double microSeconds) {
 
     std::stringstream ret;
-    ret << (unsigned long long)(microSeconds*1000.0) << "mius" << " (";
+    ret << (unsigned long long)(microSeconds*1000.0) << "ms" << " (";
     unsigned long long seconds = microSeconds ;
     if (seconds < 60) {
         ret << seconds << "s";
