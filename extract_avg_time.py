@@ -6,14 +6,20 @@ def extract_average_time(log_file):
         with open(log_file, 'r') as f:
             for line in f:
                 if line.strip().startswith('Average:'):
-                    parts = line.split()
-                    if len(parts) >= 2:
-                        avg_time = parts[1]
-                        print(f"Extracted Average Time: {avg_time}")
-                        return avg_time
+                    match = re.search(r'Average:\s*(\d+(\.\d+)?)', line)
+                    
+                    if match:
+                        avg_time_str = match.group(1)
+                        avg_time_val = float(avg_time_str)
+                        
+                        print(f"Extracted Average Time (String): {avg_time_str}")
+                        print(f"Extracted Average Time (Value): {avg_time_val}")
+                        return avg_time_val
                         
     except FileNotFoundError:
         print(f"Error: Log file '{log_file}' not found.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
         
     print(f"Error: 'Average' time metric not found in the log file '{log_file}'.")
     return None
@@ -21,6 +27,5 @@ def extract_average_time(log_file):
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: python extract_avg_time.py <log_file_name>")
-        print("Example: python extract_avg_time.py gr_ottc_R_log_sample.txt")
     else:
         extract_average_time(sys.argv[1])
