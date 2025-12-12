@@ -146,17 +146,6 @@ inline int treeindex::Find(int u,int p){
     
     int l=0,r=ed[u].size()-1,ans=-1;
     if(r-l+1<=40){
-        /*for(int i=0;i<=r;i+=8){
-            if(ed[u][i]>p)return -1;
-            if(ed[u][i]==p)return i;
-            if(i+1<=r && ed[u][i+1]==p)return i+1;
-            if(i+2<=r && ed[u][i+2]==p)return i+2;
-            if(i+3<=r && ed[u][i+3]==p)return i+3;
-            if(i+4<=r && ed[u][i+4]==p)return i+4;
-            if(i+5<=r && ed[u][i+5]==p)return i+5;
-            if(i+6<=r && ed[u][i+6]==p)return i+6;
-            if(i+7<=r && ed[u][i+7]==p)return i+7;
-        }*/
         for(int i=0;i<=r;i+=4){
             if(ed[u][i]>=p){
             if(ed[u][i]>p)return -1;
@@ -195,9 +184,6 @@ long long treeindex::solve(int ts,int te,int delta){
     pos1_delta=tree1.find(ts+delta);
     pos2_delta=tree2.find(ts+delta);
     if(pos2_te==-1 || pos1_delta ==-1||pos2_delta==-1)return 0;
-    //std::cerr<<pos2_te<<' '<<pos1_delta<<' '<<pos2_delta<<std::endl;
-    //std::cerr<<tree2.query(1,0,tmax,0,delta,pos2_te)<<"????\n";
-    //std::cerr<<' '<<tree1.query(1,0,tmax,ts,tmax,pos1_delta)<<' '<<tree2.query(1,0,tmax,0,delta,pos2_delta)<<"!!\n";
     long long ans=tree2.query(1,0,tmax,0,delta,pos2_te)+tree1.query(1,0,tmax,ts,tmax,pos1_delta)-tree2.query(1,0,tmax,0,delta,pos2_delta);
     return ans;
     }
@@ -205,7 +191,6 @@ long long treeindex::solve(int ts,int te,int delta){
         long long pos1_te;
         pos1_te=tree1.find(te);
         if(pos1_te==-1)return 0;
-        //std::cerr<<pos1_te<<'\n';
         return tree1.query(1,0,tmax,ts,tmax,pos1_te);
     }
 }
@@ -215,7 +200,6 @@ treeindex::treeindex(TemporalGraph* Graph){
     m=Graph->m;
     tmax=Graph->tmax;
     factor=RAND_MAX;
-    //mp=new std::unordered_map<int,std::vector<int> >[n];
     ed=new std::vector<int>[n];
     beta = new std::vector<std::vector<int> > [n]();
     double start_time=clock();
@@ -233,8 +217,6 @@ treeindex::treeindex(TemporalGraph* Graph){
     for(int i=0;i<n;i++){
         std::sort(ed[i].begin(),ed[i].end());
         ed[i].erase(std::unique(ed[i].begin(),ed[i].end()), ed[i].end());
-        //std::cerr<<i<<' '<<ed[i].size()<<'\n';
-        //std::cerr<<i<<": ";
         beta[i].resize(ed[i].size());
     }
     int id,p,l1,l2;
@@ -291,6 +273,14 @@ treeindex::treeindex(TemporalGraph* Graph){
     delete [] beta;
     delete Graph;
     std::cout << "Fetching total: " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl<<std::endl;
+    if(alfa.size()==0){
+        std::cout << "There is no temporal triangles!" << std::endl;
+        tree1.tr = new node[4];
+        tree2.tr = new node[4];
+        tree1.lgt = 1;
+        tree2.lgt = 1;
+        return ;
+    }
     int period_time = clock();
     long long szt=log(tmax+1)/log(2)+1;
     //tree.push_back((node)(0,0,0));
@@ -300,7 +290,7 @@ treeindex::treeindex(TemporalGraph* Graph){
     tree2.tr = new node[(tmax+5)<<2];
     tree1.lgt = log(tmax)*4;
     tree2.lgt=tree1.lgt;
-    //std::cerr<<tree1.lgt<<std::endl;
+    // std::cerr<<tree1.lgt<<std::endl;
     mode current;
     current.ts=alfa[0].ts;
     current.te=alfa[0].te;
@@ -325,6 +315,7 @@ treeindex::treeindex(TemporalGraph* Graph){
         tree1.insert(1,0,tmax,alfa[i].ts,alfa[i].te,alfa[i].val);
         tree2.insert(1,0,tmax,alfa[i].te-alfa[i].ts,alfa[i].te,alfa[i].val);
         sum=sum+alfa[i].val;
+        // std::cerr<< i<<'\n';
         //std::cerr<<alfa[i].ts<<' '<<alfa[i].te<<' '<<alfa[i].val<<'\n';
     }
     //std::cerr<<sum;
@@ -332,11 +323,11 @@ treeindex::treeindex(TemporalGraph* Graph){
     std::vector<mode>().swap(alfa);
     //std::cerr<<"Let's go!\n";
     tree1.build(1,0,tmax);
-    //std::cerr<<"Tree1 ok.\n";
+    std::cerr<<"Tree1 ok.\n";
     tree2.build(1,0,tmax);
-    //std::cerr<<tree1.total<<' '<<tree2.total<<'\n';
+    std::cerr<<tree1.total<<' '<<tree2.total<<'\n';
     std::cout << "Indexing total: " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str()<<std::endl;
-    //std::cout << "Indexing size: " <<  tree1.total+tree2.total<<"bytes"<< std::endl<<std::endl;
+    // std::cout << "Indexing size: " <<  tree1.total+tree2.total<<"bytes"<< std::endl<<std::endl;
 }
 
 
