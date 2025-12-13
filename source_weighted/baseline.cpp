@@ -130,11 +130,13 @@ baseline::baseline(TemporalGraph *Graph){
     s = new std::set<int> [n];
     g = new std::vector<edge>* [tmax+1];
     vis = new int[n];
-    int num[10]={(int)(0.1*tmax),(int)(0.3*tmax),(int)(0.5*tmax),(int)(0.7*tmax),(int)(0.9*tmax),(int)(0.2*tmax*0.1),(int)(0.4*tmax*0.1),(int)(0.6*tmax*0.1),(int)(0.8*tmax*0.1)};
-
-    for(int delta=0;delta<=tmax;delta++){
+    std::set<int> num={(int)(0.1*tmax),(int)(0.3*tmax),(int)(0.5*tmax),(int)(0.7*tmax),(int)(0.9*tmax),(int)(0.2*tmax*0.1),(int)(0.4*tmax*0.1),(int)(0.6*tmax*0.1),(int)(0.8*tmax*0.1)};
+    // std::cerr<<num.size()<<std::endl;
+    // for(int delta=0;delta<=tmax;delta++){
+    for(auto delta:num){
         g[delta]=new std::vector<edge> [n];
     }
+    return ;
     double start_time=clock();
     for(int t=0;t<=tmax;t++){
         std::vector<std::pair<int,int>>::iterator it;
@@ -143,16 +145,14 @@ baseline::baseline(TemporalGraph *Graph){
             if(u==v)continue;
             s[u].insert(v);
             s[v].insert(u);
-            std::map<int,int> vis;
-            vis.clear();
-            for(int ii=0;ii<9;ii++){
-                int delta=num[ii];
-                if(vis.count(delta))continue;
-                vis[delta]=1;
+            for(auto delta:num){
                 g[delta][u].push_back(edge(t,t+delta,v));
                 g[delta][v].push_back(edge(t,t+delta,u));
            }
         }
+        // if(t%10==0){
+        //     std::cout << "Processed time " << t << "/" << tmax << " in " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl;
+        // }
     }
     
     for(int u=0;u<n;u++){
@@ -174,12 +174,11 @@ baseline::baseline(TemporalGraph *Graph){
         }
         for(auto v:ed[u])vis[v]=0;
     }
-
+    // std::cerr<<alfa.size()<<" triangles in total\n";
         // for(int u=0;u<n;u++){
         //     sort(g2[u].begin(),g2[u].end(),cmp);
         // }
-        for(int i=0;i<9;i++){
-            int delta=num[i];
+        for(auto delta:num){
             for(int u=0;u<n;u++)sort(g[delta][u].begin(),g[delta][u].end(),cmp);
         }
     std::cout << "Building index total: " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC).str() << std::endl<<std::endl;
