@@ -136,7 +136,7 @@ baseline::baseline(TemporalGraph *Graph){
     for(auto delta:num){
         g[delta]=new std::vector<edge> [n];
     }
-    return ;
+    //return ;
     double start_time=clock();
     for(int t=0;t<=tmax;t++){
         std::vector<std::pair<int,int>>::iterator it;
@@ -210,3 +210,4 @@ void base(baseline *Index, TemporalGraph *Graph, char* query_file, char* output_
     }
     std::cout << "Average: " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC / query_num).str() << std::endl;
 }
+
