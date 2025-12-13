@@ -16,19 +16,20 @@ inline int baseline::find(int u,int v,int delta){
 }
 
 long long baseline::count(int u,int v,int w,int ts,int te,int delta){
+    // std::cerr<<u<<' '<<v<<' '<<w<<' '<<ts<<' '<<te<<' '<<delta<<'\n';
     int l1=find(u,v,delta);
     int l2=find(v,w,delta);
     int l3=find(u,w,delta);
     
     if(l1==-1||l2==-1||l3==-1)return 0;
-    //std::cerr<<g2[u][l1].ts<<' '<<g2[v][l2].ts<<' '<<g2[u][l3].ts<<'\n';
+    // std::cerr<<g2[u][l1].ts<<' '<<g2[v][l2].ts<<' '<<g2[u][l3].ts<<'\n';
     while(g[delta][u][l1].v==v&&g[delta][u][l1].te<ts)l1++;
     while(g[delta][v][l2].v==w&&g[delta][v][l2].te<ts)l2++;
     while(g[delta][u][l3].v==w&&g[delta][u][l3].te<ts)l3++;
     
     long long ans=0;
     while(g[delta][u][l1].v==v&&g[delta][v][l2].v==w&&g[delta][u][l3].v==w&&g[delta][u][l1].ts<=te&&g[delta][v][l2].ts<=te&&g[delta][u][l3].ts<=te){
-        //std::cerr<<g[delta][u][l1].ts<<' '<<g[delta][v][l2].ts<<' '<<g[delta][u][l3].ts<<'\n';
+        // std::cerr<<g[delta][u][l1].ts<<' '<<g[delta][v][l2].ts<<' '<<g[delta][u][l3].ts<<'\n';
         if(g[delta][u][l1].ts<= g[delta][v][l2].ts && g[delta][u][l1].ts<=g[delta][u][l3].ts){// (u,v) smallest
             int l=l2,r=g[delta][v].size()-1,ans_vw=l2-1;
             while(l<=r){
@@ -136,7 +137,6 @@ baseline::baseline(TemporalGraph *Graph){
     for(auto delta:num){
         g[delta]=new std::vector<edge> [n];
     }
-    //return ;
     double start_time=clock();
     for(int t=0;t<=tmax;t++){
         std::vector<std::pair<int,int>>::iterator it;
@@ -174,7 +174,7 @@ baseline::baseline(TemporalGraph *Graph){
         }
         for(auto v:ed[u])vis[v]=0;
     }
-    // std::cerr<<alfa.size()<<" triangles in total\n";
+    std::cerr<<alfa.size()<<" triangles in total\n";
         // for(int u=0;u<n;u++){
         //     sort(g2[u].begin(),g2[u].end(),cmp);
         // }
@@ -202,7 +202,7 @@ void base(baseline *Index, TemporalGraph *Graph, char* query_file, char* output_
     while(fin >> ts >> te>>delta){
         //std::cerr<<ts<<' '<<te<<' '<<delta<<"????\n";
         
-        //std::cerr<<ts<<' '<<te<<' '<<delta<<"????\n";
+        // std::cerr<<ts<<' '<<te<<' '<<delta<<"????\n";
         fout<<(long long)(Index->solve(ts , te, delta))<<std::endl;
         tmp++;
         if(tmp%1 == 0)
@@ -210,4 +210,3 @@ void base(baseline *Index, TemporalGraph *Graph, char* query_file, char* output_
     }
     std::cout << "Average: " << timeFormatting((clock()-start_time)/CLOCKS_PER_SEC / query_num).str() << std::endl;
 }
-
